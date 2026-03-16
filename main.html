@@ -1,0 +1,747 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Premier One Mobile Client</title>
+  <link rel="stylesheet" href="https://cdn.metroui.org.ua/current/metro.css">
+  <link rel="stylesheet" href="https://cdn.metroui.org.ua/current/icons.css">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+    }
+
+    .title-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 32px;
+      background-color: #fff;
+      border-bottom: 1px solid #ddd;
+      user-select: none;
+    }
+
+    .title-area {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding-left: 10px;
+      font-size: 12px;
+      font-family: "Segoe UI", Tahoma, sans-serif;
+    }
+
+    .button-group {
+      display: flex;
+      height: 100%;
+      border-radius: 0px !important;
+    }
+
+    .window-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 46px;
+      height: 100%;
+      border: none;
+      background-color: transparent;
+      font-size: 10px;
+    }
+
+    .main-action-btns {
+      flex: 1 1 10%;
+      max-width: 10%;
+      height: 110px;
+      border: 1px solid #333;
+      border-radius: 0 !important;
+      background: linear-gradient(#434480, #000000);
+      color: white;
+      padding: 8px 4px !important;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+    }
+
+    .main-action-btns:active {
+      background: rgb(10, 162, 233);
+    }
+
+    .main-action-btns p {
+      margin: 0;
+      font-size: 11px;
+      width: 100%;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .main-action-btns img {
+      max-height: 50%;
+      width: auto;
+      max-width: 80%;
+      object-fit: contain;
+      pointer-events: none;
+    }
+
+    .no-border-radius {
+      border-radius: 0 !important;
+    }
+
+    .select .button-group {
+      display: none !important;
+    }
+
+    .select .input-wrapper {
+      padding-right: 0 !important;
+      border-radius: 0 !important;
+    }
+
+    .select .title {
+      padding-right: 8px !important;
+      width: 100% !important;
+    }
+
+    .select {
+      border-radius: 0 !important;
+    }
+
+
+    .logged-in-box {
+      height: 38px !important;
+      border-radius: 0 !important;
+    }
+
+    .logged-in-box {
+      display: flex !important;
+      align-items: stretch !important;
+      border: 1px solid #ddd;
+      background: white;
+      height: 38px !important;
+      width: 250px;
+      cursor: pointer;
+    }
+
+    .login-p-style {
+      background: #28a745;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      padding: 0 8px;
+      font-size: 16px;
+    }
+
+    .login-text-stack {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding-left: 8px;
+      line-height: 1.1;
+    }
+
+    .dashboard-container {
+      display: flex;
+      height: calc(100vh - 250px);
+      margin-top: 5px;
+      background: #fff;
+    }
+
+    .table-area {
+      flex: 1;
+      overflow-y: auto;
+      border: 1px solid #ccc;
+    }
+
+    /* home-table styles */
+    .home-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: sans-serif;
+      font-size: 13px;
+    }
+
+    .home-table th {
+      background: #f0f0f0;
+      text-align: left;
+      padding: 8px;
+      border-bottom: 2px solid #ccc;
+      font-size: 10px;
+      color: #444;
+    }
+
+    .row-pending {
+      background: #0000FF;
+      color: white;
+    }
+
+    .row-active {
+      background: #008000;
+      color: white;
+    }
+
+    .home-table td {
+      padding: 10px 8px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+      font-weight: bold;
+    }
+
+    /* unit-table styles*/
+    .units-table {
+      display: none;
+    }
+
+    /* home sidebar */
+
+    .sidebar-area {
+      width: 180px;
+      display: flex;
+      flex-direction: column;
+      border-left: 1px solid #ccc;
+      background: #f0f0f0;
+    }
+
+    .side-nav-btn {
+      display: flex;
+      align-items: center;
+      padding: 8px 10px;
+      border-bottom: 1px solid #d9d9d9;
+      background: transparent;
+      cursor: pointer;
+      transition: 0.1s;
+      text-decoration: none;
+      color: #333;
+    }
+
+    .side-nav-btn:hover {
+      background-color: #e0e0e0;
+    }
+
+    .side-nav-btn span.mif-2x {
+      width: 32px;
+      margin-right: 12px;
+      text-align: center;
+      color: #555;
+    }
+
+    .side-nav-btn .btn-text {
+      font-size: 13px;
+      font-family: "Segoe UI", Tahoma, sans-serif;
+      flex-grow: 1;
+    }
+
+    .side-nav-btn .btn-text u {
+      text-decoration: underline;
+    }
+
+    /* incident-view styles */
+
+    .incident-view-wrapper {
+      display: flex;
+      height: calc(100vh - 250px);
+      width: 100%;
+    }
+
+    .inc-sidebar-area {
+      width: 200px;
+      min-width: 200px;
+      background-color: #f1f1f1;
+      border-right: 1px solid #ccc;
+      overflow-y: auto;
+    }
+
+    .inc-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px;
+      background: #fff;
+    }
+
+    .status-block {
+      background: white;
+      border: 1px solid #ddd;
+      border-left: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-size: 11px;
+      color: #333;
+      cursor: pointer;
+    }
+
+    .status-block:hover {
+      background: #f9f9f9;
+    }
+
+    .logged-in-box,
+    .status-block,
+    .select {
+      height: 38px !important;
+    }
+
+    /* footer styles */
+    footer {
+      display: flex;
+      width: 100%;
+      height: 35px;
+      background: #f0f0f0;
+      border-top: 1px solid #ccc;
+      position: fixed;
+      bottom: 0;
+    }
+
+    .footer-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-right: 1px solid #ccc;
+      font-size: 11px;
+      font-family: "Segoe UI", sans-serif;
+      background: #fff;
+      cursor: pointer;
+      color: #333;
+      padding: 0 5px;
+      white-space: nowrap;
+    }
+
+    .footer-btn:hover {
+      background: #e5e5e5;
+    }
+
+    .footer-group {
+      display: flex;
+      flex: 3;
+    }
+
+    .footer-group .footer-btn {
+      flex: 1;
+    }
+
+    .w-sm {
+      flex: 1;
+    }
+
+    .w-md {
+      flex: 2;
+    }
+
+    .w-lg {
+      flex: 3;
+    }
+
+    .active-tab {
+      background: rgb(10, 162, 233);
+    }
+
+    .incident:hover {
+      cursor: pointer;
+    }
+
+    @keyframes flash-red {
+      0% {
+        background-color: #0000FF;
+      }
+
+      50% {
+        background-color: red;
+      }
+
+      100% {
+        background-color: #0000FF;
+      }
+    }
+
+    #inc-foot {
+      display: none;
+    }
+
+    #inc-content {
+      display: none;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="title-bar">
+    <div class="title-area">
+      <img src="https://od.lk/s/MzRfMTAwNDg1ODM0Xw/Motorola_29.webp" height="16px" width="16px">
+      <span>PremierOne Mobile Client</span>
+    </div>
+    <div class="button-group">
+      <button class="window-btn">-</button>
+      <button class="window-btn bg-red-hover fg-white-hover">✕</button>
+    </div>
+  </div>
+
+  <!-- MAIN ACTION BUTTONS-->
+  <div class="container-fluid p-0">
+    <div class="row no-gap">
+      <button class="main-action-btns active-tab">
+        <p class="text-left">F1</p>
+        <img src="https://od.lk/s/MzRfMTAwNDkwNjExXw/pngimg.com%20-%20house_PNG17.png" width="55px">
+        <p class="text-center">Home</p>
+      </button>
+      <button class="main-action-btns" disabled>
+        <p class="text-left">F2</p>
+        <img src="https://od.lk/s/MzRfMTAwNDkwNjEyXw/NEWS_150629803_AR_0_IKZPTQCIXXQA.jpg" width="75px">
+        <p class="text-center">Query</p>
+      </button>
+      <button class="main-action-btns">
+        <p class="text-left">F3</p>
+        <img
+          src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9d/Stop_sign_light_red.svg/250px-Stop_sign_light_red.svg.png"
+          width="55px">
+        <p class="text-center">Traffic Stop</p>
+      </button>
+      <button class="main-action-btns">
+        <p class="text-left">F4</p>
+        <img src="https://i.pinimg.com/564x/bb/24/70/bb24700cbf83f2b574e307646fc6c29c.jpg" width="55px">
+        <p class="text-center">C6</p>
+      </button>
+      <div class="main-action-btns">
+        <p class="text-left">F5</p>
+        <img src="https://od.lk/s/MzRfMTAwNDkwNzE0Xw/image-removebg-preview%20%2812%29.png" width="55px">
+        <p class="text-center">Calls</p>
+      </div>
+      <button class="main-action-btns">
+        <p class="text-left">F6</p>
+        <img src="https://od.lk/s/MzRfMTAwNDkwNjE0Xw/image-removebg-preview%20%289%29.png" width="40px">
+        <p class="text-center">Dispatch</p>
+      </button>
+      <button class="main-action-btns">
+        <p class="text-left">F7</p>
+        <img src="https://od.lk/s/MzRfMTAwNDkwNjE3Xw/image-removebg-preview%20%2810%29.png" width="100px">
+        <p class="text-center">Enroute</p>
+      </button>
+      <button class="main-action-btns" disabled>
+        <p class="text-left">F8</p>
+        <img src="https://od.lk/s/MzRfMTAwNDkwNzEzXw/image-removebg-preview%20%2811%29.png">
+        <p class="text-center">AS</p>
+      </button>
+      <button class="main-action-btns">
+        <p class="text-left">F9</p>
+        <img src="https://od.lk/s/MzRfMTAwNDkwNzE1Xw/image-removebg-preview%20%2813%29.png"
+          style="max-width: 35px !important;">
+        <p class="text-center">Station</p>
+      </button>
+      <button class="main-action-btns">
+        <p class="text-left">F10</p>
+        <img src="https://od.lk/s/MzRfMTAwNDkwNzE2Xw/image-removebg-preview%20%2814%29.png">
+        <p class="text-center">Dispo</p>
+      </button>
+    </div>
+  </div>
+
+  <!-- Command Bar-->
+  <div class="px-5 mt-1">
+    <select data-role="select" data-filter="true">
+      <option>Enter commands</option>
+    </select>
+  </div>
+  <!-- Home Area -->
+  <div class="container-fluid p-0 mt-1">
+    <div class="row no-gap align-items-stretch">
+      <div style="flex: 1 1 14.285714%; max-width: 14.285714%;">
+        <select data-role="select">
+          <option id="currentpage">Home</option>
+        </select>
+      </div>
+      <div class="pos-relative fg-grey-hover" style="flex: 1 1 14.28%; max-width: 14.28%;">
+        <div class="d-flex flex-row align-stretch border bd-default bg-white"
+          style="height: 38px; cursor: pointer; border-left: 0;">
+          <div class="bg-green fg-white d-flex align-center flex-justify-center px-2 text-bold"
+            style="font-size: 16px; min-width: 28px;">P</div>
+          <div class="d-flex flex-column flex-justify-center px-2 flex-grow-1" style="line-height: 1.1;">
+            <span style="font-size: 9px; font-weight: bold; color: #666; text-transform: uppercase;">Logged in:</span>
+            <span id="current-user" style="font-size: 11px; color: #000; white-space: nowrap;">45683[1218-W7]</span>
+          </div>
+          <div class="d-flex flex-center px-1">
+            <span class="mif-arrow-drop-down fg-black" style="font-size: 18px;"></span>
+          </div>
+        </div>
+      </div>
+      <div class="status-block" style="flex: 1 1 14.285714%; max-width: 14.285714%;">
+        <span class="mif-mail mif-sm fg-orange"></span>
+        <span>Unread(1)</span>
+      </div>
+      <div class="status-block" style="flex: 1 1 14.285714%; max-width: 14.285714%;">
+        <span class="mif-brightness-auto mif-sm"></span>
+        <span>Day</span>
+      </div>
+      <div class="status-block" style="flex: 1 1 14.285714%; max-width: 14.285714%;">
+        <span>In Vehicle</span>
+      </div>
+      <div class="status-block" style="flex: 1 1 14.285714%; max-width: 14.285714%;">
+        <span>Enroute</span>
+      </div>
+      <div class="status-block" style="flex: 1 1 14.285714%; max-width: 14.285714%; background-color: red !important;">
+        GPS Off
+      </div>
+
+    </div>
+  </div>
+
+  <div id="mainContentWrapper">
+    <div class="dashboard-container incidents-table">
+      <div class="table-area">
+        <ul data-role="tabs" data-expand="true" class="bg-lightGray">
+          <li><a href="#">Incidents</a></li>
+          <li><a href="#">Unit Status</a></li>
+          <li><a href="#" disabled>Query</a></li>
+          <li><a href="#">Who's On</a></li>
+        </ul>
+        <!-- incident table-->
+        <table class="home-table">
+          <thead>
+            <tr>
+              <th>STATUS</th>
+              <th>TYPE</th>
+              <th>PRI</th>
+              <th>INC LOCATION</th>
+              <th>UNITS</th>
+              <th>AREA</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="row-pending incident" onclick="showIncident(2234)" id="inc-2234">
+              <td id="2234-status">Pending</td>
+              <td id="2234-type">ACCIDENT</td>
+              <td id="2234-pri">1</td>
+              <td id="2234-loc">W ADDISON ST / N CLARK ST</td>
+              <td id="2234-units"></td>
+              <td id="2234-area">HWD</td>
+            </tr>
+            <tr class="row-pending">
+              <td>Pending</td>
+              <td>FIGHT</td>
+              <td>2</td>
+              <td>2309 W WILCOX ST</td>
+              <td></td>
+              <td>HWD</td>
+            </tr>
+            <tr class="row-active">
+              <td>Active</td>
+              <td>THEFT</td>
+              <td>3</td>
+              <td>STREET/td>
+              <td>6A45</td>
+              <td>OMP</td>
+            </tr>
+            <tr class="row-pending">
+              <td>Pending</td>
+              <td>FIGHT</td>
+              <td>2</td>
+              <td>550 W MONROE ST</td>
+              <td></td>
+              <td>HWD</td>
+            </tr>
+          </tbody>
+        </table>
+        </div>
+        <div class="dashboard-container units-table">
+          <div class="table-area">
+            <!-- unit table -->
+            <table class="home-table">
+              <thead>
+                <tr>
+                  <th>Unit</th>
+                  <th>ST</th>
+                  <th>Inc #</th>
+                  <th>Inc Location</th>
+                  <th>Code</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>6A45-W2</td>
+                  <td>FA</td>
+                  <td>0680</td>
+                  <td>77th sta</td>
+                  <td>2 </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- RIGHT SIDEBAR -->
+          <div class="sidebar-area">
+            <div class="side-nav-btn">
+              <span class="mif-organization mif-2x"></span>
+              <span class="btn-text"><u>I</u>ncident (3)</span>
+            </div>
+            <div class="side-nav-btn">
+              <span class="mif-automobile mif-2x"></span>
+              <span class="btn-text"><u>U</u>nit Status</span>
+            </div>
+            <div class="side-nav-btn" disabled>
+              <span class="mif-email mif-2x"></span>
+              <span class="btn-text">M<u>e</u>ssaging</span>
+            </div>
+            <div class="side-nav-btn" disabled>
+              <span class="mif-search mif-2x"></span>
+              <span class="btn-text"><u>Q</u>uery</span>
+            </div>
+            <div class="side-nav-btn" disabled>
+              <span class="mif-earth mif-2x"></span>
+              <span class="btn-text"><u>B</u>rowser</span>
+            </div>
+            <div class="side-nav-btn" disabled>
+              <span class="mif-location mif-2x"></span>
+              <span class="btn-text"><u>L</u>ocation Detail</span>
+            </div>
+            <div class="side-nav-btn" disabled>
+              <span class="mif-map mif-2x"></span>
+              <span class="btn-text">Mobile <u>M</u>ap</span>
+            </div>
+            <a class="side-nav-btn" href="https://forms.gle/L3bexYfnWQNbVY78A">
+              <span class="mif-file-text mif-2x"></span>
+              <span class="btn-text"><u>R</u>eports</span>
+            </a>
+            <a class="side-nav-btn" class="super-only">
+              <span class="mif-access-time mif-2x"></span>
+              <span class="btn-text"><u>S</u>et Incident ID</span>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="d-flex flex-row w-100 incident-view-wrapper" style="align-items: stretch;" id="inc-2234-adv">
+        <div class="inc-sidebar-area bg-lightGray border-right bd-default">
+          <a class="side-nav-btn d-flex align-center p-2">
+            <span class="mif-info mif-2x mr-2"></span>
+            <span class="btn-text">Summary</span>
+          </a>
+          <a class="side-nav-btn d-flex align-center p-2">
+            <span class="mif-person mif-2x mr-2"></span>
+            <span class="btn-text">Persons (1)</span>
+          </a>
+          <a class="side-nav-btn d-flex align-center p-2">
+            <span class="mif-automobile mif-2x mr-2"></span>
+            <span class="btn-text">Vehicles</span>
+          </a>
+          <a class="side-nav-btn d-flex align-center p-2">
+            <span class="mif-pencil mif-2x mr-2"></span>
+            <span class="btn-text">Comments</span>
+          </a>
+          <a class="side-nav-btn d-flex align-center p-2">
+            <span class="mif-info2 mif-2x mr-2"></span>
+            <span class="btn-text">Incident Info</span>
+          </a>
+          <a class="side-nav-btn d-flex align-center p-2">
+            <span class="mif-group mif-2x mr-2"></span>
+            <span class="btn-text">Unit Details (1)</span>
+          </a>
+          <a class="side-nav-btn d-flex align-center p-2 disp-only">
+            <span class="mif-database-edit mif-2x mr-2"></span>
+            <span class="btn-text">Edit Incident Data</span>
+          </a>
+        </div>
+
+        <div class="inc-content flex-grow-1 p-4 bg-white">
+          <div class="text-center"
+            style="height: 30px !important; outline: 1px solid #333; background-color: rgb(226, 218, 218);"><b
+              id="inc-location" style="color: white; font-size: 20px;  line-height: 20px;  overflow: hidden;"></b></div>
+          <div class="grid" style="padding-top: 2px;">
+            <div class="row">
+              <h3 class="cell-11" style="color: rgb(0, 183, 255);" id="inc-status"></h3>
+              <button class="cell-auto button cycle small"
+                style="background-color: rgb(0, 174, 255); color: white;">?</button>
+            </div>
+            <div class="row">
+              <div class="cell-6" id="inc-type">Incident Type:</div>
+              <div class="cell-6" id="inc-id"></div>
+            </div>
+            <div class="row">
+              <div class="cell-6" id="inc-location2"></div>
+              <div class="cell-6" id="inc-status2"></div>
+            </div>
+            <div class="row">
+              <div class="cell-4">Units:</div><u class="cell-auto" id="incUnits">6L30-W2</u>
+            </div>
+            <div class="row">
+              <div class="cell-4">Incident intiated</div>
+              <div class="cell-4" id="incDate">03/15/26</div>
+              <div class="cell-4" id="incTime">18:39:41</div>
+            </div>
+            <div class="row">
+              <div class="cell-4">Beat:</div><u class="cell-4" id="rd">648</u><button class="button cell-4">Update
+                Comments</button>
+            </div>
+          </div>
+          <textarea data-role="textarea" style="height: 300PX !important;"
+            placeholder="NO INCIDENT NOTES!!!"></textarea>
+        </div>
+
+      </div>
+
+      <footer id="home-foot">
+        <div class="footer-btn w-sm"></div>
+        <div class="footer-btn w-md">Help</div>
+        <div class="footer-group">
+          <div class="footer-btn">About Mobile</div>
+          <div class="footer-btn">Send Message</div>
+        </div>
+        <div class="footer-btn w-sm"></div>
+        <div class="footer-btn w-sm"></div>
+        <div class="footer-group">
+          <div class="footer-btn"></div>
+          <div class="footer-btn"></div>
+          <div class="footer-btn"></div>
+        </div>
+        <div class="footer-btn w-lg"></div>
+        <div class="footer-btn w-sm"></div>
+        <div class="footer-btn w-sm"></div>
+        <div class="footer-btn w-sm"></div>
+        <div class="footer-btn w-sm"></div>
+      </footer>
+
+      <footer id="inc-foot">
+        <div class="footer-group">
+          <div class="footer-btn">
+            << /div>
+              <div class="footer-btn">></div>
+              <div class="footer-btn">Edit</div>
+              <div class="footer-btn">Clear</div>
+              <div class="footer-btn">Close</div>
+              <div class="footer-btn">Primary</div>
+
+              <div class="footer-btn"></div>
+              <div class="footer-btn"></div>
+              <div class="footer-btn"></div>
+              <div class="footer-btn"></div>
+          </div>
+      </footer>
+
+
+      <script src="https://cdn.metroui.org.ua/current/metro.js"></script>
+      <script>
+        function updateUser(name) {
+          document.getElementById('current-user').innerText = name;
+        }
+
+        function showIncident(id) {
+          document.getElementById('home-foot').style.display = 'none';
+          document.getElementById('inc-foot').style.display = 'block';
+          incLoc = document.getElementById(`${id}-loc`).textContent;
+          incType = document.getElementById(`${id}-type`).textContent;
+          incStatus = document.getElementById(`${id}-status`).textContent;
+          document.getElementById('mainContentWrapper').style.display = 'none';
+          document.getElementById(`inc-${id}`).style.display = "block";
+          document.getElementById(`inc-${id}-adv`).style.display = 'none';
+          document.getElementById('currentpage').innerHTML = "Incident"
+          document.getElementById('inc-location').innerHTML = incLoc;
+          document.getElementById('inc-type').innerHTML = `Incident type:  ${incType}`;
+          document.getElementById('inc-id').innerHTML = `Inc #:  ${id}`;
+          document.getElementById('inc-location2').innerHTML = `Location:  ${incLoc}`;
+          document.getElementById('inc-status').innerHTML = `${incStatus} Incident`;
+          document.getElementById('inc-status2').innerHTML = `Incident Status: ${incStatus}`;
+        }
+      </script>
+</body>
+
+</html>
