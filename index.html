@@ -1785,6 +1785,21 @@
             background: transparent;
         }
 
+        .tab-card.status-pending {
+            border-color: #005fcc;
+            box-shadow: inset 0 0 0 1px #005fcc;
+        }
+
+        .tab-card.status-active {
+            border-color: #0b8f3a;
+            box-shadow: inset 0 0 0 1px #0b8f3a;
+        }
+
+        .tab-card.status-new {
+            border-color: #d97a00;
+            box-shadow: inset 0 0 0 1px #d97a00;
+        }
+
         .tab-card.active {
             border: 2px solid #0078d4;
             border-bottom: none;
@@ -2587,11 +2602,11 @@
                     <div class="menu-group">
                         <button class="menu-btn" onclick="toggleSubmenu('callMenu')">Calls</button>
                         <div class="submenu" id="callMenu" style="display: none;">
-                            <button class="submenu-item">All Calls
+                            <button class="submenu-item" onclick="dispatcherAction('calls_all')">All Calls
                                 <span>(F8)</span></button>
-                            <button class="submenu-item">Active
+                            <button class="submenu-item" onclick="dispatcherAction('calls_active')">Active
                                 <span>(F9)</span></button>
-                            <button class="submenu-item">Closed
+                            <button class="submenu-item" onclick="dispatcherAction('calls_closed')">Closed
                                 <span>(F10)</span></button>
                             <button class="submenu-item" onclick="dispatcherAction('print_calls')">Print</button>
                         </div>
@@ -2649,10 +2664,10 @@
                     <!-- Tab Contents -->
                     <div class="dispatcher-tab-content" id="dispatcherTabContent">
                         <!-- Tab 1 (Blank) -->
-                        <div class="tab-pane" id="tab-1" style="display: flex;"></div>
+                        <div class="tab-pane" id="tab-1" style="display: none;"></div>
 
                         <!-- Tab 2 (Incident Details) -->
-                        <div class="tab-pane" id="tab-2" style="display: none;">
+                        <div class="tab-pane" id="tab-2" style="display: flex;">
                             <div class="incident-content">
                                 <div class="incident-header-section">
                                     <div class="incident-name" id="incidentNameDisplay">// INC NAME</div>
@@ -2684,27 +2699,23 @@
                                                     <label>Status</label>
                                                     <select id="dispatchStatus" class="dispatcher-field">
                                                         <option value="Pending">Pending</option>
-                                                        <option value="Enroute">Enroute</option>
-                                                        <option value="On Scene">On Scene</option>
-                                                        <option value="Closed">Closed</option>
+                                                        <option value="Active">Active</option>
                                                     </select>
                                                 </div>
                                                 <div class="cell-2">
                                                     <label>Inc Type</label>
-                                                    <select id="dispatchIncType" class="dispatcher-field">
-                                                        <option value="TC W/ K">TC W/ K</option>
-                                                        <option value="Structure Fire">Structure Fire</option>
-                                                        <option value="Medical">Medical</option>
-                                                    </select>
+                                                    <input type="text" id="dispatchIncType" class="dispatcher-field"
+                                                        placeholder="Incident type...">
                                                 </div>
                                                 <div class="cell-2">
                                                     <label>Area</label>
                                                     <input type="text" class="dispatcher-field" id="dispatchArea"
-                                                        value="HWD" readonly>
+                                                        value="HWD">
                                                 </div>
                                                 <div class="cell-1">
                                                     <label>PRI</label>
                                                     <select id="dispatchPriority" class="dispatcher-field">
+                                                        <option>0</option>
                                                         <option>1</option>
                                                         <option>2</option>
                                                         <option>3</option>
@@ -2784,53 +2795,6 @@
                             </div>
                         </div>
 
-                        <!-- Tab 1 (Active - Details) -->
-                        <div class="tab-pane" id="tab-1" style="display: none;">
-                            <h4>Active Call Details</h4>
-                            <div id="tab1-content">
-                                <p>Active calls with units will be shown here.</p>
-                            </div>
-                        </div>
-
-                        <!-- Tab 2 (Active - Units) -->
-                        <div class="tab-pane" id="tab-2" style="display: none;">
-                            <h4>Active Units</h4>
-                            <div id="tab2-content">
-                                <p>Units for active calls will be shown here.</p>
-                            </div>
-                        </div>
-
-                        <!-- Tab 3 (Pending - Queue) -->
-                        <div class="tab-pane" id="tab-3" style="display: none;">
-                            <h4>Pending Call Queue</h4>
-                            <div id="tab3-content">
-                                <p>Pending calls will be shown here.</p>
-                            </div>
-                        </div>
-
-                        <!-- Tab 4 (Pending - Priority) -->
-                        <div class="tab-pane" id="tab-4" style="display: none;">
-                            <h4>Pending Priorities</h4>
-                            <div id="tab4-content">
-                                <p>Priority information for pending calls will be shown here.</p>
-                            </div>
-                        </div>
-
-                        <!-- Tab 5 (Closed - Summary) -->
-                        <div class="tab-pane" id="tab-5" style="display: none;">
-                            <h4>Closed Call Summary</h4>
-                            <div id="tab5-content">
-                                <p>Summary of closed calls will be shown here.</p>
-                            </div>
-                        </div>
-
-                        <!-- Tab 6 (Closed - Archive) -->
-                        <div class="tab-pane" id="tab-6" style="display: none;">
-                            <h4>Closed Call Archive</h4>
-                            <div id="tab6-content">
-                                <p>Archived closed calls will be shown here.</p>
-                            </div>
-                        </div>
                     </div>
                 </div>
 
@@ -2844,9 +2808,9 @@
 
                     <div id="dispatchSidebar" style="display: none;" class="dispatch-sidebar">
                         <div class="dispatch-sidebar-actions">
-                            <button onclick="openDispatchSidebarPanel('summary')">Dispatch Summary (1)</button>
-                            <button onclick="openDispatchSidebarPanel('comments')">Comments (3)</button>
-                            <button onclick="openDispatchSidebarPanel('responses')">Response Msgs (4)</button>
+                            <button id="dispatchSummaryBtn" onclick="openDispatchSidebarPanel('summary')">Dispatch Summary (0)</button>
+                            <button id="dispatchCommentsBtn" onclick="openDispatchSidebarPanel('comments')">Comments (0)</button>
+                            <button id="dispatchResponsesBtn" onclick="openDispatchSidebarPanel('responses')">Response Msgs (0)</button>
                         </div>
                         <div id="dispatchSidebarContent" class="dispatch-sidebar-content">
                             <div id="summaryPanel" class="dispatch-panel" style="display:block;">
@@ -3197,6 +3161,25 @@
                     onclick="closeModal('dispRespList')">Close</button>
             </div>
         </div>
+        <div class="modal-content" id="unitRequestActionModal" style="display: none;">
+            <div class="modal-header">
+                <h3>Incident Request</h3>
+                <button class="window-btn bg-red-hover fg-white-hover" onclick="handleIncomingUnitRequestIgnore()">
+                    <h3>X</h3>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p><strong>Incident:</strong> <span id="unitReqIncidentId">N/A</span></p>
+                <p><strong>Type:</strong> <span id="unitReqIncidentType">N/A</span></p>
+                <p><strong>Location:</strong> <span id="unitReqIncidentLocation">N/A</span></p>
+                <p>Dispatch requested your unit. Choose an action:</p>
+            </div>
+            <div class="modal-footer" style="justify-content:flex-end;">
+                <button class="button" onclick="handleIncomingUnitRequestIgnore()">Ignore</button>
+                <button class="button bg-blue fg-white" onclick="handleIncomingUnitRequestView()">View Incident</button>
+                <button class="button bg-green fg-white" onclick="handleIncomingUnitRequestRespond()">View + Respond</button>
+            </div>
+        </div>
         <div class="modal-content" id="dispatchCommentModal" style="display: none;">
             <div class="modal-header">
                 <h3>Add Dispatch Comment</h3>
@@ -3263,7 +3246,7 @@
                     onkeypress="if(event.key==='Enter'){ event.preventDefault(); requestKey('supervisorKeyInput', 'supervisorKeyError', 'SUPERVISOR KEY', () => { acceptSupervisorKey(); }); }">
                 <div id="supervisorKeyError" style="color:#c80000; min-height:18px; margin-top:6px;"></div>
                 <button class="button bg-green fg-white mt-2" style="width:100%; border-radius:0 !important;"
-                    onclick="requestKey('supervisorKeyInput', 'supervisorKeyError', 'SUPERVISOR KEY', () => { acceptSupervisorKey(); });">Continue</button>
+                    onclick="requestKey('supervisorKeyInput', 'supervisorKeyError', 'INCIDENT ID KEY', () => { acceptSupervisorKey(); });">Continue</button>
             </div>
         </div>
         <div class="modal-content" id="supervisorSetIncidentModal" style="display: none;">
@@ -3283,6 +3266,30 @@
                     onclick="setIncidentID()">Set Incident ID</button>
             </div>
         </div>
+        <div class="modal-content" id="closeIncidentFullIdModal" style="display: none;">
+            <div class="modal-header">
+                <h3>Close Incident</h3>
+                <button class="window-btn bg-red-hover fg-white-hover"
+                    onclick="closeModal('closeIncidentFullIdModal')">
+                    <h3>X</h3>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p id="closeIncidentFullIdHint" style="margin-bottom: 8px;">No incident found for today. Enter full incident ID:</p>
+                <input type="text" id="closeIncidentFullIdInput" data-role="input" placeholder="PD/MMDDYY-0000"
+                    style="width:100%; border-radius:0 !important; padding:10px !important;"
+                    onkeypress="if(event.key==='Enter'){ event.preventDefault(); submitCloseIncidentFullId(); }">
+                <div id="closeIncidentFullIdError" style="color:#c80000; min-height:18px; margin-top:6px;"></div>
+                <div class="grid">
+                    <div class="row">
+                        <button class="button bg-green fg-white mt-2 cell-6" style="border-radius:0 !important;"
+                            onclick="submitCloseIncidentFullId()">Close Incident</button>
+                        <button class="button bg-light fg-dark mt-2 cell-6" style="border-radius:0 !important;"
+                            onclick="closeModal('closeIncidentFullIdModal')">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
         <div class="modal-content" id="printCallsModal" style="display: none;">
             <div class="modal-header">
                 <h3>Print Calls</h3>
@@ -3291,10 +3298,15 @@
                 </button>
             </div>
             <div class="modal-body">
+                <label style="display:block; margin-bottom:6px; font-weight:700;">Start Date</label>
                 <input type="date" id="printCallsDate" data-role="input"
-                    style="width:100%; border-radius:0 !important; padding:10px !important;">
+                    style="width:100%; border-radius:0 !important; padding:10px !important; margin-bottom:10px;">
+                <label style="display:block; margin-bottom:6px; font-weight:700;">End Date (optional)</label>
+                <input type="date" id="printCallsDateEnd" data-role="input"
+                    style="width:100%; border-radius:0 !important; padding:10px !important; margin-bottom:8px;">
+                <div id="printCallsStatus" style="min-height:18px; margin-bottom:6px; color:#666;"></div>
                 <button class="button mt-2" style="width:100%; border-radius:0 !important;"
-                    onclick="closeModal('printCallsModal')">Print Calls</button>
+                    onclick="exportCallsCsvByDateRange()">Export CSV</button>
             </div>
         </div>
     </div>
@@ -3366,15 +3378,23 @@
         let callLiveMonitorChannel = null;
         let advCallLiveMonitorChannel = null;
         let incidentDetailsChannel = null;
+        let unitRequestAlertChannel = null;
         let unitTableRefreshInterval = null;
+        let callTableRefreshInterval = null;
+        let advCallTableRefreshInterval = null;
+            let incidentRefreshInterval = null;
         let suppressOwnUnitUpdateSoundUntil = 0;
         let unloadLogoffTriggered = false;
         let currentAdvCallsView = 'assigned';
         let currentIncidentId = null;
+        let pendingCloseIncidentLast4 = null;
         let incVehAddMode = false;
         let incVehRemoveMode = false;
         let incPerAddMode = false;
         let incPerRemoveMode = false;
+        let incomingUnitRequestQueue = [];
+        let activeIncomingUnitRequest = null;
+        const seenIncomingUnitRequestKeys = new Set();
 
         // Flags
         const loginEnabled = true; // disable to remove all login and go straight to app | ONLY FOR DEBUGGING
@@ -3445,6 +3465,55 @@
             unitTableRefreshInterval = null;
         }
 
+        function startCallTableRefreshLoop() {
+            if (callTableRefreshInterval) return;
+            callTableRefreshInterval = setInterval(async () => {
+                if (currentView !== 'incidentsView') return;
+                await refreshCallTable();
+            }, 3000);
+        }
+
+        function stopCallTableRefreshLoop() {
+            if (!callTableRefreshInterval) return;
+            clearInterval(callTableRefreshInterval);
+            callTableRefreshInterval = null;
+        }
+
+        function startAdvCallTableRefreshLoop() {
+            if (advCallTableRefreshInterval) return;
+            advCallTableRefreshInterval = setInterval(async () => {
+                if (currentView !== 'callsAdvTable') return;
+                await refreshAdvCallTable(currentAdvCallsView);
+            }, 3000);
+        }
+
+        function stopAdvCallTableRefreshLoop() {
+            if (!advCallTableRefreshInterval) return;
+            clearInterval(advCallTableRefreshInterval);
+            advCallTableRefreshInterval = null;
+        }
+
+            function startIncidentRefreshLoop() {
+                if (incidentRefreshInterval) return;
+                incidentRefreshInterval = setInterval(async () => {
+                    if (currentView !== 'incidentDetails' || !currentIncidentId || !sbClient) return;
+                    const { data, error } = await sbClient
+                        .from('calls')
+                        .select('*')
+                        .eq('id', currentIncidentId)
+                        .single();
+                    if (!error && data) {
+                        applyIncidentDetailsToView(data, currentIncidentId);
+                    }
+                }, 3000);
+            }
+
+            function stopIncidentRefreshLoop() {
+                if (!incidentRefreshInterval) return;
+                clearInterval(incidentRefreshInterval);
+                incidentRefreshInterval = null;
+            }
+
         async function unsubscribeAdvCallsLiveMonitor() {
             if (sbClient && advCallLiveMonitorChannel) {
                 await sbClient.removeChannel(advCallLiveMonitorChannel);
@@ -3452,18 +3521,165 @@
             }
         }
 
+        async function unsubscribeUnitRequestAlertMonitor() {
+            if (sbClient && unitRequestAlertChannel) {
+                await sbClient.removeChannel(unitRequestAlertChannel);
+                unitRequestAlertChannel = null;
+            }
+        }
+
+        function parseRequestedUnitsFromText(text) {
+            const raw = String(text || '');
+            const match = raw.match(/Requested\s+units:\s*(.+)$/i);
+            if (!match || !match[1]) return [];
+            return match[1].split(',').map(v => v.trim()).filter(Boolean);
+        }
+
+        function getRequestedUnitsFromCallData(call) {
+            const history = Array.isArray(call?.history) ? call.history : [];
+            for (let i = history.length - 1; i >= 0; i -= 1) {
+                const units = parseRequestedUnitsFromText(history[i]);
+                if (units.length > 0) {
+                    return { units, sourceLine: String(history[i]) };
+                }
+            }
+
+            const comments = Array.isArray(call?.comments) ? call.comments : [];
+            for (let i = comments.length - 1; i >= 0; i -= 1) {
+                const units = parseRequestedUnitsFromText(comments[i]);
+                if (units.length > 0) {
+                    return { units, sourceLine: String(comments[i]) };
+                }
+            }
+
+            return { units: [], sourceLine: '' };
+        }
+
+        function showNextIncomingUnitRequestModal() {
+            if (activeIncomingUnitRequest || incomingUnitRequestQueue.length === 0) return;
+
+            const next = incomingUnitRequestQueue.shift();
+            activeIncomingUnitRequest = next;
+
+            const idEl = document.getElementById('unitReqIncidentId');
+            const typeEl = document.getElementById('unitReqIncidentType');
+            const locEl = document.getElementById('unitReqIncidentLocation');
+
+            if (idEl) idEl.textContent = next.incidentId || 'N/A';
+            if (typeEl) typeEl.textContent = next.callType || 'N/A';
+            if (locEl) locEl.textContent = next.location || 'N/A';
+
+            playSound('untUpd');
+            showModal('unitRequestActionModal');
+        }
+
+        function queueIncomingUnitRequest(request) {
+            if (!request || !request.incidentId || !request.uniqueKey) return;
+            if (seenIncomingUnitRequestKeys.has(request.uniqueKey)) return;
+
+            seenIncomingUnitRequestKeys.add(request.uniqueKey);
+            incomingUnitRequestQueue.push(request);
+            showNextIncomingUnitRequestModal();
+        }
+
+        async function maybeHandleIncomingUnitRequest(callLikeData) {
+            const userInfo = sessionStorage.getItem('userInfo') ? sessionStorage.getItem('userInfo').split(',') : null;
+            const myUnit = userInfo ? userInfo[2] : null;
+            const myUnitKey = normalizeUnitKey(myUnit);
+            if (!myUnitKey) return;
+
+            const callId = callLikeData?.id;
+            if (!callId) return;
+
+            let call = callLikeData;
+            if (!Array.isArray(call?.history) && !Array.isArray(call?.comments)) {
+                const { data, error } = await sbClient
+                    .from('calls')
+                    .select('id, call_type, location, comments, history, status, is_closed')
+                    .eq('id', callId)
+                    .maybeSingle();
+                if (error || !data) return;
+                call = data;
+            }
+
+            if (isIncidentClosedValue(call)) return;
+
+            const parsed = getRequestedUnitsFromCallData(call);
+            if (!parsed || parsed.units.length === 0) return;
+
+            const requestedSelf = parsed.units.some(unit => normalizeUnitKey(unit) === myUnitKey);
+            if (!requestedSelf) return;
+
+            queueIncomingUnitRequest({
+                incidentId: call.id,
+                callType: call.call_type || '',
+                location: call.location || '',
+                uniqueKey: `${call.id}|${parsed.sourceLine}`
+            });
+        }
+
+        async function setupUnitRequestAlertMonitor() {
+            if (!sbClient || unitRequestAlertChannel) return;
+
+            unitRequestAlertChannel = sbClient
+                .channel('unit-request-alert-monitor')
+                .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'calls' }, async (payload) => {
+                    try {
+                        await maybeHandleIncomingUnitRequest(payload?.new || null);
+                    } catch (e) {
+                        console.error('Incoming request monitor error:', e);
+                    }
+                })
+                .subscribe();
+        }
+
+        async function handleIncomingUnitRequestIgnore() {
+            closeModal('unitRequestActionModal');
+            activeIncomingUnitRequest = null;
+            showNextIncomingUnitRequestModal();
+        }
+
+        async function handleIncomingUnitRequestView() {
+            const req = activeIncomingUnitRequest;
+            closeModal('unitRequestActionModal');
+            activeIncomingUnitRequest = null;
+            if (req?.incidentId) {
+                await showIncident(req.incidentId);
+            }
+            showNextIncomingUnitRequestModal();
+        }
+
+        async function handleIncomingUnitRequestRespond() {
+            const req = activeIncomingUnitRequest;
+            closeModal('unitRequestActionModal');
+            activeIncomingUnitRequest = null;
+            if (req?.incidentId) {
+                await showIncident(req.incidentId);
+                await handleAttach();
+                await setUnitStatus('Enroute');
+                await syncCurrentUnitStatus();
+            }
+            showNextIncomingUnitRequestModal();
+        }
+
         async function syncLiveMonitorsForCurrentView() {
             if (!sbClient) return;
 
             if (currentView === 'incidentsView') {
                 stopUnitTableRefreshLoop();
+                stopAdvCallTableRefreshLoop();
+                    stopIncidentRefreshLoop();
                 await unsubscribeUnitLiveMonitor();
                 await unsubscribeAdvCallsLiveMonitor();
                 await setupCallsLiveMonitor();
+                startCallTableRefreshLoop();
                 return;
             }
 
             if (currentView === 'units-table') {
+                stopCallTableRefreshLoop();
+                stopAdvCallTableRefreshLoop();
+                    stopIncidentRefreshLoop();
                 await unsubscribeCallsLiveMonitor();
                 await unsubscribeAdvCallsLiveMonitor();
                 await setupUnitLiveMonitor();
@@ -3473,13 +3689,30 @@
 
             if (currentView === 'callsAdvTable') {
                 stopUnitTableRefreshLoop();
+                stopCallTableRefreshLoop();
+                    stopIncidentRefreshLoop();
                 await unsubscribeCallsLiveMonitor();
                 await unsubscribeUnitLiveMonitor();
                 await setupAdvCallsLiveMonitor();
+                startAdvCallTableRefreshLoop();
                 return;
             }
 
+                if (currentView === 'incidentDetails') {
+                    stopUnitTableRefreshLoop();
+                    stopCallTableRefreshLoop();
+                    stopAdvCallTableRefreshLoop();
+                    await unsubscribeCallsLiveMonitor();
+                    await unsubscribeUnitLiveMonitor();
+                    await unsubscribeAdvCallsLiveMonitor();
+                    startIncidentRefreshLoop();
+                    return;
+                }
+
             stopUnitTableRefreshLoop();
+            stopCallTableRefreshLoop();
+            stopAdvCallTableRefreshLoop();
+                stopIncidentRefreshLoop();
             await unsubscribeCallsLiveMonitor();
             await unsubscribeUnitLiveMonitor();
             await unsubscribeAdvCallsLiveMonitor();
@@ -3637,6 +3870,7 @@
                 if (currentUserDisplay) currentUserDisplay.textContent = `${serial} [${callsign}-${watch}]`;
                 playSound('logon');
                 await updateView('incidentsView');
+                await setupUnitRequestAlertMonitor();
                 startGpsOfflineSequence();
                 
 
@@ -3695,6 +3929,7 @@
                     if (currentUnit) {
                         await detachUnitFromAllIncidents(currentUnit);
                     }
+                    await unsubscribeUnitRequestAlertMonitor();
                     await sbClient.from('units').delete().eq('user', currentUser.split(',')[0]);
                 }
                 sessionStorage.removeItem('userInfo');
@@ -4134,7 +4369,7 @@
                     .single();
 
                 if (error) {
-                    errorElement.textContent = 'Key type not found in database.';
+                    errorElement.textContent = 'Incorrect key.';
                     return;
                 }
 
@@ -4639,9 +4874,7 @@
             }
         }
 
-        //-- Close Incident Logic (ic command)--\\
-        async function closeIncidentById(id) {
-            const timeNow = new Date().toLocaleString('en-US', { timeZone: 'America/Los_Angeles', hour12: false });
+        function buildTodayIncidentIdFromLast4(id) {
             const date = new Date();
             const formatter = new Intl.DateTimeFormat('en-US', {
                 timeZone: 'America/Los_Angeles',
@@ -4664,18 +4897,36 @@
             const yy = parts.year.slice(-2);
             const dateStr = `${mm}${dd}${yy}`;
 
-            let idInt = Number.parseInt(id, 10);
+            const idInt = Number.parseInt(id, 10);
             if (isNaN(idInt) || idInt < 0 || idInt > 9999) {
-                alert('Invalid incident ID (Tip: put only last 4 of incident.)');
-                return;
+                return null;
             }
 
-            let incId = `PD/${dateStr}-${idInt}`;
+            return `PD/${dateStr}-${idInt}`;
+        }
+
+        function openCloseIncidentFullIdModal(last4Hint) {
+            pendingCloseIncidentLast4 = String(last4Hint || '').trim() || null;
+            const hintEl = document.getElementById('closeIncidentFullIdHint');
+            if (hintEl) {
+                hintEl.textContent = pendingCloseIncidentLast4
+                    ? `No incident found for today using ${pendingCloseIncidentLast4}. Enter full incident ID:`
+                    : 'No incident found for today. Enter full incident ID:';
+            }
+            showModal('closeIncidentFullIdModal');
+        }
+
+        async function closeIncidentByExactId(incId, sourceLabel) {
+            const timeNow = new Date().toLocaleString('en-US', { timeZone: 'America/Los_Angeles', hour12: false });
+            const normalizedId = String(incId || '').trim();
+            if (!normalizedId) {
+                return { ok: false, found: false };
+            }
 
             const currentUser = sessionStorage.getItem('userInfo') ? sessionStorage.getItem('userInfo').split(',') : null;
             if (!currentUser) {
                 alert('No active user session found. Please log in again.');
-                return;
+                return { ok: false, found: false };
             }
 
             const user = currentUser[0];
@@ -4685,38 +4936,93 @@
                 const { data: incident, error: fetchError } = await sbClient
                     .from('calls')
                     .select('comments, history, prmry, assist, last4')
-                    .eq('id', incId)
-                    .single();
+                    .eq('id', normalizedId)
+                    .maybeSingle();
 
-                if (fetchError) throw fetchError;
+                if (fetchError) {
+                    throw fetchError;
+                }
+
+                if (!incident) {
+                    return { ok: true, found: false };
+                }
+
                 const { data, error } = await sbClient
                     .from('calls')
                     .update({
                         comments: [...(incident.comments || []), `INC CLOSED W/O DISPOSITION BY ${callsign}`],
-                        history: [...(incident.history || []), `${timeNow} ${callsign} (${user}) - Incident closed via IC command, no disposition. (Or via incident footer button...)`],
+                        history: [...(incident.history || []), `${timeNow} ${callsign} (${user}) - Incident closed via ${sourceLabel || 'IC command'}, no disposition. (Or via incident footer button...)`],
                         status: 'Closed',
                         is_active: false,
                         is_closed: true
                     })
-                    .eq('id', incId);
+                    .eq('id', normalizedId);
 
                 if (error) throw error;
 
-                alert(`Incident ${incId} closed successfully.`);
+                alert(`Incident ${normalizedId} closed successfully.`);
 
                 try {
-                    await clearUnitsForIncident(incident, id);
+                    await clearUnitsForIncident(incident, incident.last4);
                 } catch (e) {
                     console.error('Error clearing unit incident info:', e);
                     alert('Incident closed, but failed to clear incident info from units. Please check unit statuses manually.');
                 }
 
                 playSound('callClosed');
+                await refreshCallTable();
+                await refreshAdvCallTable(currentAdvCallsView);
+
+                if (currentIncidentId === normalizedId) {
+                    await closeIncident();
+                }
+
+                return { ok: true, found: true };
 
             } catch (err) {
                 console.error('Error closing incident:', err);
                 alert(`Failed to close incident: ${err.message}`);
+                return { ok: false, found: false };
             }
+        }
+
+        //-- Close Incident Logic (ic command + footer)--\\
+        async function closeIncidentById(id, sourceLabel = 'IC command') {
+            const todayIncidentId = buildTodayIncidentIdFromLast4(id);
+            if (!todayIncidentId) {
+                alert('Invalid incident ID (Tip: put only last 4 of incident.)');
+                return;
+            }
+
+            const result = await closeIncidentByExactId(todayIncidentId, sourceLabel);
+            if (!result.ok) return;
+            if (!result.found) {
+                openCloseIncidentFullIdModal(id);
+            }
+        }
+
+        async function submitCloseIncidentFullId() {
+            const input = document.getElementById('closeIncidentFullIdInput');
+            const error = document.getElementById('closeIncidentFullIdError');
+            const fullId = input ? input.value.trim() : '';
+
+            if (error) error.textContent = '';
+
+            if (!fullId) {
+                if (error) error.textContent = 'Please enter a full incident ID.';
+                return;
+            }
+
+            const result = await closeIncidentByExactId(fullId, 'full ID lookup');
+            if (!result.ok) return;
+
+            if (!result.found) {
+                if (error) error.textContent = 'no incident found';
+                alert('no incident found');
+                return;
+            }
+
+            closeModal('closeIncidentFullIdModal');
         }
 
         //-- Logic for add comment command (iu) --\\
@@ -5216,7 +5522,7 @@
             const footerCloseBtn = document.getElementById('footerBtnClose');
             if (footerCloseBtn) {
                 footerCloseBtn.onclick = () => {
-                    closeIncidentById(id.split('-').pop());
+                    closeIncidentById(id.split('-').pop(), 'incident footer button');
                 };
             }
 
@@ -5939,11 +6245,6 @@
                     return key && key !== 'N/A' && key !== 'NULL' && key !== 'UNASSIGNED';
                 });
 
-                if (!hasPrimary) {
-                    alert('No primary unit assigned to this incident. Please assign a primary unit before attaching.');
-                    return;
-                }
-
                 const userInfo = sessionStorage.getItem('userInfo') ? sessionStorage.getItem('userInfo').split(',') : null;
                 const currentUser = userInfo ? userInfo[0] : null;
                 const unit = userInfo ? userInfo[2] : null;
@@ -5969,11 +6270,16 @@
                 }
 
                 const nextAssist = Array.from(new Set([...existingAssist, unit]));
+                const nextPrimary = hasPrimary ? data.prmry : unit;
+                const nextAssistFinal = hasPrimary
+                    ? nextAssist
+                    : existingAssist.filter(unitName => normalizeUnitKey(unitName) !== selfKey);
 
                 const { error: updateCallError } = await sbClient
                     .from('calls')
                     .update({
-                        assist: nextAssist
+                        prmry: nextPrimary,
+                        assist: nextAssistFinal
                     }).eq('id', currentIncidentId);
 
                 if (updateCallError) {
@@ -5996,15 +6302,15 @@
                 }
 
                 await syncUnitsForIncidentAssignment({
-                    prmry: data.prmry,
-                    assist: nextAssist,
+                    prmry: nextPrimary,
+                    assist: nextAssistFinal,
                     last4: data.last4,
                     location: data.location
                 });
 
-                updateAttachToggleButton({ prmry: data.prmry, assist: nextAssist });
+                updateAttachToggleButton({ prmry: nextPrimary, assist: nextAssistFinal });
 
-                alert('Unit attached to incident.');
+                alert(hasPrimary ? 'Unit attached to incident.' : 'Unit attached to incident as primary.');
 
 
             } catch (error) {
@@ -6496,9 +6802,26 @@
                 if (idInput) idInput.value = '';
                 if (error) error.textContent = '';
             }
+            if (id === 'closeIncidentFullIdModal') {
+                const fullIdInput = document.getElementById('closeIncidentFullIdInput');
+                const fullIdError = document.getElementById('closeIncidentFullIdError');
+                const hintEl = document.getElementById('closeIncidentFullIdHint');
+                if (fullIdInput) fullIdInput.value = '';
+                if (fullIdError) fullIdError.textContent = '';
+                if (hintEl) {
+                    hintEl.textContent = pendingCloseIncidentLast4
+                        ? `No incident found for today using ${pendingCloseIncidentLast4}. Enter full incident ID:`
+                        : 'No incident found for today. Enter full incident ID:';
+                }
+            }
             if (id === 'printCallsModal') {
                 const dateInput = document.getElementById('printCallsDate');
+                const endDateInput = document.getElementById('printCallsDateEnd');
+                const status = document.getElementById('printCallsStatus');
+                const today = new Date().toISOString().slice(0, 10);
                 if (dateInput) dateInput.value = new Date().toISOString().slice(0, 10);
+                if (endDateInput) endDateInput.value = '';
+                if (status) status.textContent = `Single day default: ${today}. Set End Date for a range.`;
             }
         }
 
@@ -6578,10 +6901,141 @@
         function closeModal(id) {
             const modal = document.getElementById(id);
             const overlay = document.querySelector('.modal-overlay');
-            if (modal && overlay) {
+            if (modal) {
                 modal.style.display = 'none';
+            }
+            if (overlay) {
                 overlay.classList.remove('active');
             }
+        }
+
+        function parseCallDateOnly(value) {
+            if (!value) return null;
+            const parsed = new Date(value);
+            if (Number.isNaN(parsed.getTime())) return null;
+            parsed.setHours(0, 0, 0, 0);
+            return parsed;
+        }
+
+        function csvEscape(value) {
+            const text = String(value == null ? '' : value);
+            if (/[",\n\r]/.test(text)) {
+                return `"${text.replace(/"/g, '""')}"`;
+            }
+            return text;
+        }
+
+        async function exportCallsCsvByDateRange() {
+            const startInput = document.getElementById('printCallsDate');
+            const endInput = document.getElementById('printCallsDateEnd');
+            const statusEl = document.getElementById('printCallsStatus');
+
+            const startStr = startInput ? String(startInput.value || '').trim() : '';
+            const endStrRaw = endInput ? String(endInput.value || '').trim() : '';
+            const endStr = endStrRaw || startStr;
+
+            if (!startStr) {
+                if (statusEl) {
+                    statusEl.style.color = '#c80000';
+                    statusEl.textContent = 'Please select a start date.';
+                }
+                return;
+            }
+
+            const startDate = parseCallDateOnly(startStr);
+            const endDate = parseCallDateOnly(endStr);
+            if (!startDate || !endDate) {
+                if (statusEl) {
+                    statusEl.style.color = '#c80000';
+                    statusEl.textContent = 'Invalid date selection.';
+                }
+                return;
+            }
+
+            if (startDate.getTime() > endDate.getTime()) {
+                if (statusEl) {
+                    statusEl.style.color = '#c80000';
+                    statusEl.textContent = 'Start date cannot be after end date.';
+                }
+                return;
+            }
+
+            if (!sbClient) {
+                if (statusEl) {
+                    statusEl.style.color = '#c80000';
+                    statusEl.textContent = 'Database connection unavailable.';
+                }
+                return;
+            }
+
+            if (statusEl) {
+                statusEl.style.color = '#666';
+                statusEl.textContent = 'Preparing CSV export...';
+            }
+
+            const { data, error } = await sbClient
+                .from('calls')
+                .select('id, area, beat, created_at, call_type, call_code')
+                .order('created_at', { ascending: true });
+
+            if (error) {
+                console.error('Error exporting calls CSV:', error);
+                if (statusEl) {
+                    statusEl.style.color = '#c80000';
+                    statusEl.textContent = 'Failed to query calls.';
+                }
+                return;
+            }
+
+            const rows = (Array.isArray(data) ? data : []).filter(call => {
+                const callDate = parseCallDateOnly(call.created_at);
+                if (!callDate) return false;
+                return callDate.getTime() >= startDate.getTime() && callDate.getTime() <= endDate.getTime();
+            });
+
+            const headers = [
+                'Incident_Number',
+                'Area',
+                'Rpt_Dist (Beat)',
+                'Dispatch_Date (created_at)',
+                'Call_type',
+                'Call_code'
+            ];
+
+            const lines = [headers.join(',')];
+            rows.forEach(call => {
+                lines.push([
+                    csvEscape(call.id || ''),
+                    csvEscape(call.area || ''),
+                    csvEscape(call.beat || ''),
+                    csvEscape(call.created_at || ''),
+                    csvEscape(call.call_type || ''),
+                    csvEscape(call.call_code || '')
+                ].join(','));
+            });
+
+            const csvText = lines.join('\n');
+            const blob = new Blob([csvText], { type: 'text/csv;charset=utf-8;' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+
+            const startFile = startStr.replace(/-/g, '');
+            const endFile = endStr.replace(/-/g, '');
+            const suffix = startFile === endFile ? startFile : `${startFile}-${endFile}`;
+
+            link.href = url;
+            link.download = `calls_export_${suffix}.csv`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+
+            if (statusEl) {
+                statusEl.style.color = '#0a8a26';
+                statusEl.textContent = `Exported ${rows.length} call(s) to CSV.`;
+            }
+
+            closeModal('printCallsModal');
         }
 
         // Command Processing
@@ -6617,7 +7071,7 @@
             } else if (command === 'ci' && parts[1]) {
                 cloneIncident(parts[1]);
             } else if (command === 'ic' && parts[1]) {
-                closeIncidentById(parts[1]);
+                closeIncidentById(parts[1], 'IC command');
             } else if (command === `iu` && parts[1] && parts[2]) {
                 console.log(`ID: ${parts[1]}, Comment: ${parts.slice(2).join(' ')}`);
                 addComment(parts[1], parts.slice(2).join(' '));
@@ -6637,8 +7091,7 @@
             input.value = '';
         }
 
-
-
+        //-- App Login Key Logic --\\
         document.addEventListener('DOMContentLoaded', function () {
             const appPasswordInput = document.getElementById('app-password-input');
             if (appPasswordInput) {
@@ -6651,6 +7104,7 @@
             }
         });
 
+        //-- Update view logic --\\
         async function updateView(viewId) {
             const incidentsView = document.getElementById('incidentsView');
             const unitsTable = document.getElementById('units-table');
@@ -6711,6 +7165,7 @@
             }
         }
 
+        //-- Calls View Filters --\\
         function applyCallsViewFilters() {
             const showClosed = document.getElementById('showClosedCalls')?.checked;
             const showToday = document.getElementById('showCallsToday')?.checked;
@@ -6751,8 +7206,7 @@
             }
         }
 
-
-
+        //-- Night Mode Toggle --\\
         function toggleNightMode() {
             const mainApp = document.getElementById('mainApp');
             const toggle = document.getElementById('dayNightToggle');
@@ -6764,6 +7218,7 @@
             }
         }
 
+        //-- Unit options for status --\\
         function cycleUnitOptions(el) {
             if (!el || !el.dataset) return;
             const key = el.dataset.cycleFor;
@@ -6864,7 +7319,10 @@
 
 
 
-        // ===== DISPATCHER OVERLAY FUNCTIONS =====
+        /* DISPATCHER FUNCTIONS FROM HERE
+         * SOME HELPER FUNCTIONS ARE DOWN HERE TOO FOR DISPATCHER THINGS
+         * FOR EXAMPLE ADDING VEHS, ETC
+         */
 
         // Initialize dispatcher overlay
         function initDispatcherOverlay() {
@@ -7398,6 +7856,1025 @@
             updateSubtabCounts();
         }
 
+        // ===== LIVE DISPATCH RUNTIME (overrides mock dispatcher behavior) =====
+        let dispatchRuntimeInitialized = false;
+        let dispatchRuntimeTabs = [];
+        let dispatchRuntimeSelectedKey = null;
+        let dispatchRuntimeCallFilter = 'all';
+        let dispatchRuntimeUnitFilter = 'all';
+        let dispatchRuntimeDrafts = [];
+        let dispatchRuntimeDraftCounter = 1;
+        let dispatchRuntimeUnits = [];
+        let dispatchRuntimeRequestedUnits = [];
+        let dispatchRuntimeResponses = [];
+        let dispatchLiveChannel = null;
+
+        function setDispatchStatus(kind, text) {
+            const iconEl = document.querySelector('.dispatcher-status-inline .status-icon');
+            const textEl = document.querySelector('.dispatcher-status-inline .status-text');
+            if (!iconEl || !textEl) return;
+
+            if (kind === 'error') {
+                iconEl.textContent = 'X';
+                iconEl.style.color = '#c80000';
+            } else if (kind === 'warn') {
+                iconEl.textContent = '!';
+                iconEl.style.color = '#b8860b';
+            } else {
+                iconEl.textContent = '✓';
+                iconEl.style.color = '#0a8a26';
+            }
+            textEl.textContent = text || 'Ready';
+        }
+
+        function updateDispatchMenuState() {
+            const pushBtn = document.getElementById('pushIncidentBtn');
+            if (!pushBtn) return;
+            const selected = dispatchGetSelectedTab();
+            const canPush = !!selected && selected.kind === 'draft';
+            pushBtn.disabled = !canPush;
+            pushBtn.style.opacity = canPush ? '1' : '0.5';
+        }
+
+        function dispatchNowString() {
+            return new Date().toLocaleString('en-US', { timeZone: 'America/Los_Angeles', hour12: false });
+        }
+
+        function dispatchGetSelectedTab() {
+            return dispatchRuntimeTabs.find(tab => tab.key === dispatchRuntimeSelectedKey) || null;
+        }
+
+        function dispatchGetSelectedIncidentId() {
+            const selected = dispatchGetSelectedTab();
+            return selected && selected.kind === 'db' ? selected.id : null;
+        }
+
+        function dispatchGetSelectedIncidentLast4() {
+            const selected = dispatchGetSelectedTab();
+            if (!selected || selected.kind !== 'db') return '';
+            const parts = String(selected.id || '').split('-');
+            return parts.length > 1 ? parts[1] : '';
+        }
+
+        function dispatchNormalizeStatusLabel(rawStatus) {
+            const parsed = parseCombinedUnitStatus(rawStatus);
+            return getStatusLabelFromCode(parsed.statusCode);
+        }
+
+        function dispatchIsAvailableStatus(rawStatus) {
+            const label = dispatchNormalizeStatusLabel(rawStatus);
+            return label === 'Available' || label === 'Start of Watch';
+        }
+
+        function dispatchGetAttachedUnitsFromCall(call) {
+            return [
+                ...normalizeCallUnitList(call?.prmry),
+                ...normalizeCallUnitList(call?.assist)
+            ].filter(Boolean);
+        }
+
+        async function dispatchLoadUnits() {
+            if (!sbClient) return;
+            const { data, error } = await sbClient
+                .from('units')
+                .select('user, unit, status, inc, incLocation, code')
+                .order('unit', { ascending: true });
+            if (error) {
+                console.error('Dispatch units fetch failed:', error);
+                setDispatchStatus('warn', 'Units load warning');
+                return;
+            }
+            dispatchRuntimeUnits = Array.isArray(data) ? data : [];
+        }
+
+        async function dispatchLoadTabs(filter = dispatchRuntimeCallFilter) {
+            dispatchRuntimeCallFilter = filter;
+
+            const { data, error } = await sbClient
+                .from('calls')
+                .select('id, call_type, location, status, is_active, is_closed, is_pending, created_at')
+                .order('created_at', { ascending: false });
+
+            if (error) {
+                console.error('Dispatch calls fetch failed:', error);
+                setDispatchStatus('error', 'Failed loading calls');
+                return;
+            }
+
+            const rows = Array.isArray(data) ? data : [];
+            const filtered = rows.filter(call => {
+                const statusNorm = String(call.status || '').toLowerCase();
+                const isClosed = call.is_closed === true || statusNorm === 'closed';
+                const isActive = call.is_active === true;
+                const isPending = call.is_pending === true;
+
+                if (filter === 'closed') return isClosed;
+                if (filter === 'active') return isActive;
+                return !isClosed && (isActive || isPending);
+            });
+
+            const dbTabs = filtered.map(call => ({
+                key: `db:${call.id}`,
+                kind: 'db',
+                id: call.id,
+                label: String(call.id).split('-').pop() || call.id,
+                type: call.call_type || '',
+                location: call.location || '',
+                status: call.status || 'Pending',
+                isActive: call.is_active === true,
+                isPending: call.is_pending === true
+            }));
+
+            const draftTabs = dispatchRuntimeDrafts.map(d => ({
+                key: d.key,
+                kind: 'draft',
+                id: d.key,
+                label: d.label,
+                type: d.call_type || '',
+                location: d.location || '',
+                status: d.status || 'Pending',
+                isActive: false,
+                isPending: false
+            }));
+
+            dispatchRuntimeTabs = [...draftTabs, ...dbTabs];
+
+            if (!dispatchRuntimeSelectedKey || !dispatchRuntimeTabs.some(t => t.key === dispatchRuntimeSelectedKey)) {
+                dispatchRuntimeSelectedKey = dispatchRuntimeTabs.length > 0 ? dispatchRuntimeTabs[0].key : null;
+            }
+
+            renderDispatcherTabs();
+            await loadIncidentToForm(dispatchRuntimeSelectedKey);
+        }
+
+        function renderDispatcherTabs() {
+            const tabsContainer = document.getElementById('dispatcherTabs');
+            if (!tabsContainer) return;
+            tabsContainer.innerHTML = '';
+
+            dispatchRuntimeTabs.forEach(tab => {
+                const card = document.createElement('div');
+                card.className = 'tab-card';
+                if (tab.kind === 'draft') {
+                    card.classList.add('status-new');
+                } else if (tab.isActive) {
+                    card.classList.add('status-active');
+                } else if (tab.isPending) {
+                    card.classList.add('status-pending');
+                }
+                if (tab.key === dispatchRuntimeSelectedKey) card.classList.add('active');
+                card.onclick = () => switchDispatcherTab(tab.key);
+
+                const title = document.createElement('div');
+                title.className = 'tab-card-title';
+                title.textContent = tab.kind === 'draft' ? `${tab.label} (Draft)` : `Inc ${tab.label}`;
+
+                const subtype = document.createElement('div');
+                subtype.className = 'tab-card-sub';
+                subtype.textContent = `Type: ${tab.type || 'N/A'}`;
+
+                const subloc = document.createElement('div');
+                subloc.className = 'tab-card-sub';
+                subloc.textContent = `Loc: ${tab.location || 'N/A'}`;
+
+                card.appendChild(title);
+                card.appendChild(subtype);
+                card.appendChild(subloc);
+                tabsContainer.appendChild(card);
+            });
+
+            updateDispatchMenuState();
+        }
+
+        async function switchDispatcherTab(tabKey) {
+            dispatchRuntimeSelectedKey = tabKey;
+            ensureDispatchIncidentPaneVisible();
+            renderDispatcherTabs();
+            await loadIncidentToForm(tabKey);
+        }
+
+        async function loadIncidentToForm(tabKey) {
+            ensureDispatchIncidentPaneVisible();
+
+            const key = tabKey || dispatchRuntimeSelectedKey;
+            if (!key) {
+                setDispatchStatus('warn', 'No incident selected');
+                return;
+            }
+
+            const selected = dispatchRuntimeTabs.find(t => t.key === key);
+            if (!selected) return;
+
+            let incidentData = null;
+            if (selected.kind === 'db') {
+                const { data, error } = await sbClient
+                    .from('calls')
+                    .select('*')
+                    .eq('id', selected.id)
+                    .maybeSingle();
+                if (error || !data) {
+                    setDispatchStatus('warn', 'Incident missing or stale');
+                    return;
+                }
+                incidentData = data;
+            } else {
+                incidentData = dispatchRuntimeDrafts.find(d => d.key === selected.key) || null;
+                if (!incidentData) return;
+            }
+
+            const incidentNameDisplay = document.getElementById('incidentNameDisplay');
+            const incidentLocationDisplay = document.getElementById('incidentLocationDisplay');
+            const locationEl = document.getElementById('dispatcherLocation');
+            const commentsEl = document.getElementById('dispatcherComments');
+            const statusEl = document.getElementById('dispatchStatus');
+            const typeEl = document.getElementById('dispatchIncType');
+            const areaEl = document.getElementById('dispatchArea');
+            const priEl = document.getElementById('dispatchPriority');
+            const beatEl = document.getElementById('dispatchBeat');
+            const attachedEl = document.getElementById('dispatchAttachedUnits');
+
+            const attachedUnits = dispatchGetAttachedUnitsFromCall(incidentData);
+            const comments = Array.isArray(incidentData.comments) ? incidentData.comments : (incidentData.comments ? [incidentData.comments] : []);
+            const history = Array.isArray(incidentData.history) ? incidentData.history : (incidentData.history ? [incidentData.history] : []);
+            const persons = toGroupedIncidentEntries(incidentData.persons, 5);
+            const vehicles = toGroupedIncidentEntries(incidentData.vehicles, 5);
+
+            if (incidentNameDisplay) incidentNameDisplay.textContent = `// ${selected.kind === 'draft' ? selected.label : selected.id}`;
+            if (incidentLocationDisplay) incidentLocationDisplay.textContent = `// ${incidentData.location || 'No Location'}`;
+            if (locationEl) locationEl.value = incidentData.location || '';
+            if (commentsEl) commentsEl.value = comments.join('\n');
+            if (statusEl) statusEl.value = (String(incidentData.status || '').toLowerCase() === 'active' ? 'Active' : 'Pending');
+            if (typeEl) typeEl.value = incidentData.call_type || '';
+            if (areaEl) areaEl.value = incidentData.area || 'HWD';
+            if (priEl) priEl.value = String(incidentData.call_code ?? '1');
+            if (beatEl) beatEl.value = incidentData.beat || '';
+            if (attachedEl) attachedEl.textContent = attachedUnits.join(', ') || 'None';
+
+            const historyPane = document.getElementById('subtab-history');
+            if (historyPane) {
+                historyPane.innerHTML = history.length > 0
+                    ? history.map(h => `<div>${h}</div>`).join('')
+                    : '<p>History entries will be shown here.</p>';
+            }
+
+            const personsContent = document.getElementById('personsContent');
+            if (personsContent) {
+                personsContent.innerHTML = '';
+                persons.forEach(person => personsContent.appendChild(renderIncidentPersonEntry(person)));
+            }
+
+            const vehiclesContent = document.getElementById('vehiclesContent');
+            if (vehiclesContent) {
+                vehiclesContent.innerHTML = '';
+                vehicles.forEach(vehicle => vehiclesContent.appendChild(renderIncidentVehicleEntry(vehicle)));
+            }
+
+            const commentsList = document.getElementById('commentsList');
+            if (commentsList) commentsList.innerHTML = comments.length > 0 ? comments.map(c => `<div>${c}</div>`).join('') : 'No comments.';
+
+            const responseLines = history.filter(line => String(line).toLowerCase().includes('comment added'));
+            const responsesList = document.getElementById('responsesList');
+            if (responsesList) responsesList.innerHTML = responseLines.length > 0 ? responseLines.map(c => `<div>${c}</div>`).join('') : 'No response messages.';
+
+            updateSubtabCounts();
+            await dispatchUpdateSummary();
+            await initDispatchUnitTable();
+            setDispatchStatus('success', 'Incident loaded');
+        }
+
+        async function dispatchUpdateSummary() {
+            const selectedIncidentId = dispatchGetSelectedIncidentId();
+            if (!selectedIncidentId) return;
+
+            const { data, error } = await sbClient
+                .from('calls')
+                .select('id, location, last4')
+                .eq('id', selectedIncidentId)
+                .maybeSingle();
+            if (error || !data) return;
+
+            const last4 = String(data.last4 || '').trim();
+            const responding = dispatchRuntimeUnits.filter(u => String(u.inc || '').trim() === last4 && dispatchNormalizeStatusLabel(u.status) === 'Enroute').length;
+            const onScene = dispatchRuntimeUnits.filter(u => String(u.inc || '').trim() === last4 && dispatchNormalizeStatusLabel(u.status) === 'Code 6').length;
+
+            const summaryLocation = document.getElementById('summaryLocation');
+            const summaryResponding = document.getElementById('summaryResponding');
+            const summaryOnScene = document.getElementById('summaryOnScene');
+            const summaryBtn = document.getElementById('dispatchSummaryBtn');
+            const commentsBtn = document.getElementById('dispatchCommentsBtn');
+            const responsesBtn = document.getElementById('dispatchResponsesBtn');
+            const commentsEl = document.getElementById('dispatcherComments');
+            const commentsCount = commentsEl && commentsEl.value ? commentsEl.value.split('\n').filter(Boolean).length : 0;
+
+            if (summaryLocation) summaryLocation.textContent = data.location || '';
+            if (summaryResponding) summaryResponding.textContent = String(responding);
+            if (summaryOnScene) summaryOnScene.textContent = String(onScene);
+            if (summaryBtn) summaryBtn.textContent = `Dispatch Summary (${responding + onScene})`;
+            if (commentsBtn) commentsBtn.textContent = `Comments (${commentsCount})`;
+            if (responsesBtn) responsesBtn.textContent = `Response Msgs (${responseLinesCount()})`;
+        }
+
+        function responseLinesCount() {
+            const responsesList = document.getElementById('responsesList');
+            if (!responsesList) return 0;
+            const nodes = responsesList.querySelectorAll('div');
+            return nodes.length;
+        }
+
+        async function renderDispatchUnitTable(filter = dispatchRuntimeUnitFilter) {
+            dispatchRuntimeUnitFilter = filter;
+            await dispatchLoadUnits();
+
+            const table = document.getElementById('dispatchUnitTable');
+            if (!table) return;
+            table.innerHTML = '';
+
+            const selectedIncidentId = dispatchGetSelectedIncidentId();
+            let call = null;
+            if (selectedIncidentId) {
+                const callResult = await sbClient.from('calls').select('prmry, assist').eq('id', selectedIncidentId).maybeSingle();
+                if (!callResult.error) call = callResult.data;
+            }
+
+            const attachedSet = new Set(dispatchGetAttachedUnitsFromCall(call).map(normalizeUnitKey));
+
+            const filteredUnits = dispatchRuntimeUnits.filter(unit => {
+                if (filter === 'available') return dispatchIsAvailableStatus(unit.status);
+                if (filter === 'unavailable') return !dispatchIsAvailableStatus(unit.status);
+                return true;
+            });
+
+            for (let i = 0; i < filteredUnits.length; i += 3) {
+                const tr = document.createElement('tr');
+                for (let j = 0; j < 3; j++) {
+                    const row = filteredUnits[i + j];
+                    const td = document.createElement('td');
+                    td.className = 'unit-cell';
+                    if (!row) {
+                        tr.appendChild(td);
+                        continue;
+                    }
+
+                    const btn = document.createElement('button');
+                    btn.textContent = row.unit || 'Unknown';
+                    btn.className = 'unit-btn';
+
+                    if (attachedSet.has(normalizeUnitKey(row.unit))) {
+                        btn.classList.add('attached-unit');
+                    }
+
+                    btn.onclick = async () => {
+                        const wasAttached = btn.classList.contains('attached-unit');
+                        if (wasAttached) {
+                            btn.style.backgroundColor = 'red';
+                        } else {
+                            btn.classList.add('attached-unit');
+                        }
+                        await dispatchToggleUnitOnIncident(row.unit, wasAttached);
+                        setTimeout(() => {
+                            btn.style.backgroundColor = '';
+                        }, 350);
+                    };
+
+                    td.appendChild(btn);
+                    tr.appendChild(td);
+                }
+                table.appendChild(tr);
+            }
+        }
+
+        async function dispatchToggleUnitOnIncident(unitName, detach) {
+            const incidentId = dispatchGetSelectedIncidentId();
+            if (!incidentId) {
+                setDispatchStatus('warn', 'Draft incidents cannot attach units until pushed');
+                return;
+            }
+
+            const { data: call, error } = await sbClient
+                .from('calls')
+                .select('id, prmry, assist, last4, location')
+                .eq('id', incidentId)
+                .single();
+
+            if (error || !call) {
+                setDispatchStatus('error', 'Incident not found for unit update');
+                return;
+            }
+
+            const selfKey = normalizeUnitKey(unitName);
+            let primary = normalizeCallUnitList(call.prmry)[0] || null;
+            let assist = normalizeCallUnitList(call.assist);
+
+            if (detach) {
+                if (primary && normalizeUnitKey(primary) === selfKey) {
+                    primary = assist.length > 0 ? assist[0] : null;
+                    assist = assist.slice(1);
+                } else {
+                    assist = assist.filter(u => normalizeUnitKey(u) !== selfKey);
+                }
+            } else {
+                const attached = new Set([primary, ...assist].filter(Boolean).map(normalizeUnitKey));
+                if (!attached.has(selfKey)) {
+                    if (!primary) primary = unitName;
+                    else assist = Array.from(new Set([...assist, unitName]));
+                }
+            }
+
+            const { error: updateError } = await sbClient
+                .from('calls')
+                .update({ prmry: primary, assist })
+                .eq('id', incidentId);
+
+            if (updateError) {
+                console.error('Dispatch unit toggle failed:', updateError);
+                setDispatchStatus('warn', 'Incident updated partially');
+                return;
+            }
+
+            await syncUnitsForIncidentAssignment({ prmry: primary, assist, last4: call.last4, location: call.location });
+            await loadIncidentToForm(dispatchRuntimeSelectedKey);
+            setDispatchStatus('success', detach ? 'Unit de-attached' : 'Unit attached');
+        }
+
+        async function saveDispatchFieldsToIncident() {
+            const incidentId = dispatchGetSelectedIncidentId();
+            const status = document.getElementById('dispatchStatus')?.value || 'Pending';
+            const callType = document.getElementById('dispatchIncType')?.value.trim() || '';
+            const area = document.getElementById('dispatchArea')?.value.trim() || 'HWD';
+            const priority = document.getElementById('dispatchPriority')?.value || '1';
+            const beat = document.getElementById('dispatchBeat')?.value.trim() || '';
+            const location = document.getElementById('dispatcherLocation')?.value.trim() || '';
+            const commentsText = document.getElementById('dispatcherComments')?.value || '';
+            const comments = commentsText.split('\n').map(v => v.trim()).filter(Boolean);
+
+            if (!incidentId) {
+                const selected = dispatchGetSelectedTab();
+                if (!selected || selected.kind !== 'draft') {
+                    setDispatchStatus('warn', 'No incident selected');
+                    return;
+                }
+                const draft = dispatchRuntimeDrafts.find(d => d.key === selected.key);
+                if (!draft) return;
+                draft.status = status;
+                draft.call_type = callType;
+                draft.area = area;
+                draft.call_code = priority;
+                draft.beat = beat;
+                draft.location = location;
+                draft.comments = comments;
+                renderDispatcherTabs();
+                setDispatchStatus('success', 'Draft updated');
+                return;
+            }
+
+            const payload = {
+                status,
+                call_type: callType,
+                area,
+                call_code: priority,
+                beat,
+                location,
+                comments,
+                is_active: String(status).toLowerCase() === 'active',
+                is_pending: String(status).toLowerCase() === 'pending',
+                is_closed: false
+            };
+
+            const { error } = await sbClient.from('calls').update(payload).eq('id', incidentId);
+            if (error) {
+                console.error('Dispatch incident update failed:', error);
+                setDispatchStatus('error', 'Incident update failed');
+                return;
+            }
+
+            const { data: callData } = await sbClient.from('calls').select('prmry, assist').eq('id', incidentId).maybeSingle();
+            const attachedUnits = dispatchGetAttachedUnitsFromCall(callData);
+            let unitWarn = false;
+            for (const unit of attachedUnits) {
+                let q = sbClient.from('units').update({ code: priority }).eq('unit', unit);
+                const { error: unitErr } = await q;
+                if (unitErr) unitWarn = true;
+            }
+
+            await dispatchLoadTabs(dispatchRuntimeCallFilter);
+            dispatchRuntimeSelectedKey = `db:${incidentId}`;
+            await loadIncidentToForm(dispatchRuntimeSelectedKey);
+            setDispatchStatus(unitWarn ? 'warn' : 'success', unitWarn ? 'Incident updated, some unit codes failed' : 'Incident updated');
+        }
+
+        async function pushIncident() {
+            const selected = dispatchGetSelectedTab();
+            if (!selected || selected.kind !== 'draft') {
+                setDispatchStatus('warn', 'Only draft incidents can be pushed');
+                return;
+            }
+
+            const draft = dispatchRuntimeDrafts.find(d => d.key === selected.key);
+            if (!draft) return;
+
+            if (!draft.location || !draft.call_type) {
+                setDispatchStatus('warn', 'Draft needs location and incident type');
+                return;
+            }
+
+            const idResult = await sbClient.functions.invoke('incident-id');
+            if (idResult.error || !idResult.data) {
+                setDispatchStatus('error', 'Failed generating incident ID');
+                return;
+            }
+
+            const { formatted, lastFour } = idResult.data;
+            const userInfo = sessionStorage.getItem('userInfo') ? sessionStorage.getItem('userInfo').split(',') : null;
+            const user = userInfo ? userInfo[0] : 'dispatch';
+
+            const { error } = await sbClient.from('calls').insert([{
+                id: formatted,
+                last4: lastFour,
+                created_at: dispatchNowString(),
+                status: 'Pending',
+                prmry: draft.prmry || null,
+                assist: Array.isArray(draft.assist) ? draft.assist : [],
+                area: draft.area || 'HWD',
+                beat: draft.beat || '',
+                call_type: draft.call_type || '',
+                call_code: draft.call_code || '1',
+                location: draft.location || '',
+                comments: Array.isArray(draft.comments) ? draft.comments : [],
+                vehicles: Array.isArray(draft.vehicles) ? draft.vehicles.flat() : [],
+                persons: Array.isArray(draft.persons) ? draft.persons.flat() : [],
+                history: [`${dispatchNowString()} DISPATCH (${user}) - Incident pushed to units.`],
+                is_active: false,
+                is_closed: false,
+                is_pending: true,
+                logged_by: user
+            }]);
+
+            if (error) {
+                console.error('Push incident failed:', error);
+                setDispatchStatus('error', 'Push failed');
+                return;
+            }
+
+            dispatchRuntimeDrafts = dispatchRuntimeDrafts.filter(d => d.key !== draft.key);
+            await dispatchLoadTabs('all');
+            dispatchRuntimeSelectedKey = `db:${formatted}`;
+            await loadIncidentToForm(dispatchRuntimeSelectedKey);
+            setDispatchStatus('success', 'Incident pushed to units');
+        }
+
+        function createNewCallTab() {
+            const key = `draft:${dispatchRuntimeDraftCounter++}`;
+            const draft = {
+                key,
+                label: `Draft ${dispatchRuntimeDraftCounter - 1}`,
+                status: 'Pending',
+                call_type: '',
+                area: 'HWD',
+                call_code: '1',
+                beat: '',
+                location: '',
+                comments: [],
+                prmry: null,
+                assist: [],
+                persons: [],
+                vehicles: [],
+                history: []
+            };
+            dispatchRuntimeDrafts.unshift(draft);
+            dispatchRuntimeSelectedKey = key;
+            dispatchLoadTabs(dispatchRuntimeCallFilter);
+            setDispatchStatus('success', 'Draft incident created');
+        }
+
+        async function saveDispatchComment() {
+            const input = document.getElementById('dispatchCommentInput');
+            const comment = input ? input.value.trim() : '';
+            if (!comment) {
+                setDispatchStatus('warn', 'Comment is empty');
+                return;
+            }
+
+            const selected = dispatchGetSelectedTab();
+            if (!selected) return;
+
+            if (selected.kind === 'draft') {
+                const draft = dispatchRuntimeDrafts.find(d => d.key === selected.key);
+                if (!draft) return;
+                draft.comments = [...(draft.comments || []), comment];
+                if (input) input.value = '';
+                closeModal('dispatchCommentModal');
+                await loadIncidentToForm(selected.key);
+                setDispatchStatus('success', 'Draft comment added');
+                return;
+            }
+
+            const { data, error } = await sbClient.from('calls').select('comments, history').eq('id', selected.id).single();
+            if (error || !data) {
+                setDispatchStatus('error', 'Could not load incident comments');
+                return;
+            }
+
+            const userInfo = sessionStorage.getItem('userInfo') ? sessionStorage.getItem('userInfo').split(',') : null;
+            const callsign = userInfo ? userInfo[2] : 'DISPATCH';
+            const user = userInfo ? userInfo[0] : 'dispatch';
+            const now = dispatchNowString();
+
+            const { error: updateError } = await sbClient
+                .from('calls')
+                .update({
+                    comments: [...(data.comments || []), comment],
+                    history: [...(data.history || []), `${now} ${callsign} (${user}) - Comment added: ${comment}`]
+                })
+                .eq('id', selected.id);
+
+            if (updateError) {
+                setDispatchStatus('error', 'Failed saving comment');
+                return;
+            }
+
+            if (input) input.value = '';
+            closeModal('dispatchCommentModal');
+            await loadIncidentToForm(selected.key);
+            setDispatchStatus('success', 'Comment added');
+        }
+
+        async function confirmCloseDispatchIncident() {
+            const incidentId = dispatchGetSelectedIncidentId();
+            if (!incidentId) {
+                setDispatchStatus('warn', 'Draft cannot be closed');
+                closeModal('dispatchCloseConfirmModal');
+                return;
+            }
+
+            const result = await closeIncidentByExactId(incidentId, 'dispatch close (no disposition)');
+            closeModal('dispatchCloseConfirmModal');
+            if (!result.ok || !result.found) {
+                setDispatchStatus('error', 'Close failed');
+                return;
+            }
+
+            await dispatchLoadTabs(dispatchRuntimeCallFilter);
+            setDispatchStatus('success', 'Incident closed');
+        }
+
+        async function populateRequestUnitSelect() {
+            await dispatchLoadUnits();
+            const select = document.getElementById('dispatchRequestUnitSelect');
+            if (!select) return;
+            select.innerHTML = '';
+            dispatchRuntimeUnits.forEach(unit => {
+                const option = document.createElement('option');
+                option.value = unit.unit;
+                option.textContent = unit.unit;
+                select.appendChild(option);
+            });
+        }
+
+        function addRequestedDispatchUnit() {
+            const select = document.getElementById('dispatchRequestUnitSelect');
+            if (!select || !select.value) return;
+            if (!dispatchRuntimeRequestedUnits.includes(select.value)) {
+                dispatchRuntimeRequestedUnits.push(select.value);
+            }
+            renderRequestedUnits();
+        }
+
+        function renderRequestedUnits() {
+            const container = document.getElementById('dispatchRequestedUnitsList');
+            if (!container) return;
+            if (dispatchRuntimeRequestedUnits.length === 0) {
+                container.innerHTML = '<div style="color:#999;">No units requested yet.</div>';
+                return;
+            }
+            container.innerHTML = dispatchRuntimeRequestedUnits.map(u => `<div>${u}</div>`).join('');
+        }
+
+        async function saveRequestedUnits() {
+            const incidentId = dispatchGetSelectedIncidentId();
+            if (!incidentId) {
+                closeModal('dispReqUnit');
+                setDispatchStatus('warn', 'Push draft before requesting units');
+                return;
+            }
+
+            const { data: call, error } = await sbClient.from('calls').select('comments, history').eq('id', incidentId).single();
+            if (error || !call) {
+                setDispatchStatus('error', 'Could not load incident for request');
+                return;
+            }
+
+            const now = dispatchNowString();
+            const userInfo = sessionStorage.getItem('userInfo');
+            if (!userInfo) {
+                setDispatchStatus('error', 'User info missing from session');
+                return;
+            }
+            const currentUser = userInfo ? userInfo.split(',')[0] : null;
+
+            const requestText = `Requested units: ${dispatchRuntimeRequestedUnits.join(', ')}`;
+
+            const { error: updateError } = await sbClient
+                .from('calls')
+                .update({
+                    history: [...(call.history || []), `${now} DISPATCH (${currentUser}) - ${requestText}`]
+                })
+                .eq('id', incidentId);
+
+            if (updateError) {
+                setDispatchStatus('warn', 'Request saved partially');
+                console.log('Err complete saving',updateError);
+            } else {
+                setDispatchStatus('success', 'Units requested');
+            }
+
+            dispatchRuntimeResponses = Array.from(new Set([...dispatchRuntimeResponses, ...dispatchRuntimeRequestedUnits]));
+            showDispatchResponseList();
+
+            dispatchRuntimeRequestedUnits = [];
+            renderRequestedUnits();
+            closeModal('dispReqUnit');
+            await loadIncidentToForm(dispatchRuntimeSelectedKey);
+        }
+
+        function showDispatchResponseList() {
+            const container = document.getElementById('dispatchResponseList');
+            if (!container) return;
+            if (dispatchRuntimeResponses.length === 0) {
+                container.innerHTML = '<div style="color:#999;">No responding units yet.</div>';
+                return;
+            }
+            container.innerHTML = dispatchRuntimeResponses.map(u => `<div>${u}</div>`).join('');
+        }
+
+        async function dispatchSetUnitStatusByUnitName(unitName, combinedStatus) {
+            await dispatchLoadUnits();
+            const targetKey = normalizeUnitKey(unitName);
+            const row = dispatchRuntimeUnits.find(u => normalizeUnitKey(u.unit) === targetKey);
+            if (!row) return false;
+
+            let q = sbClient.from('units').update({ status: combinedStatus });
+            if (row.user) q = q.eq('user', row.user);
+            else q = q.eq('unit', row.unit);
+            const { error } = await q;
+            return !error;
+        }
+
+        async function executeDispatchCommand() {
+            const cmdInput = document.getElementById('dispatcherCmdInput');
+            const raw = cmdInput ? cmdInput.value.trim() : '';
+            if (!raw) return;
+            if (cmdInput) cmdInput.value = '';
+
+            const command = raw.toLowerCase();
+            const parts = raw.split(/\s+/);
+            const verb = parts[0].toLowerCase();
+
+            try {
+                if (verb === 'id' && parts[1] && parts[2]) {
+                    const incidentId = parts[1].includes('/') ? parts[1] : buildTodayIncidentIdFromLast4(parts[1]);
+                    const unitPart = raw.substring(raw.indexOf(parts[2]));
+                    const units = unitPart.split(',').map(v => v.trim()).filter(Boolean);
+                    const { data: call, error } = await sbClient.from('calls').select('prmry, assist, last4, location, history').eq('id', incidentId).maybeSingle();
+                    if (error || !call) {
+                        setDispatchStatus('warn', 'No incident found');
+                        return;
+                    }
+
+                    let primary = normalizeCallUnitList(call.prmry)[0] || null;
+                    let assist = normalizeCallUnitList(call.assist);
+                    units.forEach(u => {
+                        const key = normalizeUnitKey(u);
+                        if (primary && normalizeUnitKey(primary) === key) return;
+                        if (assist.some(a => normalizeUnitKey(a) === key)) return;
+                        if (!primary) primary = u;
+                        else assist.push(u);
+                    });
+
+                    const { error: updateErr } = await sbClient
+                        .from('calls')
+                        .update({
+                            prmry: primary,
+                            assist,
+                            history: [...(call.history || []), `${dispatchNowString()} DISPATCH - Units dispatched: ${units.join(', ')}`]
+                        })
+                        .eq('id', incidentId);
+
+                    if (updateErr) {
+                        setDispatchStatus('error', 'Dispatch command failed');
+                        return;
+                    }
+
+                    await syncUnitsForIncidentAssignment({ prmry: primary, assist, last4: call.last4, location: call.location });
+                    for (const unit of units) {
+                        await dispatchSetUnitStatusByUnitName(unit, 'ENR | IV');
+                    }
+                    dispatchRuntimeResponses = Array.from(new Set([...dispatchRuntimeResponses, ...units]));
+                    setDispatchStatus('success', 'Units dispatched');
+                    await dispatchLoadTabs(dispatchRuntimeCallFilter);
+                    return;
+                }
+
+                if (verb === 'ond' && parts[1]) {
+                    const ok = await dispatchSetUnitStatusByUnitName(parts[1], 'Aval | IV');
+                    setDispatchStatus(ok ? 'success' : 'warn', ok ? 'Unit marked available' : 'Unit not found');
+                    await renderDispatchUnitTable(dispatchRuntimeUnitFilter);
+                    return;
+                }
+
+                if (verb === 'ufd' && parts[1]) {
+                    const ok = await dispatchSetUnitStatusByUnitName(parts[1], 'UNAVL | IV');
+                    setDispatchStatus(ok ? 'success' : 'warn', ok ? 'Unit marked unavailable' : 'Unit not found');
+                    await renderDispatchUnitTable(dispatchRuntimeUnitFilter);
+                    return;
+                }
+
+                if ((verb === 'end' || verb === 'osd') && parts[1]) {
+                    const unitPart = raw.substring(raw.indexOf(parts[1]));
+                    const units = unitPart.split(',').map(v => v.trim()).filter(Boolean);
+                    const status = verb === 'end' ? 'ENR | IV' : 'C6 | IV';
+                    let updated = 0;
+                    for (const unit of units) {
+                        if (await dispatchSetUnitStatusByUnitName(unit, status)) updated++;
+                    }
+                    dispatchRuntimeResponses = Array.from(new Set([...dispatchRuntimeResponses, ...units]));
+                    setDispatchStatus(updated > 0 ? 'success' : 'warn', updated > 0 ? 'Unit status updated' : 'No units updated');
+                    await renderDispatchUnitTable(dispatchRuntimeUnitFilter);
+                    await dispatchUpdateSummary();
+                    return;
+                }
+
+                setDispatchStatus('warn', 'Unknown dispatch command');
+            } catch (e) {
+                console.error('Dispatch command error:', e);
+                setDispatchStatus('error', 'Command failed');
+            }
+        }
+
+        async function dispatcherAction(action) {
+            if (action === 'push_incident') {
+                await pushIncident();
+                return;
+            }
+            if (action === 'create_incident') {
+                createNewCallTab();
+                return;
+            }
+            if (action === 'refresh_incident') {
+                await dispatchLoadTabs(dispatchRuntimeCallFilter);
+                setDispatchStatus('success', 'Incident refreshed');
+                return;
+            }
+            if (action === 'add_comment') {
+                showModal('dispatchCommentModal');
+                return;
+            }
+            if (action === 'close_incident') {
+                showModal('dispatchCloseConfirmModal');
+                return;
+            }
+            if (action === 'show_all_units') {
+                await renderDispatchUnitTable('all');
+                return;
+            }
+            if (action === 'show_available_units') {
+                await renderDispatchUnitTable('available');
+                return;
+            }
+            if (action === 'show_unavailable_units') {
+                await renderDispatchUnitTable('unavailable');
+                return;
+            }
+            if (action === 'calls_all') {
+                await dispatchLoadTabs('all');
+                return;
+            }
+            if (action === 'calls_active') {
+                await dispatchLoadTabs('active');
+                return;
+            }
+            if (action === 'calls_closed') {
+                await dispatchLoadTabs('closed');
+                return;
+            }
+            if (action === 'print_calls') {
+                showModal('printCallsModal');
+                return;
+            }
+        }
+
+        function ensureDispatchIncidentPaneVisible() {
+            const incidentPane = document.getElementById('tab-2');
+            if (incidentPane) incidentPane.style.display = 'flex';
+
+            const blankPane = document.getElementById('tab-1');
+            if (blankPane) blankPane.style.display = 'none';
+        }
+
+        function openIncidentSubtab(subtab) {
+            ensureDispatchIncidentPaneVisible();
+
+            const panes = document.querySelectorAll('.subtab-pane');
+            panes.forEach(p => p.style.display = 'none');
+
+            const buttons = document.querySelectorAll('.incident-subtab');
+            buttons.forEach(b => b.classList.remove('active'));
+
+            const activeButton = document.querySelector(`.incident-subtab[data-tab="${subtab}"]`);
+            if (activeButton) activeButton.classList.add('active');
+
+            const pane = document.getElementById(`subtab-${subtab}`);
+            if (pane) pane.style.display = 'block';
+
+            const dispatchSidebar = document.getElementById('dispatchSidebar');
+            const callsListView = document.getElementById('callsListView');
+            if (dispatchSidebar) dispatchSidebar.style.display = subtab === 'dispatch' ? 'block' : 'none';
+            if (callsListView) callsListView.style.display = 'none';
+        }
+
+        function openDispatchSidebarPanel(panel) {
+            ['summaryPanel', 'commentsPanel', 'responsesPanel'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.style.display = 'none';
+            });
+            const active = document.getElementById(`${panel}Panel`);
+            if (active) active.style.display = 'block';
+        }
+
+        function updateSubtabCounts() {
+            const personsCount = document.querySelectorAll('#personsContent .person-entry').length;
+            const vehiclesCount = document.querySelectorAll('#vehiclesContent .vehicle-entry').length;
+            const personsTab = document.querySelector('.incident-subtab[data-tab="persons"]');
+            const vehiclesTab = document.querySelector('.incident-subtab[data-tab="vehicles"]');
+            if (personsTab) personsTab.textContent = `Persons (${personsCount})`;
+            if (vehiclesTab) vehiclesTab.textContent = `Vehicles (${vehiclesCount})`;
+        }
+
+        async function initDispatchUnitTable() {
+            await renderDispatchUnitTable(dispatchRuntimeUnitFilter);
+        }
+
+        function initPersonVehicleLists() {
+            updateSubtabCounts();
+        }
+
+        async function setupDispatchLiveMonitor() {
+            if (!sbClient || dispatchLiveChannel) return;
+            dispatchLiveChannel = sbClient
+                .channel('dispatch-live-monitor')
+                .on('postgres_changes', { event: '*', schema: 'public', table: 'calls' }, async () => {
+                    const dispatchArea = document.getElementById('dispatchingArea');
+                    if (!dispatchArea || dispatchArea.style.display === 'none') return;
+                    await dispatchLoadTabs(dispatchRuntimeCallFilter);
+                })
+                .on('postgres_changes', { event: '*', schema: 'public', table: 'units' }, async () => {
+                    const dispatchArea = document.getElementById('dispatchingArea');
+                    if (!dispatchArea || dispatchArea.style.display === 'none') return;
+                    await renderDispatchUnitTable(dispatchRuntimeUnitFilter);
+                    await dispatchUpdateSummary();
+                })
+                .subscribe();
+        }
+
+        async function initDispatcherOverlay() {
+            if (dispatchRuntimeInitialized) return;
+            dispatchRuntimeInitialized = true;
+
+            updateDispatcherClock();
+            setInterval(updateDispatcherClock, 1000);
+            updateDispatcherTimeDate();
+            setInterval(updateDispatcherTimeDate, 1000);
+
+            const bindInput = (id, handler) => {
+                const el = document.getElementById(id);
+                if (!el) return;
+                el.addEventListener('keydown', async (e) => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        await handler();
+                    }
+                });
+            };
+
+            bindInput('dispatcherLocation', saveDispatchFieldsToIncident);
+            bindInput('dispatcherComments', saveDispatchFieldsToIncident);
+            bindInput('dispatchIncType', saveDispatchFieldsToIncident);
+            bindInput('dispatchArea', saveDispatchFieldsToIncident);
+            bindInput('dispatchBeat', saveDispatchFieldsToIncident);
+
+            const statusEl = document.getElementById('dispatchStatus');
+            const priEl = document.getElementById('dispatchPriority');
+            if (statusEl) statusEl.addEventListener('change', saveDispatchFieldsToIncident);
+            if (priEl) priEl.addEventListener('change', saveDispatchFieldsToIncident);
+
+            await setupDispatchLiveMonitor();
+            await dispatchLoadUnits();
+            await dispatchLoadTabs('all');
+            ensureDispatchIncidentPaneVisible();
+            openIncidentSubtab('general');
+            openDispatchSidebarPanel('summary');
+            setDispatchStatus('success', 'Ready');
+        }
+
         // Incident Person/Vehicle Management Functions
         function addPersonToIncident() {
             const personsContent = document.getElementById('personsContent');
@@ -7406,12 +8883,15 @@
                 personEntry.className = 'person-entry editing';
                 personEntry.innerHTML = `
                         <div class="row">
-                            <div class="cell-6"><input type="text" placeholder="First Name" class="person-input" data-field="firstName"></div>
-                            <div class="cell-6"><input type="text" placeholder="Last Name" class="person-input" data-field="lastName"></div>
+                            <div class="cell-12"><input type="text" placeholder="Name" class="person-input" data-field="name"></div>
                         </div>
                         <div class="row">
-                            <div class="cell-6"><input type="text" placeholder="Age" class="person-input" data-field="age"></div>
-                            <div class="cell-6"><input type="text" placeholder="Gender" class="person-input" data-field="gender"></div>
+                            <div class="cell-12"><input type="text" placeholder="Clothing Desc" class="person-input" data-field="clothing"></div>
+                        </div>
+                        <div class="row">
+                            <div class="cell-4"><input type="text" placeholder="Race" class="person-input" data-field="race"></div>
+                            <div class="cell-4"><input type="text" placeholder="Sex" class="person-input" data-field="sex"></div>
+                            <div class="cell-4"><input type="text" placeholder="ID #" class="person-input" data-field="id"></div>
                         </div>
                         <div class="row" style="margin-top: 8px;">
                             <button class="button bg-green fg-white cell-6" onclick="savePersonData(this)">Save</button>
@@ -7636,225 +9116,6 @@
             updateSubtabCounts();
         }
 
-        let currentDispatcherTab = 1;
-        const dispatcherIncidents = {
-            1: {
-                id: 2234,
-                tabLabel: 'Tab 1',
-                type: 'TC W/ K',
-                location: 'YUCCA ST / N LAS PALMAS AVE',
-                beat: '648',
-                units: '6L30-W2',
-                comments: 'Priority: 1\nArea: HWD\nUnits: 6L30-W2'
-            },
-            2: {
-                id: 2235,
-                tabLabel: 'Tab 2',
-                type: '',
-                location: '',
-                beat: '',
-                units: '',
-                comments: ''
-            },
-            3: { id: 2236, tabLabel: 'Tab 3', type: '', location: '', beat: '', units: '', comments: '' },
-            4: { id: 2237, tabLabel: 'Tab 4', type: '', location: '', beat: '', units: '', comments: '' },
-            5: { id: 2238, tabLabel: 'Tab 5', type: '', location: '', beat: '', units: '', comments: '' },
-            6: { id: 2239, tabLabel: 'Tab 6', type: '', location: '', beat: '', units: '', comments: '' }
-        };
-
-        const dispatcherUnits = ['6L30-W2', '6A45-W2', '6A49-W2', '6G80-W2', 'R69D-W7'];
-        const dispatchAvailableUnits = ['6L30-W2', '6A45-W2', '6A49-W2', '6G80-W2', 'R69D-W7'];
-        let dispatchRequestedUnits = [];
-        let respondingUnits = ['6L30-W2'];
-        let currentCallBoardFilter = 'assigned';
-        let isCallsView = false;
-        let filteredCalls = [];
-        let currentCallTab = 0;
-
-        const dispatcherCallBoard = [
-            { st: 'A', inc: '2234', type: 'TC W/ K', code: '2', location: 'Yucca / N Las Palmas', rd: '648', status: 'assigned' },
-            { st: 'B', inc: '2235', type: 'Structure Fire', code: '3', location: 'Main / 7th', rd: '645', status: 'pending' },
-            { st: 'C', inc: '2236', type: 'Medical', code: '2', location: 'Elm / 3rd', rd: '642', status: 'pending' },
-            { st: 'D', inc: '2237', type: 'Traffic Stop', code: '3', location: 'Rose / 8th', rd: '649', status: 'closed' },
-            { st: 'E', inc: '2238', type: 'Alarm', code: '2', location: 'Cedar / 4th', rd: '650', status: 'assigned' }
-        ];
-
-        function renderDispatcherTabs() {
-            const tabsContainer = document.getElementById('dispatcherTabs');
-            if (!tabsContainer) return;
-            tabsContainer.innerHTML = '';
-
-            if (isCallsView) {
-                // Show call cards
-                filteredCalls.forEach((call, i) => {
-                    const card = document.createElement('div');
-                    card.className = 'tab-card';
-                    if (i === currentCallTab) card.classList.add('active');
-                    card.onclick = () => showCallDetails(i);
-
-                    const title = document.createElement('div');
-                    title.className = 'tab-card-title';
-                    title.textContent = call.inc;
-
-                    const subtype = document.createElement('div');
-                    subtype.className = 'tab-card-sub';
-                    subtype.textContent = `Type: ${call.type}`;
-
-                    const subloc = document.createElement('div');
-                    subloc.className = 'tab-card-sub';
-                    subloc.textContent = `Loc: ${call.location}`;
-
-                    card.appendChild(title);
-                    card.appendChild(subtype);
-                    card.appendChild(subloc);
-                    tabsContainer.appendChild(card);
-                });
-            } else {
-                // Show incident tabs
-                Object.keys(dispatcherIncidents).sort((a, b) => Number(a) - Number(b)).forEach((key) => {
-                    const incident = dispatcherIncidents[key];
-                    const card = document.createElement('div');
-                    card.className = 'tab-card';
-                    if (Number(key) === currentDispatcherTab) card.classList.add('active');
-                    card.onclick = () => switchDispatcherTab(Number(key));
-
-                    const title = document.createElement('div');
-                    title.className = 'tab-card-title';
-                    title.textContent = incident.tabLabel;
-
-                    const subtype = document.createElement('div');
-                    subtype.className = 'tab-card-sub';
-                    subtype.textContent = `Type: ${incident.type || 'N/A'}`;
-
-                    const subloc = document.createElement('div');
-                    subloc.className = 'tab-card-sub';
-                    subloc.textContent = `Loc: ${incident.location || 'N/A'}`;
-
-                    card.appendChild(title);
-                    card.appendChild(subtype);
-                    card.appendChild(subloc);
-                    tabsContainer.appendChild(card);
-                });
-            }
-        }
-
-        function showCallDetails(index) {
-            currentCallTab = index;
-            renderDispatcherTabs();
-            const call = filteredCalls[index];
-            const content = document.querySelector('.dispatcher-tab-content');
-            const isClosed = call.status === 'closed';
-            content.innerHTML = `
-                <div class="call-details">
-                    <div class="incident-header-section">
-                        <div class="incident-name">Call ${call.inc}</div>
-                        <div class="incident-location">${call.location}</div>
-                    </div>
-                    <div class="incident-subtab-content">
-                        <div class="form-group full-width">
-                            <label>Type</label>
-                            ${isClosed ? `<div class="dispatcher-field">${call.type}</div>` : `<input class="dispatcher-field" value="${call.type}" readonly>`}
-                        </div>
-                        <div class="form-group full-width">
-                            <label>Code</label>
-                            ${isClosed ? `<div class="dispatcher-field">${call.code}</div>` : `<input class="dispatcher-field" value="${call.code}" readonly>`}
-                        </div>
-                        <div class="form-group full-width">
-                            <label>RD</label>
-                            ${isClosed ? `<div class="dispatcher-field">${call.rd}</div>` : `<input class="dispatcher-field" value="${call.rd}" readonly>`}
-                        </div>
-                        <div class="form-group full-width">
-                            <label>Status</label>
-                            ${isClosed ? `<div class="dispatcher-field">${call.status}</div>` : `<input class="dispatcher-field" value="${call.status}" readonly>`}
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-
-        function switchDispatcherTab(tabNum) {
-            currentDispatcherTab = tabNum;
-            renderDispatcherTabs();
-
-            const panes = document.querySelectorAll('.tab-pane');
-            panes.forEach(pane => pane.style.display = 'none');
-            const pane = document.getElementById('tab-2');
-            if (pane) pane.style.display = 'flex';
-
-            loadIncidentToForm(tabNum);
-        }
-
-        function loadIncidentToForm(tabNum) {
-            const incident = dispatcherIncidents[tabNum];
-            if (!incident) return;
-
-            document.getElementById('incidentNameDisplay').textContent = `// ${incident.tabLabel}`;
-            document.getElementById('incidentLocationDisplay').textContent = `// ${incident.location || 'No Location'}`;
-            document.getElementById('dispatcherLocation').value = incident.location;
-            document.getElementById('dispatcherIncType').value = incident.type;
-            document.getElementById('dispatcherBeat').value = incident.beat;
-            document.getElementById('dispatcherUnits').value = incident.units || '';
-            document.getElementById('dispatcherComments').value = incident.comments;
-
-            const dispatchStatus = document.getElementById('dispatchStatus');
-            const dispatchIncType = document.getElementById('dispatchIncType');
-            const dispatchPriority = document.getElementById('dispatchPriority');
-            const dispatchAttachedUnits = document.getElementById('dispatchAttachedUnits');
-            if (dispatchStatus) dispatchStatus.value = incident.status || 'Pending';
-            if (dispatchIncType) dispatchIncType.value = incident.type || 'TC W/ K';
-            if (dispatchPriority) dispatchPriority.value = incident.priority || '1';
-            if (dispatchAttachedUnits) dispatchAttachedUnits.textContent = incident.units || 'None';
-        }
-
-        function createNewCallTab() {
-            const newKey = Object.keys(dispatcherIncidents).length + 1;
-            dispatcherIncidents[newKey] = {
-                id: 2234 + newKey,
-                tabLabel: `Tab ${newKey}`,
-                type: '',
-                location: '',
-                beat: '',
-                units: '',
-                comments: ''
-            };
-            switchDispatcherTab(newKey);
-        }
-
-        function pushIncident() {
-            const incident = dispatcherIncidents[currentDispatcherTab];
-            incident.type = document.getElementById('dispatcherIncType').value;
-            incident.location = document.getElementById('dispatcherLocation').value;
-            incident.beat = document.getElementById('dispatcherBeat').value;
-            incident.units = document.getElementById('dispatcherUnits').value;
-            incident.comments = document.getElementById('dispatcherComments').value;
-
-            const dispatchIncType = document.getElementById('dispatchIncType');
-            if (dispatchIncType && dispatchIncType.value) incident.type = dispatchIncType.value;
-
-            const dispatchStatus = document.getElementById('dispatchStatus');
-            const dispatchPriority = document.getElementById('dispatchPriority');
-            const dispatchAttachedUnits = document.getElementById('dispatchAttachedUnits');
-            incident.priority = dispatchPriority ? dispatchPriority.value : incident.priority;
-            incident.status = dispatchStatus ? dispatchStatus.value : incident.status;
-            incident.units = dispatchAttachedUnits ? dispatchAttachedUnits.textContent : incident.units;
-
-            dispatcherIncidents[currentDispatcherTab] = incident;
-
-            if (currentDispatcherTab >= 7) {
-                const nextKey = Object.keys(dispatcherIncidents).length + 1;
-                dispatcherIncidents[nextKey] = { id: incident.id + 1, tabLabel: `Tab ${nextKey}`, type: '', location: '', beat: '', units: '', comments: '' };
-            }
-
-            renderDispatcherTabs();
-            loadIncidentToForm(currentDispatcherTab);
-            dispatcherAction('incident_pushed');
-        }
-
-        // Initialize dispatcher when page loads
-        document.addEventListener('DOMContentLoaded', function () {
-            initDispatcherOverlay();
-        });
-
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', initDispatcherOverlay);
         } else {
@@ -7862,5 +9123,4 @@
         }
     </script>
 </body>
-
 </html>
