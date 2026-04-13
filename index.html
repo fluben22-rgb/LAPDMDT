@@ -2577,37 +2577,38 @@
                         <button class="menu-btn" onclick="toggleSubmenu('dispatchMenu')">Dispatch</button>
                         <div class="submenu" id="dispatchMenu" style="display: none;">
                             <button class="submenu-item" onclick="dispatcherAction('push_incident')"
-                                id="pushIncidentBtn">Push Incident to Units <span>(F1)</span></button>
+                                id="pushIncidentBtn">Push Incident to Units <span>Ctrl+Alt+1</span></button>
                             <button class="submenu-item" onclick="dispatcherAction('create_incident')">Create Incident
-                                <span>(F2)</span></button>
+                                <span>Ctrl+Alt+2</span></button>
                             <button class="submenu-item" onclick="dispatcherAction('refresh_incident')">Refresh Incident
-                                <span>(F3)</span></button>
+                                <span>Ctrl+Alt+3</span></button>
                             <button class="submenu-item" onclick="dispatcherAction('add_comment')">Add Comment
-                                <span>(F4)</span></button>
+                                <span>Ctrl+Alt+4</span></button>
                             <button class="submenu-item" onclick="dispatcherAction('close_incident')">Close Incident
-                                <span>(F5)</span></button>
+                                <span>Ctrl+Alt+5</span></button>
                         </div>
                     </div>
                     <div class="menu-group">
                         <button class="menu-btn" onclick="toggleSubmenu('unitMenu')">Units</button>
                         <div class="submenu" id="unitMenu" style="display: none;">
                             <button class="submenu-item" onclick="dispatcherAction('show_all_units')">View All
-                                <span>(F6)</span></button>
+                                <span>Ctrl+Alt+6</span></button>
                             <button class="submenu-item" onclick="dispatcherAction('show_available_units')">Available
-                                <span>(F7)</span></button>
+                                <span>Ctrl+Alt+7</span></button>
                             <button class="submenu-item"
-                                onclick="dispatcherAction('show_unavailable_units')">Unavailable</button>
+                                onclick="dispatcherAction('show_unavailable_units')">Unavailable
+                                <span>Ctrl+Alt+8</span></button>
                         </div>
                     </div>
                     <div class="menu-group">
                         <button class="menu-btn" onclick="toggleSubmenu('callMenu')">Calls</button>
                         <div class="submenu" id="callMenu" style="display: none;">
                             <button class="submenu-item" onclick="dispatcherAction('calls_all')">All Calls
-                                <span>(F8)</span></button>
+                                <span>Ctrl+Alt+9</span></button>
                             <button class="submenu-item" onclick="dispatcherAction('calls_active')">Active
-                                <span>(F9)</span></button>
+                                <span>Ctrl+Alt+0</span></button>
                             <button class="submenu-item" onclick="dispatcherAction('calls_closed')">Closed
-                                <span>(F10)</span></button>
+                                <span>Ctrl+Alt+F10</span></button>
                             <button class="submenu-item" onclick="dispatcherAction('print_calls')">Print</button>
                         </div>
                     </div>
@@ -2763,7 +2764,7 @@
                                     <!-- Persons Subtab -->
                                     <div class="subtab-pane" id="subtab-persons"
                                         style="display: none; padding: 8px; background: #fff; border: 1px solid #ddd;">
-                                        <p id="personsCountText"><b>0</b> persons found attached to incident:</p>
+                                        <p id="personsCountText"><b></b></p>
                                         <hr />
                                         <div id="personsContent"></div>
                                         <div class="row" style="margin-top: 10px;">
@@ -2779,7 +2780,7 @@
                                     <!-- Vehicles Subtab -->
                                     <div class="subtab-pane" id="subtab-vehicles"
                                         style="display: none; padding: 8px; background: #fff; border: 1px solid #ddd;">
-                                        <p id="vehiclesCountText"><b>0</b> vehicles found attached to incident:</p>
+                                        <p id="vehiclesCountText"><b></b></p>
                                         <hr />
                                         <div id="vehiclesContent"></div>
                                         <div class="row" style="margin-top: 10px;">
@@ -7868,6 +7869,7 @@
         let dispatchRuntimeRequestedUnits = [];
         let dispatchRuntimeResponses = [];
         let dispatchLiveChannel = null;
+        let dispatchMenuKeybindsBound = false;
 
         function setDispatchStatus(kind, text) {
             const iconEl = document.querySelector('.dispatcher-status-inline .status-icon');
@@ -8114,7 +8116,7 @@
             if (historyPane) {
                 historyPane.innerHTML = history.length > 0
                     ? history.map(h => `<div>${h}</div>`).join('')
-                    : '<p>History entries will be shown here.</p>';
+                    : '<p>No history for incident! (Are you sure you pushed this call to units?)</p>';
             }
 
             const personsContent = document.getElementById('personsContent');
@@ -8136,6 +8138,8 @@
             const responsesList = document.getElementById('responsesList');
             if (responsesList) responsesList.innerHTML = responseLines.length > 0 ? responseLines.map(c => `<div>${c}</div>`).join('') : 'No response messages.';
 
+            updatePersonsCount();
+            updateVehiclesCount();
             updateSubtabCounts();
             await dispatchUpdateSummary();
             await initDispatchUnitTable();
@@ -8866,6 +8870,11 @@
             if (statusEl) statusEl.addEventListener('change', saveDispatchFieldsToIncident);
             if (priEl) priEl.addEventListener('change', saveDispatchFieldsToIncident);
 
+            if (!dispatchMenuKeybindsBound) {
+                document.addEventListener('keydown', handleDispatcherMenuKeydown);
+                dispatchMenuKeybindsBound = true;
+            }
+
             await setupDispatchLiveMonitor();
             await dispatchLoadUnits();
             await dispatchLoadTabs('all');
@@ -8873,6 +8882,71 @@
             openIncidentSubtab('general');
             openDispatchSidebarPanel('summary');
             setDispatchStatus('success', 'Ready');
+        }
+
+        function handleDispatcherMenuKeydown(event) {
+            const dispatchArea = document.getElementById('dispatchingArea');
+            if (!dispatchArea || dispatchArea.style.display === 'none') return;
+
+            const target = event.target;
+            const tag = target && target.tagName ? target.tagName.toLowerCase() : '';
+            const isTypingTarget = tag === 'input' || tag === 'textarea' || tag === 'select' || (target && target.isContentEditable);
+            if (isTypingTarget) return;
+
+            if (!event.ctrlKey || !event.altKey) return;
+
+            let action = null;
+            switch (event.code) {
+                case 'Digit1':
+                case 'Numpad1':
+                    action = 'push_incident';
+                    break;
+                case 'Digit2':
+                case 'Numpad2':
+                    action = 'create_incident';
+                    break;
+                case 'Digit3':
+                case 'Numpad3':
+                    action = 'refresh_incident';
+                    break;
+                case 'Digit4':
+                case 'Numpad4':
+                    action = 'add_comment';
+                    break;
+                case 'Digit5':
+                case 'Numpad5':
+                    action = 'close_incident';
+                    break;
+                case 'Digit6':
+                case 'Numpad6':
+                    action = 'show_all_units';
+                    break;
+                case 'Digit7':
+                case 'Numpad7':
+                    action = 'show_available_units';
+                    break;
+                case 'Digit8':
+                case 'Numpad8':
+                    action = 'show_unavailable_units';
+                    break;
+                case 'Digit9':
+                case 'Numpad9':
+                    action = 'calls_all';
+                    break;
+                case 'Digit0':
+                case 'Numpad0':
+                    action = 'calls_active';
+                    break;
+                case 'F10':
+                    action = 'calls_closed';
+                    break;
+                default:
+                    break;
+            }
+
+            if (!action) return;
+            event.preventDefault();
+            dispatcherAction(action);
         }
 
         // Incident Person/Vehicle Management Functions
@@ -9102,7 +9176,7 @@
             const count = document.querySelectorAll('#personsContent .person-entry').length;
             const countText = document.getElementById('personsCountText');
             if (countText) {
-                countText.innerHTML = `<b>${count}</b> persons found attached to incident:`;
+                countText.innerHTML = `<b>${count}</b> person${count !== 1 ? 's' : ''} attached to incident.`;
             }
             updateSubtabCounts();
         }
@@ -9111,7 +9185,7 @@
             const count = document.querySelectorAll('#vehiclesContent .vehicle-entry').length;
             const countText = document.getElementById('vehiclesCountText');
             if (countText) {
-                countText.innerHTML = `<b>${count}</b> vehicles found attached to incident:`;
+                countText.innerHTML = `<b>${count}</b> vehicle${count !== 1 ? 's' : ''} attached to incident.`;
             }
             updateSubtabCounts();
         }
@@ -9123,4 +9197,5 @@
         }
     </script>
 </body>
+
 </html>
