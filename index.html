@@ -3037,6 +3037,8 @@
                                 <option>ARREST MADE</option>
                                 <option>PEACE RESTORED</option>
                                 <option>NO OFFENSE FOUND</option>
+                                <option>GONE ON ARRIVAL</option>
+                                <option>CIVIL CITATION ISSUED</option>
                             </select>
                         </div>
                         <div class="cell-6" id="supervisorArea" style="display:none;">
@@ -3053,11 +3055,11 @@
                             <select class="cell-12" id="supervisorAction" disabled
                                 style="width: 100%; border-radius: 0 !important; padding: 10px !important; margin-top: 12px;">
                                 <option value="">Select supervisor action</option>
-                                <option>Directed officer</option>
-                                <option>Reviewed incident</option>
-                                <option>Completed report review</option>
-                                <option>Assisted with arrest</option>
-                                <option>Cleared no further action</option>
+                                <option>DIRECTED OFFICER</option>
+                                <option>REVIEWED INCIDENT</option>
+                                <option>CONDUCTED INCIDENT DE-BRIEF</option>
+                                <option>ASSISTED WITH OFFICER ACTION</option>
+                                <option>CLEARED WITH NO ACTION</option>
                             </select>
                         </div>
                     </div>
@@ -8146,6 +8148,7 @@
             setDispatchStatus('success', 'Incident loaded');
         }
 
+        //TODO: MAKE THIS FILTER OUT DISP CMTS
         async function dispatchUpdateSummary() {
             const selectedIncidentId = dispatchGetSelectedIncidentId();
             if (!selectedIncidentId) return;
@@ -8185,6 +8188,7 @@
             return nodes.length;
         }
 
+        //-- RENDER UNIT TBL (kind of glitchly, render multi times but thats due to SupaBase) --\\
         async function renderDispatchUnitTable(filter = dispatchRuntimeUnitFilter) {
             dispatchRuntimeUnitFilter = filter;
             await dispatchLoadUnits();
@@ -8247,6 +8251,7 @@
             }
         }
 
+        //-- DISPATCH TABLE FUNCTIONALITIES HERE --\\
         async function dispatchToggleUnitOnIncident(unitName, detach) {
             const incidentId = dispatchGetSelectedIncidentId();
             if (!incidentId) {
@@ -8366,6 +8371,8 @@
             setDispatchStatus(unitWarn ? 'warn' : 'success', unitWarn ? 'Incident updated, some unit codes failed' : 'Incident updated');
         }
 
+        //-- PUSH INCIDENT TO UNITS FROM DISPATCH --\\
+        // small note... i dont know if people will auto be added if a incident is pushed with unit data (as itll update in their view)
         async function pushIncident() {
             const selected = dispatchGetSelectedTab();
             if (!selected || selected.kind !== 'draft') {
@@ -8534,6 +8541,7 @@
             });
         }
 
+        //-- REQUEST UNIT FUNCS AFTER THIS POINT --\\
         function addRequestedDispatchUnit() {
             const select = document.getElementById('dispatchRequestUnitSelect');
             if (!select || !select.value) return;
@@ -8623,6 +8631,7 @@
             return !error;
         }
 
+        //-- EXEC DISPATCH CMD --\\
         async function executeDispatchCommand() {
             const cmdInput = document.getElementById('dispatcherCmdInput');
             const raw = cmdInput ? cmdInput.value.trim() : '';
@@ -8724,7 +8733,7 @@
                 return;
             }
             if (action === 'refresh_incident') {
-                await dispatchLoadTabs(dispatchRuntimeCallFilter);
+                await dispatchLoadTabs(dispatchRuntimeCallFilter); // DO NOT MAKE THIS NOT AWAIT IT WILL BREAK THE DATABASE
                 setDispatchStatus('success', 'Incident refreshed');
                 return;
             }
@@ -8765,7 +8774,7 @@
                 return;
             }
         }
-
+        
         function ensureDispatchIncidentPaneVisible() {
             const incidentPane = document.getElementById('tab-2');
             if (incidentPane) incidentPane.style.display = 'flex';
@@ -8774,6 +8783,8 @@
             if (blankPane) blankPane.style.display = 'none';
         }
 
+        //-- INCIDENT SUBTAP OPEN --\\
+        //i shoula made it a switch func
         function openIncidentSubtab(subtab) {
             ensureDispatchIncidentPaneVisible();
 
@@ -8795,6 +8806,7 @@
             if (callsListView) callsListView.style.display = 'none';
         }
 
+        //-- LITERALLY USELESS WHY IS THIS A BUTTON IRL LOL
         function openDispatchSidebarPanel(panel) {
             ['summaryPanel', 'commentsPanel', 'responsesPanel'].forEach(id => {
                 const el = document.getElementById(id);
@@ -8804,6 +8816,7 @@
             if (active) active.style.display = 'block';
         }
 
+        //-- UPDATE INCIDENT TABS COUNT --\\
         function updateSubtabCounts() {
             const personsCount = document.querySelectorAll('#personsContent .person-entry').length;
             const vehiclesCount = document.querySelectorAll('#vehiclesContent .vehicle-entry').length;
@@ -8821,6 +8834,7 @@
             updateSubtabCounts();
         }
 
+        //-- DISPATCH LIVE MONITOR [CALLS & UNITS]--\\
         async function setupDispatchLiveMonitor() {
             if (!sbClient || dispatchLiveChannel) return;
             dispatchLiveChannel = sbClient
@@ -8839,6 +8853,7 @@
                 .subscribe();
         }
 
+        //-- OPEN DISPATCH VIEW --\\
         async function initDispatcherOverlay() {
             if (dispatchRuntimeInitialized) return;
             dispatchRuntimeInitialized = true;
@@ -8884,6 +8899,8 @@
             setDispatchStatus('success', 'Ready');
         }
 
+        // kind of glitchy when modals open, fix in query upd
+        //-- DISPATCH HANDLE KEY DOWN FOR SUB MENUS --\\
         function handleDispatcherMenuKeydown(event) {
             const dispatchArea = document.getElementById('dispatchingArea');
             if (!dispatchArea || dispatchArea.style.display === 'none') return;
@@ -8955,6 +8972,7 @@
             if (personsContent) {
                 const personEntry = document.createElement('div');
                 personEntry.className = 'person-entry editing';
+                // row 1 colu 3
                 personEntry.innerHTML = `
                         <div class="row">
                             <div class="cell-12"><input type="text" placeholder="Name" class="person-input" data-field="name"></div>
@@ -8975,7 +8993,6 @@
                     `;
                 personsContent.appendChild(personEntry);
 
-                // Change the add button to save mode
                 const addBtn = document.querySelector('#subtab-persons .button.bg-green');
                 if (addBtn) {
                     addBtn.textContent = 'Save Data';
@@ -8997,8 +9014,7 @@
                     input.replaceWith(document.createTextNode('N/A'));
                 }
             });
-
-            // Remove save/cancel buttons
+ 
             const buttonRow = entry.querySelector('.row:last-of-type');
             if (buttonRow) buttonRow.remove();
 
@@ -9018,7 +9034,6 @@
             entry.remove();
             updatePersonsCount();
 
-            // Reset add button
             const addBtn = document.querySelector('#subtab-persons .button.bg-green');
             if (addBtn) {
                 addBtn.textContent = 'Add New Person';
@@ -9067,6 +9082,7 @@
             if (vehiclesContent) {
                 const vehicleEntry = document.createElement('div');
                 vehicleEntry.className = 'vehicle-entry editing';
+                // row 2 col 1 href?
                 vehicleEntry.innerHTML = `
                         <div class="row">
                             <div class="cell-4"><input type="text" placeholder="Year" class="vehicle-input" data-field="year"></div>
@@ -9084,8 +9100,7 @@
                         <hr />
                     `;
                 vehiclesContent.appendChild(vehicleEntry);
-
-                // Change the add button to save mode
+                
                 const addBtn = document.querySelector('#subtab-vehicles .button.bg-green');
                 if (addBtn) {
                     addBtn.textContent = 'Save Data';
@@ -9107,15 +9122,13 @@
                     input.replaceWith(document.createTextNode('N/A'));
                 }
             });
-
-            // Remove save/cancel buttons
+            
             const buttonRow = entry.querySelector('.row:last-of-type');
             if (buttonRow) buttonRow.remove();
 
             entry.classList.remove('editing');
             updateVehiclesCount();
 
-            // Reset add button
             const addBtn = document.querySelector('#subtab-vehicles .button.bg-green');
             if (addBtn) {
                 addBtn.textContent = 'Add New Vehicle';
