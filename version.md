@@ -8,7 +8,6 @@ Entire ppre-release of MDT made, to enter testing very soon!!! :)
 
 1. Querying added!
 Can query a person only for now, they are added to the queery table, to query simply press the main aciton query button, the other two take you to the query table. Dispatch can also query.
-
 Queries can be added to an inident using footer buttons or the paperclip icon. They can be viewed from query results sidebar in incident view. A sound will play when any query is made.
 2. Incident Edit Button (in footer) now actually does something
 Allows you to edit base incident data
