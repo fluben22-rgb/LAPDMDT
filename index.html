@@ -4428,9 +4428,10 @@
         const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxnYWphaXRncXF6bnpsemphenhuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAzMDg2NzQsImV4cCI6MjA4NTg4NDY3NH0.Sm_Y4XiwCwjVtdvNEALNsDNY4EDGVI2KIWXkp3VdmfQ'; // anon, only for veh_fleet now
 
         //-- Create supabase helper --\\
-        function createSupabaseClient(token = null) {
+        function createSupabaseClient({ token = null, storageKey = 'sb-lgajaitgqqznzlzjazxn-anon-auth-token' } = {}) {
             const options = {
                 auth: {
+                    storageKey,
                     persistSession: false,
                     autoRefreshToken: false,
                     detectSessionInUrl: false
@@ -4448,13 +4449,26 @@
             return window.supabase.createClient(supabaseUrl, supabaseKey, options);
         }
 
-        let sbClient = createSupabaseClient();
+        const sbAnonClient = createSupabaseClient({
+            storageKey: 'sb-lgajaitgqqznzlzjazxn-anon-auth-token'
+        });
+        let sbClient = sbAnonClient;
+        let sbClientToken = null;
+        let rlsClient = null;
+        let rlsClientToken = null;
 
         //-- Get user token helper --\\
         function getRlsClient() {
             const token = sessionStorage.getItem('userToken');
             if (!token) throw new Error('No active auth token found.');
-            return createSupabaseClient(token);
+            if (!rlsClient || rlsClientToken !== token) {
+                rlsClient = createSupabaseClient({
+                    token,
+                    storageKey: 'sb-lgajaitgqqznzlzjazxn-rls-auth-token'
+                });
+                rlsClientToken = token;
+            }
+            return rlsClient;
         }
 
         //-- Sync supabase session --\\
@@ -4463,13 +4477,25 @@
             if (typeof unsubscribeDispatchLiveMonitor === 'function') {
                 await unsubscribeDispatchLiveMonitor();
             }
-            sbClient = createSupabaseClient(token || null);
             if (token) {
+                if (!sbClientToken || sbClientToken !== token) {
+                    sbClient = createSupabaseClient({
+                        token,
+                        storageKey: 'sb-lgajaitgqqznzlzjazxn-app-auth-token'
+                    });
+                    sbClientToken = token;
+                }
                 try {
                     sbClient.realtime.setAuth(token);
                 } catch (e) {
                     console.warn('Realtime auth sync failed:', e);
                 }
+            }
+            if (!token) {
+                sbClient = sbAnonClient;
+                sbClientToken = null;
+                rlsClient = null;
+                rlsClientToken = null;
             }
             return sbClient;
         }
@@ -4496,10 +4522,21 @@
 
         //-- Clear auth state on logoff --\\
         function clearAuthState() {
+            const activeClient = sbClient;
             sessionStorage.removeItem('userToken');
             sessionStorage.removeItem('userInfo');
+            sbClient = sbAnonClient;
+            sbClientToken = null;
+            rlsClient = null;
+            rlsClientToken = null;
             // Reset client to anon state
-            sbClient.auth.signOut();
+            try {
+                if (activeClient && activeClient.auth) {
+                    activeClient.auth.signOut();
+                }
+            } catch (e) {
+                console.warn('Supabase signOut cleanup failed:', e);
+            }
         }
 
         /*
@@ -4517,7 +4554,7 @@
             const rawShop = pwd.value.trim();
 
             err.textContent = '';
-            if (!sbClient) {
+            if (!sbAnonClient) {
                 err.textContent = 'Login service is unavailable. Please refresh and try again.';
                 return;
             }
@@ -4529,7 +4566,7 @@
 
             const shopNumber = Number.parseInt(rawShop, 10);
             try {
-                const { data, error } = await sbClient
+                const { data, error } = await sbAnonClient
                     .from('veh_fleet')
                     .select('*')
                     .eq('SHOP', shopNumber)
@@ -4849,6 +4886,12 @@
             if (!supabaseUrl || !supabaseKey) return;
 
             try {
+                fetch('https://lgajaitgqqznzlzjazxn.supabase.co/functions/v1/logoff', {
+                    method: 'POST',
+                    headers: getSupabaseAuthHeaders({ 'Content-Type': 'application/json' }),
+                    keepalive: true
+                }).catch(err => console.error('Unload logoff function error:', err));
+
                 if (currentUnit) {
                     fetch(`${supabaseUrl}/rest/v1/calls?select=id,prmry,assist&apikey=${encodeURIComponent(supabaseKey)}`, {
                         method: 'GET',
@@ -4878,6 +4921,14 @@
                     headers: getSupabaseAuthHeaders({ Prefer: 'return=minimal' }),
                     keepalive: true
                 });
+
+                if (currentUnit) {
+                    fetch(`${supabaseUrl}/rest/v1/units?unit=eq.${encodeURIComponent(currentUnit)}&apikey=${encodeURIComponent(supabaseKey)}`, {
+                        method: 'DELETE',
+                        headers: getSupabaseAuthHeaders({ Prefer: 'return=minimal' }),
+                        keepalive: true
+                    });
+                }
             } catch (e) {
                 console.error('Unload logoff error:', e);
             }
@@ -5194,27 +5245,50 @@
         }
 
         //-- Sync status from table (upon disp upd of unit) --\\
-        async function syncCurrentUserStatusFromUnitsTable() {
-            if (!sbClient) return;
-            const userInfo = sessionStorage.getItem('userInfo');
-            const currentUser = userInfo ? userInfo.split(',')[0] : null;
-            if (!currentUser) return;
+        async function findCurrentUnitRow(authClient, currentUser, currentUnit) {
+            if (!authClient || !currentUser) return null;
 
-            try {
-                const { data, error } = await sbClient
+            if (currentUnit) {
+                const { data: byUnitData, error: byUnitError } = await authClient
                     .from('units')
-                    .select('status')
-                    .eq('user', currentUser)
+                    .select('user, unit, status')
+                    .eq('unit', currentUnit)
                     .limit(1)
                     .maybeSingle();
 
-                if (error) {
-                    console.error('Error syncing local status from units table:', error);
-                    return;
+                if (byUnitError) {
+                    console.error('Error resolving current unit row by unit:', byUnitError);
+                } else if (byUnitData) {
+                    return byUnitData;
                 }
+            }
 
-                if (data && data.status) {
-                    applyCombinedStatusToTopBar(data.status);
+            const { data: byUserData, error: byUserError } = await authClient
+                .from('units')
+                .select('user, unit, status')
+                .eq('user', currentUser)
+                .limit(1)
+                .maybeSingle();
+
+            if (byUserError) {
+                console.error('Error resolving current unit row by user:', byUserError);
+                return null;
+            }
+
+            return byUserData || null;
+        }
+
+        async function syncCurrentUserStatusFromUnitsTable() {
+            const userInfo = sessionStorage.getItem('userInfo');
+            const currentUser = userInfo ? userInfo.split(',')[0] : null;
+            const currentUnit = userInfo ? userInfo.split(',')[2] : null;
+            if (!currentUser) return;
+
+            try {
+                const authClient = getRlsClient();
+                const row = await findCurrentUnitRow(authClient, currentUser, currentUnit);
+                if (row && row.status) {
+                    applyCombinedStatusToTopBar(row.status);
                 }
             } catch (e) {
                 console.error('Error syncing local status from units table:', e);
@@ -5223,31 +5297,34 @@
 
         //-- Sync current unit status to Supabase --\\
         async function syncCurrentUnitStatus() {
-            if (!sbClient) return;
             const userInfo = sessionStorage.getItem('userInfo');
-            const currentUser = userInfo ? userInfo.split(',')[0] : null;
-            if (!currentUser) return;
+            const currentUser = userInfo
+                ? userInfo.split(',')[0].replace(/[\[\]" ]/g, '').trim().toLowerCase()
+                : null;
+
+            const userToken = sessionStorage.getItem('userToken');
+
+            if (!currentUser || !userToken) return;
 
             try {
-                const { error } = await sbClient
+                const combinedStatus = getCombinedUnitStatus();
+                const authClient = getRlsClient();
+                
+                console.log(`Searching for user: |${currentUser}|`);
+
+                const { data, error } = await authClient
                     .from('units')
-                    .update({ status: getCombinedUnitStatus() })
-                    .eq('user', currentUser);
+                    .update({ status: combinedStatus })
+                    .eq('user', currentUser)
+                    .select();
 
-                if (error) {
-                    console.error('Error syncing unit status:', error);
-                    return;
-                }
-
-                suppressOwnUnitUpdateSoundUntil = Date.now() + 1500;
-                playSound('untUpd');
-
-                if (currentView === 'units-table') {
-                    await refreshUnitsTable();
-                    await syncCurrentUserStatusFromUnitsTable();
+                if (data && data.length > 0) {
+                    playSound('untUpd');
+                } else {
+                    console.error('Err in rLS.');
                 }
             } catch (e) {
-                console.error('Error syncing unit status:', e);
+                console.error('System Error:', e);
             }
         }
 
@@ -8052,7 +8129,7 @@
                         switchQueryFolder('posted', null);
                         return;
                     }
-                    
+
                     // if no data 
                     if (!data) {
                         const row = (window._queryRows || []).find(r => r.id === rowId);
