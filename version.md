@@ -20,3 +20,13 @@ Allows you to edit base incident data
 9. View indicator now actually changes!
 10. Calls advanced view changed to be more "spec" (this is the vie that allows you to see closed calls)
 11. Made selecting your watch a dropdown
+
+# [V 0.1.1]
+##### April 30th, 2026 - Backend revamp + Bug Fixes
+
+1. Images not loading on devices should be fixed
+2. Entire backend revamped, requests now requiring a JWT token and some are mapped thru edge functiosn for high seveirty
+3. Force logoff now created, required to set logoff to TRUE in database
+4. Querying revamped to be more secure (minor whoops last time)
+
+^ This update is most likely to have bugs do to the ammount of over-hauling done... report them to me!!!!!! I'm a bug eater... i consume bug
