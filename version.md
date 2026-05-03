@@ -30,3 +30,8 @@ Allows you to edit base incident data
 4. Querying revamped to be more secure (minor whoops last time)
 
 ^ This update is most likely to have bugs do to the ammount of over-hauling done... report them to me!!!!!! I'm a bug eater... i consume bug
+
+# [V 0.1.2]
+##### May 3rd, 2026 - Backend changes for dispatch
+
+1. Dispatch role in server updated upon key being verified now, allowing to update other units
