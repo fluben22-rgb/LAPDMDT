@@ -4608,7 +4608,7 @@
                     headers: {
                         'Content-Type': 'application/json',
                         'apikey': supabaseKey,
-                        'Authorization': `Bearer ${supabaseKey}` // Added this for Edge Function compatibility
+                        'Authorization': `Bearer ${supabaseKey}`
                     },
                     body: JSON.stringify({ email, password })
                 });
@@ -4616,15 +4616,25 @@
                 const result = await response.json();
 
                 if (!response.ok || !result.success) {
-                    // Use result.error to see the actual error from the logs
                     errorEl.textContent = result.error || 'Invalid email or password';
                     return;
                 }
 
                 sessionStorage.setItem('userToken', result.token);
                 if (typeof refreshSupabaseClient === 'function') await refreshSupabaseClient();
+                
+                let role = 'unit';
+                try {
+                    const payloadBase64 = result.token.split('.')[1];
+                    const decodedPayload = JSON.parse(atob(payloadBase64));
+                    role = decodedPayload.user_role || 'unit';
+                } catch (e) {
+                    console.warn('Failed to parse role from token payload:', e);
+                }
 
-                sessionStorage.setItem('userInfo', [email, email.split('@')[0], null, null, null]);
+                // Save role at index 3 instead of null
+                sessionStorage.setItem('userInfo', [email, email.split('@')[0], null, role, null]);
+
                 document.getElementById('appLoginArea').style.display = 'none';
                 document.getElementById('inputUserDataArea').style.display = 'flex';
 
@@ -5309,7 +5319,7 @@
             try {
                 const combinedStatus = getCombinedUnitStatus();
                 const authClient = getRlsClient();
-                
+
                 console.log(`Searching for user: |${currentUser}|`);
 
                 const { data, error } = await authClient
@@ -5387,6 +5397,12 @@
 
                 if (response.ok && result.success) {
                     inputElement.value = '';
+
+                    if (result.token) {
+                        sessionStorage.setItem('userToken', result.token);
+                        if (typeof refreshSupabaseClient === 'function') await refreshSupabaseClient();
+                    }
+
                     successCallback();
                 } else {
                     errorElement.textContent = result.error || 'Incorrect key. Please try again.';
@@ -5396,6 +5412,7 @@
                 errorElement.textContent = 'A connection error occurred.';
             }
         }
+
 
         //-- Set Incident ID Logic --\\
         async function setIncidentID() {
