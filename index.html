@@ -185,7 +185,7 @@
 
         .modal-header {
             padding: 16px;
-            border-bottom: 1px solid #ddd;
+            color: rgb(8, 148, 212);
             font-weight: bold;
             font-size: 16px;
             display: flex;
@@ -907,6 +907,13 @@
             color: #fff !important;
         }
 
+        #mainApp.night-mode .row-selected-callsadv,
+        #mainApp.night-mode .row-selected-callsadv td {
+            background: #1a6abf !important;
+            color: #fff !important;
+            border-color: #1a6abf !important;
+        }
+
         #callsAdvTable .row-active,
         #callsAdvTable .row-pending,
         #callsAdvTable .row-closed {
@@ -1005,8 +1012,6 @@
         #advCallsTabs.visible {
             display: flex !important;
         }
-
-
 
         .sidebar-area {
             position: relative;
@@ -1502,7 +1507,7 @@
         }
 
         .button {
-            background: linear-gradient(to bottom, #ffffff 0%, #e0e0e0 100%);
+            background: linear-gradient(to bottom, #ffffff 50%, #e0e0e0 50%);
             border: 1px solid #999;
             color: #333;
             cursor: pointer;
@@ -1513,9 +1518,10 @@
         }
 
         .button:active {
-            background: linear-gradient(to bottom, #0078d4 0%, #005cc8 100%);
+            background: linear-gradient(to bottom, #80b6df 50%, #4086d6 50%);
             color: white;
             border-color: #004080;
+            border: 4px solid rgb(0, 119, 255);
         }
 
         .button:hover:not(:active) {
@@ -1524,30 +1530,30 @@
 
         /*=== COLOR VARIENTS (BG COLORS) */
         .bg-green {
-            background: linear-gradient(to bottom, #90ee90 0%, #228b22 100%) !important;
+            background: linear-gradient(to bottom, #3cad3c 50%, #228b22 50%) !important;
             color: white !important;
         }
 
         .bg-green:active {
-            background: linear-gradient(to bottom, #0078d4 0%, #005cc8 100%) !important;
+            background: linear-gradient(to bottom, #80b6df 50%, #4086d6 50%);
         }
 
         .bg-red {
-            background: linear-gradient(to bottom, #ff9999 0%, #cc0000 100%) !important;
+            background: linear-gradient(to bottom, #d85252 50%, #cc0000 50%) !important;
             color: white !important;
         }
 
         .bg-red:active {
-            background: linear-gradient(to bottom, #0078d4 0%, #005cc8 100%) !important;
+            background: linear-gradient(to bottom, #80b6df 50%, #4086d6 50%);
         }
 
         .bg-dark {
-            background: linear-gradient(to bottom, #cccccc 0%, #666666 100%) !important;
+            background: linear-gradient(to bottom, #9b9090 50%, #666666 50%) !important;
             color: white !important;
         }
 
         .bg-dark:active {
-            background: linear-gradient(to bottom, #0078d4 0%, #005cc8 100%) !important;
+            background: linear-gradient(to bottom, #9b9090 50%, #666666 50%);
         }
 
         .bg-blue {
@@ -1556,7 +1562,7 @@
         }
 
         .bg-blue:active {
-            background: linear-gradient(to bottom, #0078d4 0%, #005cc8 100%) !important;
+            background: linear-gradient(to bottom, #80b6df 50%, #4086d6 50%);
         }
 
         /*=== FOOTER STYLES ===*/
@@ -2790,12 +2796,11 @@
                     onclick="showModal('unitModifyModal');">
                     <div class="d-flex flex-row align-stretch border bd-default bg-white"
                         style="height: 38px; cursor: pointer; border-left: 0;">
-                        <div class="bg-green fg-white d-flex align-center flex-justify-center px-2 text-bold"
-                            style="font-size: 16px; min-width: 28px;">P</div>
+                        <div class="d-flex align-center flex-justify-center px-2 text-bold"
+                            style="font-size: 16px; min-width: 28px; background-color: green; color: white;">P</div>
                         <div class="d-flex flex-column flex-justify-center px-2 flex-grow-1" style="line-height: 1.1;">
-                            <span
-                                style="font-size: 9px; font-weight: bold; color: #666; text-transform: uppercase;">Logged
-                                in:</span>
+                            <span style="font-size: 9px; font-weight: bold; color: #666;">LOGGED
+                                IN:</span>
                             <div style="display:flex; align-items:center; gap:8px;">
                                 <span id="current-user"
                                     style="font-size: 11px; color: #000; white-space: nowrap;"></span>
@@ -3603,7 +3608,7 @@
 
 
                     <div id="callsListView" class="calls-list" style="display: none;">
-                        <!-- Call display moved to left sidebar tabs -->
+                        <p>Calls will be listed here.</p>
                     </div>
 
                     <!-- Right Panel: Incident Info + Queries Tabs -->
@@ -3691,18 +3696,15 @@
                                 style="background:#222; color:#888; border:1px solid #444; padding:3px 10px; cursor:pointer; font-family:monospace; font-size:11px;">CLEAR</button>
                         </div>
                     </div>
-                </div><!-- end dispatcher-calls-panel -->
-            </div><!-- end dispatcher-main-area -->
-        </div><!-- end dispatcher-overlay -->
-    </div><!-- end dispatchingArea -->
+                </div>
+            </div>
+        </div>
+    </div>
     <!-- Modals Area-->
     <div class="modal-overlay">
         <div class="modal-content" id="incidentInitModal" style="display: none;">
             <div class="modal-header">
                 <h3>New Incident</h3>
-                <button class="window-btn bg-red-hover fg-white-hover" onclick="closeModal('incidentInitModal')">
-                    <h3>X</h3>
-                </button>
             </div>
             <div class="modal-body">
                 <p>Please input the circumstances and location of the incident:</p>
@@ -3719,8 +3721,9 @@
                         style="border-radius: 0px !important; padding: 5px;">
                 </div>
                 <div class="row">
-                    <button class="button bg-green fg-white mt-2" style="border-radius: 0px !important;"
-                        onclick="createCustomIncident();">Create Incident</button>
+                    <button class="button bg-green fg-white cell-6" onclick="createCustomIncident();">Create
+                        Incident</button>
+                    <button class="button cell-6" onclick="closeModal('incidentInitModal')">Cancel</button>
                 </div>
             </div>
         </div>
@@ -3728,46 +3731,49 @@
         <div class="modal-content" id="unitModifyModal" style="display: none;">
             <div class="modal-header">
                 <h3>Modify Unit Info</h3>
-                <button class="window-btn bg-red-hover fg-white-hover" onclick="closeModal('unitModifyModal')">
-                    <h3>X</h3>
-                </button>
             </div>
             <div class="modal-body">
-                <button class="button bg-green fg-white mt-2" style="border-radius: 0px !important;"
-                    onclick="closeModal('unitModifyModal'); showModal('editUnitInfoModal')">Update Unit
-                    Info</button>
-                <button class="button bg-red fg-white mt-2" style="border-radius: 0px !important;"
-                    onclick="logoff();">Logoff</button>
+                <div class="grid">
+                    <div class="row">
+                        <button class="button bg-green fg-white cell-4" style="border-radius: 0px !important;"
+                            onclick="closeModal('unitModifyModal'); showModal('editUnitInfoModal')">Update Unit
+                            Info</button>
+                        <button class="button bg-red fg-white cell-4" style="border-radius: 0px !important;"
+                            onclick="logoff();">Logoff</button>
+                        <button class="button cell-4" onclick="closeModal('unitModifyModal');">Close</button>
+                    </div>
+                </div>
+
             </div>
         </div>
         <!-- Edit Unit Info Modal -->
         <div class="modal-content" id="editUnitInfoModal" style="display: none;">
             <div class="modal-header">
                 <h3>Edit Unit Info</h3>
-                <button class="window-btn bg-red-hover fg-white-hover" onclick="closeModal('editUnitInfoModal')">
-                    <h3>X</h3>
-                </button>
             </div>
             <div class="modal-body">
-                <input id="newCallsign" type="text" data-role="input" placeholder="New Callsign"
-                    style="border-radius: 0px !important; padding: 5px;">
-                <select id="newWatch" data-role="select" placeholder="Select Watch"
-                    style="width: 100%; margin-bottom: 15px !important; border-radius: 0 !important; padding: 10px !important;">
-                    <option value="" disabled selected>Select Watch</option>
-                    <option value="W1">W1 - PATROL</option>
-                    <option value="W2">W2 - PATROL</option>
-                    <option value="W3">W3 - PATROL</option>
-                    <option value="W4">W4- XRAY / FB/ DESK (OT)</option>
-                    <option value="W5">W5 - SPECIAL / XRAY (W1)</option>
-                    <option value="W6">W6 - SPECIAL / XRAY (W2)</option>
-                    <option value="W7">W7- SPECIAL / XRAY (W3)</option>
-                    <option value="W8">W8- SPECIAL PATROL (OT)</option>
-                </select>
+                <div class="grid">
+                    <div class="row">
+                        <input id="newCallsign" class="cell-6" type="text" data-role="input" placeholder="New Callsign">
+                        <select id="newWatch" data-role="select" placeholder="Select Watch" class="cell-6"
+                            style="background-color: white !important; border-radius: 0px;">
+                            <option value="" disabled selected>Select Watch</option>
+                            <option value="W1">W1 - PATROL</option>
+                            <option value="W2">W2 - PATROL</option>
+                            <option value="W3">W3 - PATROL</option>
+                            <option value="W4">W4- XRAY / FB/ DESK (OT)</option>
+                            <option value="W5">W5 - SPECIAL / XRAY (W1)</option>
+                            <option value="W6">W6 - SPECIAL / XRAY (W2)</option>
+                            <option value="W7">W7- SPECIAL / XRAY (W3)</option>
+                            <option value="W8">W8- SPECIAL PATROL (OT)</option>
+                        </select>
+                    </div>
+                </div>
                 <div class="grid">
                     <div class="row">
                         <button class="button bg-green fg-white mt-2 cell-6" style="border-radius: 0px !important;"
                             onclick="updateUser();">Save Info</button>
-                        <button class="button bg-red fg-white mt-2 cell-6" style="border-radius: 0px !important;"
+                        <button class="button mt-2 cell-6" style="border-radius: 0px !important;"
                             onclick="closeModal('editUnitInfoModal')">Close</button>
                     </div>
                 </div>
@@ -3777,9 +3783,6 @@
         <div class="modal-content" id="trafficStopModal" style="display: none;">
             <div class="modal-header">
                 <h3>Initiate Traffic Stop</h3>
-                <button class="window-btn bg-red-hover fg-white-hover" onclick="closeModal('trafficStopModal')">
-                    <h3>X</h3>
-                </button>
             </div>
             <div class="modal-body">
                 <div class="grid">
@@ -3789,24 +3792,27 @@
                         <input type="text" id="trafficStopNarrative" class="cell-6" placeholder="Narrative"
                             style="border-radius: 0px !important; padding: 5px;">
                     </div>
-                    <div id="trafficStopVehHolder"></div>
+                    <div id="trafficStopVehHolder" style="margin-top: 5px;"></div>
                     <div class="row">
                         <button class="button bg-green fg-white cell-6" onclick="addTrafficStopVehicle()"
                             style="border-radius: 0px !important;">Add Vehicle</button>
                         <button class="button bg-red fg-white cell-6" onclick="removeTrafficStopVehicle()"
                             style="border-radius: 0px !important;">Remove Vehicle</button>
                     </div>
-                    <button class="button bg-green fg-white mt-2" style="border-radius: 0px !important;"
-                        onclick="finalizeTrafficStop()">Start Traffic Stop</button>
+                    <hr style="margin-top: 10px;" />
+                    <div class="grid" style="margin-top: 10px;">
+                        <div class="row">
+                            <button class="button bg-green fg-white cell-6" style="border-radius: 0px !important;"
+                                onclick="finalizeTrafficStop()">Start Traffic Stop</button>
+                            <button class="button cell-6" onclick="closeModal('trafficStopModal')">Cancel</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
         <div class="modal-content" id="code6Modal" style="display: none;">
             <div class="modal-header">
                 <h3>Initiate Code 6</h3>
-                <button class="window-btn bg-red-hover fg-white-hover" onclick="closeModal('code6Modal')">
-                    <h3>X</h3>
-                </button>
             </div>
             <div class="modal-body">
                 <div class="grid">
@@ -3816,67 +3822,73 @@
                         <input type="text" id="code6Narrative" class="cell-6" placeholder="Narrative"
                             style="border-radius: 0px !important; padding: 5px;">
                     </div>
-                    <div id="code6VehHolder"></div>
+                    <div id="code6VehHolder" style="margin-top: 5px;"></div>
                     <div class="row">
                         <button class="button bg-green fg-white cell-6" onclick="addCode6Person()"
                             style="border-radius: 0px !important;">Add Person</button>
                         <button class="button bg-red fg-white cell-6" onclick="removeCode6Person()"
                             style="border-radius: 0px !important;">Remove Person</button>
                     </div>
-                    <button class="button bg-green fg-white mt-2" style="border-radius: 0px !important;"
-                        onclick="finalizeCode6()">Start Code 6</button>
+                    <hr style="margin-top: 10px;" />
+                    <div class="grid" style="margin-top: 10px;">
+                        <div class="row">
+                            <button class="button bg-green fg-white cell-6" style="border-radius: 0px !important;"
+                                onclick="finalizeCode6()">Start Code 6</button>
+                            <button class="button cell-6" onclick="closeModal('code6Modal')">Cancel</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
         <div class="modal-content" id="incVehModal" style="display: none;">
             <div class="modal-header">
                 <h3>Vehicles</h3>
-                <button class="window-btn bg-red-hover fg-white-hover"
-                    onclick="closeModal('incVehModal'); resetIncVehModal()">
-                    <h3>X</h3>
-                </button>
             </div>
             <div class="modal-body">
                 <p id="incVehCountText"><b>0</b> vehicles found attached to incident:</p>
                 <hr />
-                <div id="incVehHolder"></div>
-                <div class="row">
-                    <button id="addIncVehBtn" class="button bg-green fg-white mt-2 cell-6"
-                        style="border-radius: 0px !important;" onclick="addIncVehicle()">Add New
-                        Vehicle</button>
-                    <button id="removeIncVehBtn" class="button bg-red fg-white mt-2 cell-6"
-                        style="border-radius: 0px !important;" onclick="toggleRemoveIncVehMode()">Remove
-                        Vehicle</button>
+                <div id="incVehHolder" style="margin-top: 5px;"></div>
+                <div class="grid">
+                    <div class="row">
+                        <button id="addIncVehBtn" class="button bg-green fg-white cell-6"
+                            style="border-radius: 0px !important;" onclick="addIncVehicle()">Add New
+                            Vehicle</button>
+                        <button id="removeIncVehBtn" class="button bg-red fg-white cell-6"
+                            style="border-radius: 0px !important;" onclick="toggleRemoveIncVehMode()">Remove
+                            Vehicle</button>
+                    </div>
+                    <div class="row">
+                        <button class="button" onclick="closeModal('incVehModal'); resetIncVehModal()">Close</button>
+                    </div>
                 </div>
+
             </div>
         </div>
         <div class="modal-content" id="incPerModal" style="display: none;">
             <div class="modal-header">
                 <h3>Persons</h3>
-                <button class="window-btn bg-red-hover fg-white-hover"
-                    onclick="closeModal('incPerModal'); resetIncPerModal()">
-                    <h3>X</h3>
-                </button>
             </div>
             <div class="modal-body">
                 <p id="incPerCountText"><b>0</b> persons found attached to incident:</p>
                 <hr />
-                <div id="incPerHolder"></div>
-                <div class="row">
-                    <button id="addIncPerBtn" class="button bg-green fg-white mt-2 cell-6"
-                        style="border-radius: 0px !important;" onclick="addIncPerson()">Add New Person</button>
-                    <button id="removeIncPerBtn" class="button bg-red fg-white mt-2 cell-6"
-                        style="border-radius: 0px !important;" onclick="toggleRemoveIncPerMode()">Remove
-                        Person</button>
+                <div id="incPerHolder" style="margin-top: 5px;"></div>
+                <div class="grid">
+                    <div class="row">
+                        <button id="addIncPerBtn" class="button bg-green fg-white cell-6"
+                            style="border-radius: 0px !important;" onclick="addIncPerson()">Add New Person</button>
+                        <button id="removeIncPerBtn" class="button bg-red fg-white cell-6"
+                            style="border-radius: 0px !important;" onclick="toggleRemoveIncPerMode()">Remove
+                            Person</button>
+                    </div>
+                    <div class="row">
+                        <button class="button" onclick="closeModal('incPerModal'); resetIncPerModal()">Close</button>
+                    </div>
                 </div>
             </div>
         </div>
         <div class="modal-content" id="dispositionModal" style="display: none;">
             <div class="modal-header">
                 <h3 id="dispHeader"></h3>
-                <button class="window-btn bg-red-hover fg-white-hover" onclick="closeModal('dispositionModal')">
-                    <h3>X</h3>
-                </button>
             </div>
             <div class="modal-body">
                 <h6 id="dispIncId"></h6>
@@ -3976,10 +3988,6 @@
         <div class="modal-content" id="incAdvViewAddCommantsModal" style="display: none;">
             <div class="modal-header">
                 <h3>Add Call Comments</h3>
-                <button class="window-btn bg-red-hover fg-white-hover"
-                    onclick="closeModal('incAdvViewAddCommantsModal')">
-                    <h3>X</h3>
-                </button>
             </div>
             <div class="modal-body">
                 <input type="text" id="incAdvViewAddCmtsInput" data-role="input" placeholder="Input your comments here"
@@ -3997,9 +4005,6 @@
         <div class="modal-content" id="dispReqUnit" style="display: none;">
             <div class="modal-header">
                 <h3>Request Unit</h3>
-                <button class="window-btn bg-red-hover fg-white-hover" onclick="closeModal('dispReqUnit')">
-                    <h3>X</h3>
-                </button>
             </div>
             <div class="modal-body">
                 <label style="display:block; margin-bottom:8px; font-weight:700;">Select Unit</label>
@@ -4042,9 +4047,6 @@
             <div class="modal-header">
                 <h3>Manage Alerts <span id="manageAlertsIdLabel" style="font-size:14px; font-weight:normal;"></span>
                 </h3>
-                <button class="window-btn bg-red-hover fg-white-hover" onclick="closeModal('manageAlertsModal')">
-                    <h3>X</h3>
-                </button>
             </div>
             <div class="modal-body">
                 <p style="font-size:12px; color:#666; margin-bottom:8px;">Do not abuse alerts in any way, shape, or
@@ -4067,9 +4069,6 @@
         <div class="modal-content" id="unitRequestActionModal" style="display: none;">
             <div class="modal-header">
                 <h3>Incident Request</h3>
-                <button class="window-btn bg-red-hover fg-white-hover" onclick="handleIncomingUnitRequestIgnore()">
-                    <h3>X</h3>
-                </button>
             </div>
             <div class="modal-body">
                 <p><strong>Incident:</strong> <span id="unitReqIncidentId">N/A</span></p>
@@ -4122,9 +4121,6 @@
         <div class="modal-content" id="makePrimaryConfirmModal" style="display: none;">
             <div class="modal-header">
                 <h3>Become Primary Unit</h3>
-                <button class="window-btn bg-red-hover fg-white-hover" onclick="closeModal('makePrimaryConfirmModal')">
-                    <h3>X</h3>
-                </button>
             </div>
             <div class="modal-body">
                 <p>Are you sure you wish to become primary of this incident?</p>
@@ -4133,7 +4129,7 @@
                         <button class="button bg-green fg-white mt-2 cell-6" style="border-radius:0 !important;"
                             onclick="becomePrimaryOfCurrentIncident()">Yes</button>
                         <button class="button bg-light fg-dark mt-2 cell-6" style="border-radius:0 !important;"
-                            onclick="closeModal('makePrimaryConfirmModal')">No</button>
+                            onclick="closeModal('makePrimaryConfirmModal')">Cancel</button>
                     </div>
                 </div>
             </div>
@@ -4141,42 +4137,42 @@
         <div class="modal-content" id="supervisorKeyModal" style="display: none;">
             <div class="modal-header">
                 <h3>Supervisor Key Required</h3>
-                <button class="window-btn bg-red-hover fg-white-hover" onclick="closeModal('supervisorKeyModal')">
-                    <h3>X</h3>
-                </button>
             </div>
             <div class="modal-body">
                 <input type="password" id="supervisorKeyInput" data-role="input" placeholder="Supervisor Key"
-                    style="width:100%; border-radius:0 !important; padding:10px !important;"
+                    style="width:100%; border-radius:0 !important; padding:5px !important;"
                     onkeypress="if(event.key==='Enter'){ event.preventDefault(); requestKey('supervisorKeyInput', 'supervisorKeyError', 'SUPERVISOR KEY', () => { acceptSupervisorKey(); }); }">
-                <div id="supervisorKeyError" style="color:#c80000; min-height:18px; margin-top:6px;"></div>
-                <button class="button bg-green fg-white mt-2" style="width:100%; border-radius:0 !important;"
-                    onclick="requestKey('supervisorKeyInput', 'supervisorKeyError', 'INCIDENT ID KEY', () => { acceptSupervisorKey(); });">Continue</button>
+                <div id="supervisorKeyError" style="color:#c80000; min-height:18px; margin-top:3px;"></div>
+                <div class="grid">
+                    <div class="row">
+                        <button class="button bg-green fg-white cell-6"
+                            onclick="requestKey('supervisorKeyInput', 'supervisorKeyError', 'INCIDENT ID KEY', () => { acceptSupervisorKey(); });">Submit</button>
+                        <button class="button cell-6" onclick="closeModal('supervisorKeyModal')">Cancel</button>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="modal-content" id="supervisorSetIncidentModal" style="display: none;">
             <div class="modal-header">
                 <h3>Set Incident ID</h3>
-                <button class="window-btn bg-red-hover fg-white-hover"
-                    onclick="closeModal('supervisorSetIncidentModal')">
-                    <h3>X</h3>
-                </button>
             </div>
             <div class="modal-body">
                 <input type="text" id="incidentIdInput" data-role="input" placeholder="0000"
                     style="width:100%; border-radius:0 !important; padding:10px !important;"
                     onkeypress="if(event.key==='Enter'){ event.preventDefault(); setIncidentID(); }">
                 <div id="incidentIdError" style="color:#c80000; min-height:18px; margin-top:6px;"></div>
-                <button class="button bg-green fg-white mt-2" style="width:100%; border-radius:0 !important;"
-                    onclick="setIncidentID()">Set Incident ID</button>
+                <div class="grid">
+                    <div class="row">
+                        <button class="button bg-green fg-white cell-6" onclick="setIncidentID()">Set Incident
+                            ID</button>
+                        <button class="button cell-6" onclick="closeModal('supervisorSetIncidentModal')">Cancel</button>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="modal-content" id="closeIncidentFullIdModal" style="display: none;">
             <div class="modal-header">
                 <h3>Close Incident</h3>
-                <button class="window-btn bg-red-hover fg-white-hover" onclick="closeModal('closeIncidentFullIdModal')">
-                    <h3>X</h3>
-                </button>
             </div>
             <div class="modal-body">
                 <p id="closeIncidentFullIdHint" style="margin-bottom: 8px;">No incident found for today. Enter
@@ -4200,9 +4196,6 @@
         <div class="modal-content" id="printCallsModal" style="display: none;">
             <div class="modal-header">
                 <h3>Print Calls</h3>
-                <button class="window-btn bg-red-hover fg-white-hover" onclick="closeModal('printCallsModal')">
-                    <h3>X</h3>
-                </button>
             </div>
             <div class="modal-body">
                 <label style="display:block; margin-bottom:6px; font-weight:700;">Start Date</label>
@@ -4212,16 +4205,18 @@
                 <input type="date" id="printCallsDateEnd" data-role="input"
                     style="width:100%; border-radius:0 !important; padding:10px !important; margin-bottom:8px;">
                 <div id="printCallsStatus" style="min-height:18px; margin-bottom:6px; color:#666;"></div>
-                <button class="button mt-2" style="width:100%; border-radius:0 !important;"
-                    onclick="exportCallsCsvByDateRange()">Export CSV</button>
+                <div class="grid">
+                    <div class="row">
+                        <button class="button mt-2" style="width:100%; border-radius:0 !important;"
+                            onclick="exportCallsCsvByDateRange()">Export CSV</button>
+                        <button class="button cell-6" onclick="closeModal('printCallsModal')">Close</button>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="modal-content" id="editIncidentModal" style="display: none;">
             <div class="modal-header">
                 <h3>Edit Incident Data</h3>
-                <button class="window-btn bg-red-hover fg-white-hover" onclick="closeModal('editIncidentModal')">
-                    <h3>X</h3>
-                </button>
             </div>
             <div class="modal-body">
                 <div class="grid">
@@ -4253,31 +4248,30 @@
                 </div>
             </div>
         </div>
+        <!-- Incident History Modal -->
         <div class="modal-content" id="incHistoryCommentsView" style="display: none;">
             <div class="modal-header">
                 <h3>Incident History</h3>
-                <button class="window-btn bg-red-hover fg-white-hover" onclick="closeModal('incHistoryCommentsView')">
-                    <h3>X</h3>
-                </button>
             </div>
             <div class="modal-body">
                 <h5 id="incHistoryHeader"></h5>
                 <hr>
                 <br />
                 <div class="incidentHistory" id="incidentHistory"></div>
+                <br />
+                <button class="button mt-2" onclick="closeModal('incHistoryCommentsView')">Close</button>
             </div>
         </div>
-
         <!-- Inc Query Results Modal -->
         <div class="modal-content" id="incQueryResultsModal" style="display: none;">
             <div class="modal-header">
                 <h3>Query Results</h3>
-                <button class="window-btn bg-red-hover fg-white-hover" onclick="closeModal('incQueryResultsModal')">
-                    <h3>X</h3>
-                </button>
+                <br />
             </div>
             <div class="modal-body" style="padding:0;">
                 <div id="incQueryResultsHolder" style="overflow-y:auto; max-height:60vh; padding:10px;"></div>
+                <br />
+                <button class="button mt-2" onclick="closeModal('incQueryResultsModal')">Close</button>
             </div>
         </div>
 
@@ -4286,9 +4280,12 @@
     <!-- Home Footer -->
     <footer id="home-foot">
         <div class="footer-btn w-sm"></div>
-        <div class="footer-btn w-md">Help</div>
+        <a class="footer-btn w-md" href="https://drive.google.com/file/d/1GfbJwrWv6pCmZWdTQ-zz_Afoh5oGSbsk/view"
+            target="_blank">Help</a>
         <div class="footer-group">
-            <div class="footer-btn">About Mobile</div>
+            <a class="footer-btn"
+                href="https://www.motorolasolutions.com/en_us/products/command-center-software/public-safety-software/premierone/premierone-mobile.html"
+                target="_blank">About Mobile</a>
             <div class="footer-btn" disabled>Send Message</div>
         </div>
         <div class="footer-btn w-sm"></div>
@@ -4308,11 +4305,11 @@
     <!-- Incident Footer-->
     <footer id="inc-foot" style="display: none;">
         <div class="footer-group">
-            <div class="footer-btn"></div>
-            <div class="footer-btn"></div>
+            <div class="footer-btn" onclick="movePages('prev')">&lt;</div>
+            <div class="footer-btn" onclick="movePages('next')">&gt;</div>
             <div class="footer-btn" onclick="showModal('editIncidentModal');">Edit</div>
             <div class="footer-btn" onclick="closeIncident()">Clear</div>
-            <div class="footer-btn" id="footerBtnClose">Close</div>
+            <div class="footer-btn" id="footerBtnClose" onclick="footerCloseIncident()">Close</div>
             <div class="footer-btn" onclick="handlePrimaryButtonClick()">Primary</div>
 
             <div class="footer-btn" id="attachToggleBtn" onclick="handleAttachToggle();">Attach</div>
@@ -4324,8 +4321,8 @@
 
     <!-- Query Table Footer -->
     <footer id="query-foot" style="display: none;">
-        <div class="footer-btn w-sm"></div>
-        <div class="footer-btn w-sm"></div>
+        <div class="footer-btn w-sm" onclick="movePages('prev')">&lt;</div>
+        <div class="footer-btn w-sm" onclick="movePages('next')">&gt;</div>
         <div class="footer-btn w-md" onclick="showQueryOptsView('CAL-OP')">New Query</div>
         <div class="footer-btn w-sm" onclick="viewSelectedQueryRows()">View</div>
         <div class="footer-btn w-sm" onclick="deleteSelectedQueryRows()">Delete</div>
@@ -4349,8 +4346,8 @@
 
     <!-- Adv Call Table Footer -->
     <footer id="adv-call-table-foot" style="display: none;">
-        <div class="footer-btn w-sm" onclick="callsAdvTablePrev()">&lt;</div>
-        <div class="footer-btn w-sm" onclick="callsAdvTableNext()">&gt;</div>
+        <div class="footer-btn w-sm" onclick="movePages('prev')">&lt;</div>
+        <div class="footer-btn w-sm" onclick="movePages('next')">&gt;</div>
         <div class="footer-btn w-md" onclick="callsAdvView()">View</div>
         <div class="footer-btn w-md" style="pointer-events:none;" disabled>Locate on Map</div>
         <div class="footer-btn w-md" onclick="callsAdvSelfDispatch()">Self Dispatch</div>
@@ -4379,7 +4376,7 @@
             newCmt: 'https://od.lk/s/MzRfMTAwMjgzNDQyXw/Windows_Restore%5B1%5D.wav',
         };
 
-        // Security: HTML-escape any untrusted string before injecting into innerHTML
+        // CHANGE TO SERVER SIDE, NOT CLIENT
         function escapeHtml(str) {
             return String(str ?? '')
                 .replace(/&/g, '&amp;')
@@ -4419,6 +4416,8 @@
         let activeIncomingUnitRequest = null;
         const seenIncomingUnitRequestKeys = new Set();
         let processedCmds = [];
+        let surfedPages = [];
+        let currentPageIndex = -1;  // Tracks current position in surfedPages history
 
         // Flags
         const loginEnabled = true; // disable to remove all login and go straight to app | ONLY FOR DEBUGGING
@@ -4622,7 +4621,7 @@
 
                 sessionStorage.setItem('userToken', result.token);
                 if (typeof refreshSupabaseClient === 'function') await refreshSupabaseClient();
-                
+
                 let role = 'unit';
                 try {
                     const payloadBase64 = result.token.split('.')[1];
@@ -5177,62 +5176,6 @@
             }
         }
 
-        //--- Clear a unit from their current incident --\\
-        async function clearUnitsForIncident(incidentData, fallbackLast4) {
-            if (!sbClient || !incidentData) return;
-
-            const targetUnits = new Set();
-            normalizeCallUnitList(incidentData.prmry)
-                .map(normalizeUnitKey)
-                .filter(Boolean)
-                .forEach(key => targetUnits.add(key));
-            normalizeCallUnitList(incidentData.assist)
-                .map(normalizeUnitKey)
-                .filter(Boolean)
-                .forEach(key => targetUnits.add(key));
-
-            const incidentLast4 = String(incidentData.last4 || fallbackLast4 || '').trim();
-            const numericLast4 = String(Number.parseInt(incidentLast4, 10));
-
-            const { data: unitRows, error: unitRowsError } = await sbClient
-                .from('units')
-                .select('user, unit, status, inc');
-
-            if (unitRowsError) {
-                console.error('Error fetching units for incident clear:', unitRowsError);
-                return;
-            }
-
-            const rowsToUpdate = (unitRows || []).filter(row => {
-                const normalizedUnit = normalizeUnitKey(row.unit);
-                const rowInc = String(row.inc || '').trim();
-                return targetUnits.has(normalizedUnit) || (!!incidentLast4 && (rowInc === incidentLast4 || rowInc === numericLast4));
-            });
-
-            for (const row of rowsToUpdate) {
-                let updateQuery = sbClient
-                    .from('units')
-                    .update({
-                        status: getAvailableCombinedStatus(row.status),
-                        inc: null,
-                        incLocation: null,
-                        code: null
-                    });
-
-                if (row.user) {
-                    updateQuery = updateQuery.eq('user', row.user);
-                } else {
-                    updateQuery = updateQuery.eq('unit', row.unit);
-                }
-
-                const { error: unitUpdateError } = await updateQuery;
-
-                if (unitUpdateError) {
-                    console.error(`Error clearing unit state for ${row.unit}:`, unitUpdateError);
-                }
-            }
-        }
-
         //-- Apply combined status to unit info area --\\
         function applyCombinedStatusToTopBar(rawStatus) {
             const { statusCode, vehicleCode } = parseCombinedUnitStatus(rawStatus);
@@ -5694,8 +5637,6 @@
                     alert(`Failed to sync unit data: ${e?.message || e}`);
                 }
 
-
-
             } catch (err) {
                 console.error('Error creating incident:', err);
                 alert(`Failed to create incident}`);
@@ -6035,25 +5976,36 @@
             const callsign = currentUser[2];
 
             try {
-                const { data: incident, error: fetchError } = await sbClient
+                const authClient = getRlsClient();
+
+                const { data: incident, error: fetchError } = await authClient
                     .from('calls')
-                    .select('comments, history, prmry, assist, last4')
+                    .select('comments, history, prmry, assist, last4, status, is_closed')
                     .eq('id', normalizedId)
                     .maybeSingle();
 
-                if (fetchError) {
-                    throw fetchError;
+                if (fetchError) throw fetchError;
+                if (!incident) return { ok: true, found: false };
+                if (isIncidentClosedValue(incident)) return { ok: true, found: true, alreadyClosed: true };
+
+                let cleanComments = [];
+                if (incident.comments && Array.isArray(incident.comments)) {
+                    cleanComments = incident.comments.filter(item => item !== null && String(item).trim() !== "");
                 }
 
-                if (!incident) {
-                    return { ok: true, found: false };
+                let cleanHistory = [];
+                if (incident.history && Array.isArray(incident.history)) {
+                    cleanHistory = incident.history.filter(item => item !== null && String(item).trim() !== "");
                 }
 
-                const { data, error } = await sbClient
+                cleanComments.push(`INC CLOSED W/O DISPOSITION BY ${callsign}`);
+                cleanHistory.push(`${timeNow} ${callsign} (${user}) - Incident closed via ${sourceLabel || 'IC command'}, no disposition.`);
+
+                const { data, error } = await authClient
                     .from('calls')
                     .update({
-                        comments: [...(incident.comments || []), `INC CLOSED W/O DISPOSITION BY ${callsign}`],
-                        history: [...(incident.history || []), `${timeNow} ${callsign} (${user}) - Incident closed via ${sourceLabel || 'IC command'}, no disposition. (Or via incident footer button...)`],
+                        comments: cleanComments,
+                        history: cleanHistory,
                         status: 'Closed',
                         is_active: false,
                         is_closed: true
@@ -6063,30 +6015,20 @@
                 if (error) throw error;
 
                 alert(`Incident ${normalizedId} closed successfully.`);
-
-                try {
-                    await clearUnitsForIncident(incident, incident.last4);
-                } catch (e) {
-                    console.error('Error clearing unit incident info:', e);
-                    alert('Incident closed, but failed to clear incident info from units. Please check unit statuses manually.');
-                }
-
                 playSound('callClosed');
                 await refreshCallTable();
                 await refreshAdvCallTable(currentAdvCallsView);
-
                 if (currentIncidentId === normalizedId) {
                     await closeIncident();
                 }
-
                 return { ok: true, found: true };
-
             } catch (err) {
                 console.error('Error closing incident:', err);
                 alert(`Failed to close incident: ${err.message}`);
                 return { ok: false, found: false };
             }
         }
+
 
         //-- Close Incident Logic (ic command + footer)--\\
         async function closeIncidentById(id, sourceLabel = 'IC command') {
@@ -6120,8 +6062,12 @@
             if (!result.ok) return;
 
             if (!result.found) {
-                if (error) error.textContent = 'no incident found';
-                alert('no incident found');
+                if (error) error.textContent = 'No incident found with that ID.';
+                return;
+            }
+
+            if (result.alreadyClosed) {
+                if (error) error.textContent = 'This incident is already closed.';
                 return;
             }
 
@@ -6635,6 +6581,7 @@
             const vehCounter = document.getElementById('incVehCounter');
             const perCounter = document.getElementById('incPerCounter');
             const unitCounter = document.getElementById('incUnitCounter');
+            const incHistoryCounter = document.getElementById('incHistoryCounter');
             const incCommentsModalSubmit = document.getElementById('incAdvViewAddCmtsSubmit');
             const dispFile = document.getElementById('dispSubmitBtn');
             dispFile.onclick = () => { handleDisposition(id); };
@@ -6694,7 +6641,7 @@
             if (vehCounter) vehCounter.textContent = `(${vehicles.length})`;
             if (perCounter) perCounter.textContent = `(${persons.length})`;
             if (unitCounter) unitCounter.textContent = `(${String(allUnits.length)})`;
-
+            if (incHistoryCounter) incHistoryCounter.textContent = `(${data.history.length || 0})`;
             const cmtsEl = document.getElementById('inc-adv-view-cmts');
             const beat = document.getElementById('rd');
             const start = document.getElementById('incStart');
@@ -6886,9 +6833,14 @@
 
                 if (incPerActivator) {
                     incPerActivator.onclick = () => {
+                        let addPerEl = document.getElementById('addIncPerBtn');
+                        let remvPerEl = document.getElementById('removeIncPerBtn');
                         if (isIncidentClosedValue(data)) {
-                            alert('Cannot add or edit persons. Incident is closed.');
-                            return;
+                            addPerEl.disabled = true;
+                            remvPerEl.disabled = true;
+                        } else {
+                            addPerEl.disabled = false;
+                            remvPerEl.disabled = false;
                         }
                         showModal('incPerModal');
                         getIncidentPersons(id);
@@ -6897,9 +6849,14 @@
 
                 if (incVehActivator) {
                     incVehActivator.onclick = () => {
+                        let addVehBtnEl = document.getElementById('addIncVehBtn');
+                        let removeVehBtnEl = document.getElementById('removeIncVehBtn');
                         if (isIncidentClosedValue(data)) {
-                            alert('Cannot add or edit vehicles. Incident is closed.');
-                            return;
+                            addVehBtnEl.disabled = true;
+                            removeVehBtnEl.disabled = true;
+                        } else {
+                            addVehBtnEl.disabled = false;
+                            removeVehBtnEl.disabled = false;
                         }
                         showModal('incVehModal');
                         getIncidentVehicles(id);
@@ -6909,6 +6866,14 @@
                 setIncidentSectionState('summary', true);
                 setIncidentSectionState('incidentInfo', true);
                 setIncidentSectionState('unitDetails', true);
+
+                if (surfedPages.length < 7) {
+                    surfedPages.push(`showIncident(${id});`);
+                } else {
+                    surfedPages.shift();
+                    surfedPages.push(`showIncident(${id});`);
+                }
+                currentPageIndex = surfedPages.length - 1;
 
                 await subscribeIncidentDetails(id);
                 refreshIncQueryCounter();
@@ -7265,6 +7230,20 @@
         }
 
         //-- Logic for closing incident details view and cleaning up --\\
+        //-- Footer 'Close' button: guard against closing an already-closed incident --\\
+        async function footerCloseIncident() {
+            if (!currentIncidentId) {
+                alert('No incident is currently open.');
+                return;
+            }
+
+            const isOpen = await ensureIncidentOpenForAction(currentIncidentId, 'close incident');
+            if (!isOpen) return;  // Already closed - ensureIncidentOpenForAction shows the alert
+
+            // closeIncidentByExactId directly since we already have the full ID
+            await closeIncidentByExactId(currentIncidentId, 'footer close button');
+        }
+
         async function closeIncident() {
             const homeFoot = document.getElementById('home-foot');
             const incFoot = document.getElementById('inc-foot');
@@ -7609,6 +7588,11 @@
         function showQueryOptsView(defaultType) {
             const viewIndicator = document.getElementById('currentpage');
             viewIndicator.textContent = 'Query';
+            if (surfedPages.length >= 7) {
+                surfedPages.shift();  // Remove oldest entry
+            }
+            surfedPages.push('Query');
+            currentPageIndex = surfedPages.length - 1;  // Point to newest entry
             restoreMainUI();
             const qv = document.getElementById('query-opts-view');
             const homeContent = document.getElementById('homeContentWrapper');
@@ -8213,35 +8197,76 @@
             const sideNavBtns = document.querySelectorAll('#callboard-sidebar-area .side-nav-btn');
             if (activeIdx !== undefined && sideNavBtns[activeIdx]) sideNavBtns[activeIdx].classList.add('active-calls-tab');
 
-            let query = sbClient
-                .from('calls')
-                .select('id, last4, call_type, call_code, location, status, created_at, beat, prmry, assist, is_active, is_closed, is_pending');
+            const PAGE_SIZE = 100;
+            let offset = 0;
+            let data = [];
 
-            if (currentAdvCallsView === 'active' || currentAdvCallsView === 'assigned') {
-                query = query.or('is_active.eq.true,status.ilike.assigned,status.ilike.active');
-            } else if (currentAdvCallsView === 'closed') {
-                query = query.or('is_closed.eq.true,status.ilike.closed');
-            } else if (currentAdvCallsView === 'pending') {
-                query = query.or('is_pending.eq.true,status.ilike.pending');
+            while (true) {
+                const { data: pageData, error } = await sbClient
+                    .from('calls')
+                    .select('id, last4, call_type, call_code, location, status, created_at, beat, prmry, assist, is_active, is_closed, is_pending')
+                    .order('created_at', { ascending: false })
+                    .range(offset, offset + PAGE_SIZE - 1);
+
+                if (error) {
+                    console.error('Error fetching calls for live monitor:', error);
+                    return;
+                }
+
+                if (!Array.isArray(pageData) || pageData.length === 0) {
+                    break;
+                }
+
+                data = data.concat(pageData);
+
+                if (pageData.length < PAGE_SIZE) {
+                    break;
+                }
+
+                offset += PAGE_SIZE;
+
+                if (offset > 1000000) {
+                    console.warn('Stopped paging calls at 1,000,000 max for api :)');
+                    break;
+                }
             }
 
-            const { data, error } = await query.order('created_at', { ascending: false });
+            // Stable ordering for UI by incident last4 descending (fallback to created_at desc).
+            data.sort((a, b) => {
+                const aLast4 = Number(a?.last4);
+                const bLast4 = Number(b?.last4);
 
-            if (error) {
-                console.error('Error fetching calls for live monitor:', error);
-                return;
-            }
+                const aLast4Valid = Number.isFinite(aLast4);
+                const bLast4Valid = Number.isFinite(bLast4);
+
+                if (aLast4Valid && bLast4Valid && aLast4 !== bLast4) {
+                    return bLast4 - aLast4;
+                }
+
+                const aTime = Date.parse(a?.created_at || '');
+                const bTime = Date.parse(b?.created_at || '');
+                if (Number.isFinite(aTime) && Number.isFinite(bTime)) {
+                    return bTime - aTime;
+                }
+
+                return String(b?.id || '').localeCompare(String(a?.id || ''));
+            });
 
             const tableBody = document.getElementById('adv-call-table-real');
             if (!tableBody) return;
 
             tableBody.innerHTML = '';
 
+            const unclassified = (data || []).filter(c => {
+                const s = String(c.status || '').toLowerCase();
+                return !c.is_closed && s !== 'closed' && !c.is_pending && s !== 'pending' && !c.is_active && s !== 'assigned' && s !== 'active';
+            });
+
             (data || []).forEach(call => {
                 const statusNorm = String(call.status || '').toLowerCase();
-                const isClosed = call.is_closed === true || statusNorm === 'closed';
-                const isPending = call.is_pending === true || statusNorm === 'pending';
-                const isAssigned = call.is_active === true || statusNorm === 'assigned' || statusNorm === 'active';
+                const isClosed = !!call.is_closed || statusNorm === 'closed';
+                const isPending = !isClosed && (!!call.is_pending || statusNorm === 'pending');
+                const isAssigned = !isClosed && !isPending && (!!call.is_active || statusNorm === 'assigned' || statusNorm === 'active');
 
                 const row = document.createElement('tr');
                 row.className = isClosed ? 'row-closed' : (isPending ? 'row-pending' : (isAssigned ? 'row-active' : 'row-pending'));
@@ -8361,15 +8386,29 @@
         }
 
         async function removeQueryFromIncident(index) {
+            const userInfo = sessionStorage.getItem('userInfo');
+            const currentUser = userInfo ? userInfo.split(',')[0] : null;
+            const currentUnit = userInfo ? userInfo.split(',')[2] : null;
+
             if (!sbClient) return;
             const incId = await getEffectiveIncidentId();
             if (!incId) return;
             try {
-                const { data } = await sbClient.from('calls').select('queries').eq('id', incId).maybeSingle();
+                const { data } = await sbClient
+                    .from('calls')
+                    .select('queries, history')
+                    .eq('id', incId)
+                    .maybeSingle();
                 const rawQ = Array.isArray(data?.queries) ? data.queries : [];
                 const parsed = rawQ.map(q => { try { return typeof q === 'string' ? JSON.parse(q) : q; } catch (e) { return null; } }).filter(Boolean);
                 parsed.splice(index, 1);
-                const { error } = await sbClient.from('calls').update({ queries: parsed }).eq('id', incId);
+                const { error } = await sbClient
+                    .from('calls')
+                    .update({
+                        queries: parsed,
+                        history: [data.history, `${currentUnit} (${currentUser}) removed a query result from the incident.`].filter(Boolean).join(' | ')
+                    })
+                    .eq('id', incId);
                 if (error) throw error;
                 refreshIncQueryCounter();
                 openIncQueryResultsModal();
@@ -8423,7 +8462,13 @@
                 const { data: existing } = await sbClient.from('calls').select('queries').eq('id', incId).maybeSingle();
                 const currentQueries = Array.isArray(existing?.queries) ? existing.queries : [];
                 const updated = [...currentQueries, queryEntry];
-                const { error } = await sbClient.from('calls').update({ queries: updated }).eq('id', incId);
+                const { error } = await sbClient
+                    .from('calls')
+                    .update({
+                        queries: updated,
+                        history: [existing?.history, `${_callsign} (${_userInfo ? _userInfo.split(',')[0] : 'Unknown'}) attached a query result to the incident.`].filter(Boolean).join(' | ')
+                    })
+                    .eq('id', incId);
                 if (error) throw error;
                 alert(`Query attached to incident ${incId}.`);
                 refreshIncQueryCounter();
@@ -8662,16 +8707,6 @@
             if (!window._callsAdvSelectedId) { alert('Select an incident first.'); return; }
             currentIncidentId = window._callsAdvSelectedId;
             handleAttach();
-        }
-
-        function callsAdvTablePrev() {
-            const tb = document.getElementById('callboard-table-area');
-            if (tb) tb.scrollBy({ top: -100, behavior: 'smooth' });
-        }
-
-        function callsAdvTableNext() {
-            const tb = document.getElementById('callboard-table-area');
-            if (tb) tb.scrollBy({ top: 100, behavior: 'smooth' });
         }
 
 
@@ -9036,8 +9071,15 @@
                     throw updateError;
                 }
 
-                await clearUnitsForIncident(incident, incident.last4);
-
+                mainDispoEl.value = '';
+                dispoCmtsEl.value = '';
+                prmryDispoEl.value = '';
+                superCallsignEl.value = '';
+                superDispoEl.value = '';
+                superPresentEl.checked = false;
+                bwvUsedEl.checked = false;
+                dicvUsedEl.checked = false;
+                repNumEl.value = '';
                 closeModal('dispositionModal');
                 closeIncident();
                 await refreshCallTable();
@@ -9054,6 +9096,32 @@
          * HELPER FUNCTIONS BEYOND THIS POINT (that dont fall into any specific category)
          */
 
+        function movePages(direction) {
+            if (surfedPages.length === 0) return;
+            if (direction === 'next') {
+                if (currentPageIndex < surfedPages.length - 1) {
+                    currentPageIndex++;
+                    executePage(surfedPages[currentPageIndex]);
+                }
+            } else if (direction === 'prev') {
+                // Move backward in history
+                if (currentPageIndex > 0) {
+                    currentPageIndex--;
+                    executePage(surfedPages[currentPageIndex]);
+                }
+            }
+        }
+
+        function executePage(page) {
+            // Check if it's an incident display command (contains 'showIncident')
+            if (typeof page === 'string' && page.includes('showIncident')) {
+                // Execute the incident display
+                eval(page);
+            } else {
+                // It's a view name, navigate to it
+                updateView(page);
+            }
+        }
         async function syncLiveMonitorsForCurrentView() {
             if (!sbClient) return;
 
@@ -9766,6 +9834,13 @@
                 if (queryFoot) queryFoot.style.display = 'none';
                 if (homeFoot) homeFoot.style.display = 'flex';
                 if (viewIndicator) viewIndicator.textContent = 'Home';
+                if (surfedPages.length < 7) {
+                    surfedPages.push('incidentsView');
+                } else {
+                    surfedPages.shift();  // Remove oldest entry
+                    surfedPages.push('incidentsView');
+                }
+                currentPageIndex = surfedPages.length - 1;  // Point to newest entry
                 currentView = 'incidentsView';
                 lastMainView = currentView;
                 flickerIn(tableArea);
@@ -9782,6 +9857,13 @@
                 if (queryFoot) queryFoot.style.display = 'none';
                 if (homeFoot) homeFoot.style.display = 'flex';
                 if (viewIndicator) viewIndicator.textContent = 'Home';
+                if (surfedPages.length < 7) {
+                    surfedPages.push('units-table');
+                } else {
+                    surfedPages.shift();  // Remove oldest entry
+                    surfedPages.push('units-table');
+                }
+                currentPageIndex = surfedPages.length - 1;  // Point to newest entry
                 currentView = 'units-table';
                 lastMainView = currentView;
                 flickerIn(unitsTable);
@@ -9800,6 +9882,12 @@
                 if (homeFoot) homeFoot.style.display = 'none';
                 if (advCallFoot) advCallFoot.style.display = 'flex';
                 if (viewIndicator) viewIndicator.textContent = 'Home';
+                if (surfedPages.length() < 7) {
+                    surfedPages.push('callsAdvTable');
+                } else {
+                    surfedPages.pop();
+                    surfedPages.push('callsAdvTable');
+                }
                 currentView = 'callsAdvTable';
                 lastMainView = currentView;
                 switchCallsSubView(window._callsSubView || 'callboard');
@@ -9818,6 +9906,12 @@
                 if (homeFoot) homeFoot.style.display = 'none';
                 if (queryResultsView) queryResultsView.style.display = 'flex';
                 if (viewIndicator) viewIndicator.textContent = 'Query';
+                if (surfedPages.length() < 7) {
+                    surfedPages.push('queryResults');
+                } else {
+                    surfedPages.pop();
+                    surfedPages.push('queryResults');
+                }
                 currentView = 'queryResults';
                 lastMainView = currentView;
                 switchQueryFolder(window._queryFolder || 'responses', null);
@@ -9837,6 +9931,12 @@
                 if (advCallFoot) advCallFoot.style.display = 'none';
                 if (viewIndicator) viewIndicator.textContent = 'Home';
                 if (queryResultsView) queryResultsView.style.display = 'none';
+                if (surfedPages.length() < 7) {
+                    surfedPages.push('dispatchLogon');
+                } else {
+                    surfedPages.pop();
+                    surfedPages.push('dispatchLogon');
+                }
                 currentView = 'dispatchLogon';
                 flickerIn(dispatchLogonArea);
                 await syncLiveMonitorsForCurrentView();
@@ -9846,33 +9946,33 @@
         //-- Calls View Filters --\\
         function applyCallsViewFilters() {
             const showClosed = document.getElementById('showClosedCalls')?.checked;
-            const showToday = document.getElementById('showCallsToday')?.checked;
             const unitFilter = (document.getElementById('unitFilter')?.value || '').trim().toLowerCase();
 
             const rows = document.querySelectorAll('#callsAdvTable tbody tr');
             rows.forEach(row => {
-                const status = (row.dataset.status || '').toLowerCase();
+                const status = (row.dataset.status || '').toLowerCase();  // 'closed' | 'pending' | 'assigned'
                 const units = (row.dataset.units || '').toLowerCase();
-                const date = row.dataset.date || '';
 
                 let visible = true;
 
-                if (currentAdvCallsView !== 'closed' && !showClosed && status === 'closed') {
-                    visible = false;
+                // Tab filtering: only show rows matching the current view tab
+                if (currentAdvCallsView === 'closed') {
+                    if (status !== 'closed') visible = false;
+                } else if (currentAdvCallsView === 'pending') {
+                    if (status !== 'pending') visible = false;
+                } else {
+                    // assigned/active view - hide closed (unless checkbox on) and pending
+                    if (status === 'closed') {
+                        if (!showClosed) visible = false;
+                    } else if (status === 'pending') {
+                        visible = false;  // pending has its own tab
+                    }
                 }
 
                 if (unitFilter) {
                     const unitFilters = unitFilter.split(',').map(u => u.trim()).filter(u => u);
                     const matchesAnyUnit = unitFilters.some(u => units.includes(u));
-                    if (!matchesAnyUnit) {
-                        visible = false;
-                    }
-                }
-
-                if (showToday) {
-                    console.log('button enabled');
-                } else {
-                    console.log('button disabled');
+                    if (!matchesAnyUnit) visible = false;
                 }
 
                 row.style.setProperty('display', visible ? 'table-row' : 'none', 'important');
