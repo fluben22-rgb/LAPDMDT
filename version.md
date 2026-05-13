@@ -8,6 +8,7 @@ Entire ppre-release of MDT made, to enter testing very soon!!! :)
 
 1. Querying added!
 Can query a person only for now, they are added to the queery table, to query simply press the main aciton query button, the other two take you to the query table. Dispatch can also query.
+
 Queries can be added to an inident using footer buttons or the paperclip icon. They can be viewed from query results sidebar in incident view. A sound will play when any query is made.
 2. Incident Edit Button (in footer) now actually does something
 Allows you to edit base incident data
@@ -21,17 +22,26 @@ Allows you to edit base incident data
 10. Calls advanced view changed to be more "spec" (this is the vie that allows you to see closed calls)
 11. Made selecting your watch a dropdown
 
-# [V 0.1.1]
-##### April 30th, 2026 - Backend revamp + Bug Fixes
+# [V. 0.1.5]
+##### May 12th, 2026
 
-1. Images not loading on devices should be fixed
-2. Entire backend revamped, requests now requiring a JWT token and some are mapped thru edge functiosn for high seveirty
-3. Force logoff now created, required to set logoff to TRUE in database
-4. Querying revamped to be more secure (minor whoops last time)
+Small fixes folks, mainly for bugs :)
 
-^ This update is most likely to have bugs do to the ammount of over-hauling done... report them to me!!!!!! I'm a bug eater... i consume bug
+ADDITIONS:
+1. The back and forword buttons now actually navigate between pages
+2. Can now view vehicles and persons on closed incidents
+3. Added incident history for more actions
+4. Gave the incident history counter functionality
 
-# [V 0.1.2]
-##### May 3rd, 2026 - Backend changes for dispatch
+CHANGES:
+1. De-attaching units from incident now handled on server side instead of client to avoid people still being attached on incident close due to enhanced security, sorry about this!
+2. Can no longer double close calls by pressing the footer button or using incident close command
 
-1. Dispatch role in server updated upon key being verified now, allowing to update other units
+FIXES:
+1. Dispatch now given elevated permissions to manage units on the server side
+2. Modal styles remade in order to mimic how they are in real life
+3. Closing a modal should reset most fields (besides vehicle and persons fields, I'll get to it later...)
+4. When selecting calls in dark mode it should actually show instead of being nothing
+5. Help button in bottom footer now works
+6. About button in bottom footer now works
+7. Fixed the mystical "ghost" call
