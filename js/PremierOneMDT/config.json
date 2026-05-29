@@ -1,0 +1,25 @@
+{
+    "sound_urls": {
+        "gpsOffline": "https://od.lk/s/MzRfMTAwODg3OTc2Xw/2026-04-12-120048_115417.mp3",
+        "logon": "https://od.lk/s/MzRfMTAwODg3OTc5Xw/radio-turned-on-tone-%28motorola%29-made-with-Voicemod.mp3",
+        "untUpd": "https://od.lk/d/MzRfMTAwMjE2MDY5Xw/chimes.mp3",
+        "newCall": "https://od.lk/d/MzRfMTAwMjE2MDY4Xw/ding.mp3",
+        "query": "https://od.lk/d/MzRfMTAwMjE2MDcxXw/notify.mp3",
+        "callClosed": "https://od.lk/s/MzRfMTAwMjgzNDMxXw/Speech_On%5B1%5D.wav",
+        "newCmt": "https://od.lk/s/MzRfMTAwMjgzNDQyXw/Windows_Restore%5B1%5D.wav"
+    },
+    "supabase": {
+        "supabaseUrl": "https://lgajaitgqqznzlzjazxn.supabase.co",
+        "supabaseKey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxnYWphaXRncXF6bnpsemphenhuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAzMDg2NzQsImV4cCI6MjA4NTg4NDY3NH0.Sm_Y4XiwCwjVtdvNEALNsDNY4EDGVI2KIWXkp3VdmfQ"
+    },
+    "flags": {
+        "loadByDefault": false,
+        "loginEnabled": true
+    },
+    "vars": {
+        "inVehicleOptions": ["In Vehicle", "Out of Vehicle"],
+        "unitStatusOptions": ["Start of Watch", "Available", "End of Watch", "At Scene not Investigating", "Code 6", "Station", "Enroute", "Unavailable"],
+        "unitCycleState": { "invehicle": 0, "enroute": 0 }
+    }
+    
+}

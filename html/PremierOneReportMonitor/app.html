@@ -1,0 +1,186 @@
+<div class="p1r-root" id="p1r-root">
+    <div class="p1r-login" id="p1r-login">
+        <section class="p1r-login-screen" id="p1r-login-step-hash">
+            <div class="p1r-login-card">
+                <div class="p1r-login-title">PremierOne Records</div>
+
+                <label for="p1r-email">Email</label>
+                <input id="p1r-email" type="email" placeholder="serial@lapd.org" autocomplete="off">
+
+                <label for="p1r-password">Password</label>
+                <input id="p1r-password" type="password" placeholder="Enter password" autocomplete="off">
+
+                <button class="p1r-btn p1r-btn-primary" onclick="if(typeof __p1rHandleAction === 'function')__p1rHandleAction('login-hash',this)">Continue</button>
+                <div class="p1r-login-error" id="p1r-login-error"></div>
+            </div>
+        </section>
+
+        <section class="p1r-login-screen hidden" id="p1r-login-step-supervisor">
+            <div class="p1r-login-card">
+                <div class="p1r-login-title">Supervisor Key Input</div>
+
+                <div class="p1r-login-context" id="p1r-login-context"></div>
+
+                <label for="p1r-supervisor-key">Supervisor Key</label>
+                <input id="p1r-supervisor-key" type="password" placeholder="Enter supervisor key" autocomplete="off">
+
+                <div class="p1r-login-step-actions">
+                    <button class="p1r-btn" onclick="if(typeof __p1rHandleAction === 'function')__p1rHandleAction('login-back',this)">Back</button>
+                    <button class="p1r-btn p1r-btn-primary" onclick="if(typeof __p1rHandleAction === 'function')__p1rHandleAction('login-supervisor',this)">Verify Key</button>
+                </div>
+                <div class="p1r-login-error" id="p1r-supervisor-error"></div>
+            </div>
+        </section>
+    </div>
+
+    <div class="p1r-app hidden" id="p1r-app">
+        <div class="p1r-app-bar">
+            <div>
+                <span class="p1r-app-title">PremierOne Records</span>
+                <span class="p1r-app-subtitle">Motorola Solutions</span>
+            </div>
+            <div class="p1r-user-badge" id="p1r-user-badge">Signed in</div>
+        </div>
+
+        <div class="p1r-menu-bar">
+            <button class="p1r-menu-btn" data-menu="file" onclick="event.stopPropagation();if(typeof __p1rHandleMenu === 'function')__p1rHandleMenu('file',this)">File</button>
+            <button class="p1r-menu-btn" data-menu="view" onclick="event.stopPropagation();if(typeof __p1rHandleMenu === 'function')__p1rHandleMenu('view',this)">View</button>
+            <button class="p1r-menu-btn" onclick="if(typeof __p1rHandleAction === 'function')__p1rHandleAction('open-help',this)">Help</button>
+            <div class="p1r-menu-spacer"></div>
+            <button class="p1r-menu-icon" title="Employee Search" onclick="if(typeof __p1rHandleAction === 'function')__p1rHandleAction('open-serial-search',this)"><span class="mif-search"></span></button>
+            <button class="p1r-menu-btn" onclick="if(typeof __p1rHandleAction === 'function')__p1rHandleAction('open-advanced-search',this)">Advanced Search</button>
+        </div>
+
+        <div class="p1r-menu-popover hidden" id="p1r-file-menu">
+            <button onclick="if(typeof __p1rHandleAction === 'function')__p1rHandleAction('export-roster-csv',this)">Export Current Roster</button>
+            <button onclick="if(typeof __p1rHandleAction === 'function')__p1rHandleAction('export-current-docx',this)">Current Data</button>
+            <button onclick="if(typeof __p1rHandleAction === 'function')__p1rHandleAction('save-as',this)">Save As...</button>
+        </div>
+
+        <div class="p1r-menu-popover hidden" id="p1r-view-menu">
+            <button onclick="if(typeof __p1rHandleAction === 'function')__p1rHandleAction('set-view-fullscreen',this)">Full Screen</button>
+            <button onclick="if(typeof __p1rHandleAction === 'function')__p1rHandleAction('set-view-windowed',this)">Windowed</button>
+            <button onclick="if(typeof __p1rHandleAction === 'function')__p1rHandleAction('set-view-minimize',this)">Minimize</button>
+        </div>
+
+        <div class="p1r-command-bar">
+            <button class="p1r-btn" onclick="if(typeof __p1rHandleAction === 'function')__p1rHandleAction('go-lobby',this)"><span class="mif-home"></span>Lobby</button>
+            <button class="p1r-btn" id="p1r-back-btn" onclick="if(typeof __p1rHandleAction === 'function')__p1rHandleAction('go-back',this)" disabled><span class="mif-arrow-left"></span>Back</button>
+            <button class="p1r-btn" id="p1r-forward-btn" onclick="if(typeof __p1rHandleAction === 'function')__p1rHandleAction('go-forward',this)" disabled><span class="mif-arrow-right"></span>Forward</button>
+            <button class="p1r-btn" disabled><span class="mif-bubbles"></span>Messaging</button>
+            <button class="p1r-btn" onclick="if(typeof __p1rHandleAction === 'function')__p1rHandleAction('open-change-password',this)"><span class="mif-key"></span>Change Password</button>
+            <button class="p1r-btn" onclick="if(typeof __p1rHandleAction === 'function')__p1rHandleAction('open-query',this)"><span class="mif-search"></span>Query</button>
+            <button class="p1r-btn p1r-btn-danger" onclick="if(typeof __p1rHandleAction === 'function')__p1rHandleAction('logout',this)"><span class="mif-exit"></span>Logout</button>
+        </div>
+
+        <div class="p1r-tab-strip">
+            <div class="p1r-tab-title" id="p1r-tab-title">Lobby</div>
+            <button class="p1r-tab-close" onclick="if(typeof __p1rHandleAction === 'function')__p1rHandleAction('go-lobby',this)">X</button>
+            <button class="p1r-tab-plus" disabled>+</button>
+        </div>
+
+        <div class="p1r-workspace">
+            <aside class="p1r-sidebar">
+                <section class="p1r-nav-section">
+                    <div class="p1r-nav-header">
+                        <span class="p1r-nav-icon">🚓</span>
+                        <span class="p1r-nav-title">Operations</span>
+                    </div>
+                    <button class="p1r-nav-item" data-page="operations" onclick="event.stopPropagation();if(typeof __p1rHandlePage === 'function')__p1rHandlePage('operations',this)">Operations</button>
+                    <button class="p1r-nav-item" data-page="accident" onclick="event.stopPropagation();if(typeof __p1rHandlePage === 'function')__p1rHandlePage('accident',this)">Accident</button>
+                    <button class="p1r-nav-item" data-page="booking" onclick="event.stopPropagation();if(typeof __p1rHandlePage === 'function')__p1rHandlePage('booking',this)">Booking</button>
+                    <button class="p1r-nav-item" data-page="calls-for-service" onclick="event.stopPropagation();if(typeof __p1rHandlePage === 'function')__p1rHandlePage('calls-for-service',this)">Calls for Service</button>
+                    <button class="p1r-nav-item" data-page="citations" onclick="event.stopPropagation();if(typeof __p1rHandlePage === 'function')__p1rHandlePage('citations',this)">Citations</button>
+                    <button class="p1r-nav-item" data-page="field-investigations" onclick="event.stopPropagation();if(typeof __p1rHandlePage === 'function')__p1rHandlePage('field-investigations',this)">Field Investigations</button>
+                    <button class="p1r-nav-item" data-page="impounds" onclick="event.stopPropagation();if(typeof __p1rHandlePage === 'function')__p1rHandlePage('impounds',this)">Impounds</button>
+                </section>
+
+                <section class="p1r-nav-section">
+                    <div class="p1r-nav-header">
+                        <span class="p1r-nav-icon">📁</span>
+                        <span class="p1r-nav-title">Cases</span>
+                    </div>
+                    <button class="p1r-nav-item" data-page="cases" onclick="event.stopPropagation();if(typeof __p1rHandlePage === 'function')__p1rHandlePage('cases',this)">Cases</button>
+                    <button class="p1r-nav-item" data-page="all-officer-reports" onclick="event.stopPropagation();if(typeof __p1rHandlePage === 'function')__p1rHandlePage('all-officer-reports',this)">All Officer Reports</button>
+                    <button class="p1r-nav-item" data-page="all-officer-dispositions" onclick="event.stopPropagation();if(typeof __p1rHandlePage === 'function')__p1rHandlePage('all-officer-dispositions',this)">All Officer Dispositions</button>
+                </section>
+
+                <section class="p1r-nav-section">
+                    <div class="p1r-nav-header">
+                        <span class="p1r-nav-icon">👤</span>
+                        <span class="p1r-nav-title">Staff</span>
+                    </div>
+                    <button class="p1r-nav-item" data-page="staff" onclick="event.stopPropagation();if(typeof __p1rHandlePage === 'function')__p1rHandlePage('staff',this)">Staff</button>
+                    <button class="p1r-nav-item" data-page="attendance" onclick="event.stopPropagation();if(typeof __p1rHandlePage === 'function')__p1rHandlePage('attendance',this)">Attendance</button>
+                    <button class="p1r-nav-item" data-page="roster" onclick="event.stopPropagation();if(typeof __p1rHandlePage === 'function')__p1rHandlePage('roster',this)">Roster</button>
+                    <button class="p1r-nav-item" data-page="logged-on" onclick="event.stopPropagation();if(typeof __p1rHandlePage === 'function')__p1rHandlePage('logged-on',this)">Logged On</button>
+                </section>
+            </aside>
+
+            <main class="p1r-content">
+                <div class="p1r-content-title" id="p1r-content-title">Lobby</div>
+                <div class="p1r-content-body" id="p1r-content-body"></div>
+            </main>
+        </div>
+    </div>
+
+    <div class="p1r-modal hidden" id="p1r-modal-serial">
+        <div class="p1r-modal-card">
+            <div class="p1r-modal-title">Employee Search by Serial #</div>
+            <input id="p1r-serial-input" type="text" placeholder="Enter serial number">
+            <div class="p1r-modal-actions">
+                <button class="p1r-btn" onclick="if(typeof __p1rHandleAction === 'function')__p1rHandleAction('close-modals',this)">Cancel</button>
+                <button class="p1r-btn p1r-btn-primary" onclick="if(typeof __p1rHandleAction === 'function')__p1rHandleAction('submit-serial-search',this)">Search</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="p1r-modal hidden" id="p1r-modal-advanced">
+        <div class="p1r-modal-card">
+            <div class="p1r-modal-title">Advanced Incident Search</div>
+            <input id="p1r-advanced-input" type="text" placeholder="Enter full incident id">
+            <div class="p1r-modal-actions">
+                <button class="p1r-btn" onclick="if(typeof __p1rHandleAction === 'function')__p1rHandleAction('close-modals',this)">Cancel</button>
+                <button class="p1r-btn p1r-btn-primary" onclick="if(typeof __p1rHandleAction === 'function')__p1rHandleAction('submit-advanced-search',this)">Search</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="p1r-modal hidden" id="p1r-modal-password">
+        <div class="p1r-modal-card">
+            <div class="p1r-modal-title">Request Password Change</div>
+            <input id="p1r-pass-email" type="email" placeholder="Exact email">
+            <input id="p1r-pass-reason" type="text" placeholder="Reason for change">
+            <input id="p1r-pass-new" type="password" placeholder="Requested new password">
+            <div class="p1r-modal-actions">
+                <button class="p1r-btn" onclick="if(typeof __p1rHandleAction === 'function')__p1rHandleAction('close-modals',this)">Cancel</button>
+                <button class="p1r-btn p1r-btn-primary" onclick="if(typeof __p1rHandleAction === 'function')__p1rHandleAction('submit-password-request',this)">Send Request</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="p1r-modal hidden" id="p1r-modal-report-review">
+        <div class="p1r-modal-card p1r-review-modal-card">
+            <div class="p1r-modal-title" id="p1r-report-review-title">Report Review</div>
+            <div class="p1r-review-preview" id="p1r-report-review-body"></div>
+            <div class="p1r-review-reason-wrap hidden" id="p1r-report-review-reason-wrap">
+                <label for="p1r-report-review-reason">Denial Narrative</label>
+                <textarea id="p1r-report-review-reason" class="p1r-textarea" placeholder="Enter denial reason"></textarea>
+            </div>
+            <div class="p1r-modal-actions">
+                <button class="p1r-btn" onclick="if(typeof __p1rHandleAction === 'function')__p1rHandleAction('close-modals',this)">Cancel</button>
+                <button class="p1r-btn p1r-btn-primary" id="p1r-report-review-submit" onclick="if(typeof __p1rHandleAction === 'function')__p1rHandleAction('submit-report-review',this)">Submit</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="p1r-modal hidden" id="p1r-modal-denial-reason">
+        <div class="p1r-modal-card p1r-review-modal-card">
+            <div class="p1r-modal-title" id="p1r-denial-title">Denial Reason</div>
+            <div class="p1r-review-preview" id="p1r-denial-body"></div>
+            <div class="p1r-modal-actions">
+                <button class="p1r-btn p1r-btn-primary" onclick="if(typeof __p1rHandleAction === 'function')__p1rHandleAction('close-modals',this)">Close</button>
+            </div>
+        </div>
+    </div>
+</div>

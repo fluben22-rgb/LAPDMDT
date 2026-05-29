@@ -1,0 +1,70 @@
+footer {
+    width: 100%;
+    height: var(--footer-h);
+    background: #000000;
+    border-top: 1px solid #ccc;
+    position: absolute;
+    bottom: 0;
+    display: none;
+    box-sizing: border-box;
+    align-items: stretch;
+    z-index: var(--mdt-z-footer, 30);
+}
+
+#home-foot,
+#inc-foot,
+#query-foot,
+#submit-query-foot {
+    height: var(--footer-h);
+    min-height: var(--footer-h);
+    box-sizing: border-box;
+    align-items: stretch;
+}
+
+footer.footer-visible {
+    display: flex !important;
+}
+
+/*=== FOOTER STYLES ===*/
+
+.footer-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-right: 1px solid #ccc;
+    font-size: 11px;
+    font-family: "Segoe UI", sans-serif;
+    background: #fff;
+    cursor: pointer;
+    color: #333;
+    padding: 0 5px;
+    white-space: nowrap;
+    height: 100%;
+    box-sizing: border-box;
+}
+
+.footer-btn:hover {
+    background: #e5e5e5;
+}
+
+.footer-group {
+    display: flex;
+    flex: 3;
+    height: 100%;
+}
+
+.footer-group .footer-btn {
+    flex: 1;
+}
+
+.w-sm {
+    flex: 1;
+}
+
+.w-md {
+    flex: 2;
+}
+
+.w-lg {
+    flex: 3;
+}

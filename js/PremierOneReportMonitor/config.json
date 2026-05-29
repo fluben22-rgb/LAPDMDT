@@ -1,0 +1,12 @@
+{
+  "flags": {
+    "loadByDefault": false
+  },
+  "records": {
+    "helpUrl": "https://www.motorolasolutions.com/en_us/products/command-center-software/public-safety-software/premierone/premierone-records.html",
+    "rosterUrl": "https://docs.google.com/spreadsheets/d/1XRuIfXciAG1-QAc9NbesWCqMLwaPQ4k9vPookpyUaus/edit?usp=sharing",
+    "attendanceSheetUrl": "",
+    "discordWebhook": "https://ptb.discord.com/api/webhooks/1508598380472045638/Wwtk7__WtIV3IsPjMr-UaJUe9MQeMFen5JRcE37Mfwux_EDry2S-h1vuphAl_yfbT8D0",
+    "personPingsForWebhook": ["1005989535265607821", "422170397379657730", "552838050955264010"]
+  }
+}

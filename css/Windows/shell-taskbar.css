@@ -1,0 +1,187 @@
+.win-taskbar {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 5vh;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 2px 8px;
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(22, 22, 22, 0.86);
+    backdrop-filter: blur(22px) saturate(180%);
+}
+
+.win-taskbar-left,
+.win-taskbar-right,
+.win-taskbar-pinned {
+    display: flex;
+    align-items: center;
+}
+
+.win-taskbar-left {
+    gap: 2px;
+    margin: 0;
+    padding-left: 4px;
+}
+
+.win-taskbar-right {
+    position: absolute;
+    right: 8px;
+    gap: 0;
+}
+
+.win-taskbar-pinned {
+    gap: 2px;
+}
+
+.win-task-btn {
+    width: clamp(30px, 2.82vh, 34px);
+    height: clamp(30px, 2.82vh, 34px);
+    border: none;
+    border-radius: 6px;
+    background: transparent;
+    color: #e7eefb;
+    cursor: pointer;
+    transition: background-color 0.15s ease, transform 0.1s ease;
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+}
+
+.win-task-btn:hover {
+    background: rgba(255, 255, 255, 0.14);
+}
+
+.win-task-btn:active {
+    transform: scale(0.92);
+}
+
+.win-task-btn.is-open::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: 2px;
+    width: 8px;
+    height: 3px;
+    border-radius: 999px;
+    transform: translateX(-50%);
+    background: #cde1ff;
+}
+
+.win-task-btn.is-active::after {
+    width: 14px;
+    background: #ffffff;
+}
+
+.win-task-btn .mif-2x {
+    font-size: 18px !important;
+}
+
+.win-task-btn .win-app-icon,
+.win10-logo {
+    width: 78%;
+    height: 78%;
+    object-fit: contain;
+}
+
+.win-task-search-wrap {
+    height: 30px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    background: rgba(0, 0, 0, 0.5);
+    color: #dbe7ff;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0 10px;
+    margin: 0 5px;
+}
+
+.win-task-search-wrap .mif-search {
+    font-size: 13px;
+    opacity: 0.85;
+}
+
+.win-task-search {
+    width: 210px;
+    height: 100%;
+    border: 0;
+    background: transparent !important;
+    color: #eef4ff;
+    padding: 0;
+    outline: 0 !important;
+    border-width: 0 !important;
+    box-sizing: border-box;
+    appearance: none;
+    -webkit-appearance: none;
+    box-shadow: none;
+}
+
+.win-task-search:focus,
+.win-task-search:focus-visible {
+    outline: 0 !important;
+    box-shadow: none !important;
+    border: 0 !important;
+}
+
+.win-task-search::placeholder {
+    color: rgba(238, 244, 255, 0.8);
+}
+
+.win-task-datetime {
+    color: #f2f6ff;
+    font-size: 11px;
+    line-height: 1.2;
+    text-align: right;
+    min-width: 76px;
+    margin-left: -1px;
+}
+
+#taskbarHiddenIconsBtn {
+    margin-right: -2px;
+}
+
+#taskbarSoundBtn {
+    margin-right: -1px;
+}
+
+.win-task-preview {
+    position: fixed;
+    min-width: 220px;
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    background: rgba(22, 28, 45, 0.96);
+    padding: 10px;
+    z-index: 2200;
+    display: none;
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.35);
+}
+
+.win-task-preview.active {
+    display: block;
+}
+
+.win-task-preview-title {
+    color: #f2f6ff;
+    font-size: 12px;
+    margin-bottom: 8px;
+}
+
+.win-task-preview-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.win-task-preview-actions button {
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    background: rgba(255, 255, 255, 0.08);
+    color: #eaf1ff;
+    border-radius: 6px;
+    font-size: 12px;
+    padding: 4px 10px;
+}

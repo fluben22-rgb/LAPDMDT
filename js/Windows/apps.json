@@ -1,0 +1,95 @@
+{
+	"PremierOneMDT": {
+		"title": "PremierOne MDT",
+		"iconUrl": "https://web.opendrive.com/api/v1/download/file.json/MzRfMTAwNDg1ODM0Xw?inline=1&preview=1",
+		"rootId": "premierOneApp",
+		"htmlPath": "./html/PremierOneMDT/app.html",
+		"configPath": "./js/PremierOneMDT/config.json",
+		"styles": [
+			"./css/PremierOneMDT/app.css",
+			"./css/PremierOneMDT/styles.css",
+			"./css/PremierOneMDT/footer.css",
+			"./css/PremierOneMDT/login.css",
+			"./css/PremierOneMDT/modals.css"
+		],
+		"scripts": [
+			"./js/PremierOneMDT/supabase.js",
+			"./js/PremierOneMDT/helpers.js",
+			"./js/PremierOneMDT/logon.js",
+			"./js/PremierOneMDT/units.js",
+			"./js/PremierOneMDT/calls.js",
+			"./js/PremierOneMDT/query.js",
+			"./js/PremierOneMDT/reports.js"
+		]
+	},
+	"PremierOneCAD": {
+		"title": "PremierOne CAD",
+		"iconUrl": "https://od.lk/s/MzRfMTAwNDkwNjE0Xw/image-removebg-preview%20%289%29.png",
+		"rootId": "premierOneApp",
+		"htmlPath": "./html/PremierOneCAD/app.html",
+		"configPath": "./js/PremierOneCAD/config.json",
+		"styles": [
+			"./css/PremierOneCAD/app.css"
+		],
+		"scripts": [
+			"./js/PremierOneMDT/supabase.js",
+			"./js/PremierOneCAD/helpers.js",
+			"./js/PremierOneCAD/logon.js",
+			"./js/PremierOneCAD/ui.js",
+			"./js/PremierOneCAD/calls.js",
+			"./js/PremierOneCAD/query.js",
+			"./js/PremierOneCAD/call-export.js"
+		]
+	},
+	"Notepad": {
+		"title": "Notepad",
+		"iconUrl": "https://img.icons8.com/color/48/notepad.png",
+		"htmlPath": "./html/Notepad/app.html",
+		"configPath": "./js/Notepad/config.json",
+		"initFunction": "initNotepadApp",
+		"scripts": [
+			"./js/Notepad/index.js"
+		]
+	},
+	"Outlook": {
+		"title": "Outlook",
+		"iconUrl": "https://img.icons8.com/color/48/ms-outlook.png",
+		"htmlPath": "./html/Outlook/app.html",
+		"configPath": "./js/Outlook/config.json",
+		"initFunction": "initOutlookApp",
+		"scripts": [
+			"./js/Outlook/index.js"
+		]
+	},
+	"Google": {
+		"title": "Google",
+		"iconUrl": "https://www.google.com/favicon.ico",
+		"htmlPath": "./html/Google/app.html",
+		"configPath": "./js/Google/config.json",
+		"initFunction": "initGoogleApp",
+		"scripts": [
+			"./js/Google/index.js"
+		]
+	},
+	"PremierOneReportMonitor": {
+		"title": "Premier One Report Monitor",
+		"iconUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8f/Motorola_M_symbol_blue.svg/960px-Motorola_M_symbol_blue.svg.png?utm_source=commons.wikimedia.org&utm_campaign=index&utm_content=thumbnail",
+		"htmlPath": "./html/PremierOneReportMonitor/app.html",
+		"configPath": "./js/PremierOneReportMonitor/config.json",
+		"initFunction": "initReportMonitorApp",
+		"styles": [
+			"./css/PremierOneReportMonitor/app.css"
+		],
+		"scripts": [
+			"./js/PremierOneReportMonitor/helpers.js",
+			"./js/PremierOneReportMonitor/user-management.js",
+			"./js/PremierOneReportMonitor/attendence.js",
+			"./js/PremierOneReportMonitor/calls.js",
+			"./js/PremierOneReportMonitor/query.js",
+			"./js/PremierOneReportMonitor/export.js",
+			"./js/PremierOneReportMonitor/reports.js",
+			"./js/PremierOneReportMonitor/logon.js",
+			"./js/PremierOneReportMonitor/index.js"
+		]
+	}
+}
