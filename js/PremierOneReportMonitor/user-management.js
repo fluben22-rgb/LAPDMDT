@@ -62,7 +62,13 @@ async function submitPasswordRequest(state, deps) {
         return;
     }
 
-    const payload = {
+    const userToken = sessionStorage.getItem('p1rUserToken');
+    if (!userToken) {
+        alert('Authentication token missing. Please log in again.');
+        return;
+    }
+
+    const payloadData = {
         source: 'PremierOne Records',
         requestedBy: state.userEmail,
         targetEmail: email,
@@ -71,27 +77,45 @@ async function submitPasswordRequest(state, deps) {
         requestedAt: new Date().toISOString()
     };
 
-    const webhook = state.config.records.discordWebhook;
     let pings = state.config.records.personPingsForWebhook || [];
+    let pingString = '';
     if (Array.isArray(pings) && pings.length) {
-        payload.pings = pings.map(id => `<@!${id}>`).join(' ');
-    }
-    if (webhook) {
-        try {
-            await fetch(webhook, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ content: payload.pings || '', embeds: [{ description: '```json\n' + JSON.stringify(payload, null, 2) + '\n```' }] })
-            });
-        } catch (err) {
-            console.error('Discord webhook send failed:', err);
-            alert('Failed to send request webhook.');
-            return;
-        }
-    } else {
-        console.warn('No Discord webhook configured for password request.', payload);
+        pingString = pings.map(id => `<@!${id}>`).join(' ');
     }
 
-    deps.closeModals(state);
-    alert('Password change request sent.');
-};
+    try {
+        const edgeFunctionUrl = state.config.supabase.supabaseUrl + '/functions/v1/send-dhook-msg';
+
+        const response = await fetch(edgeFunctionUrl, {
+            method: 'POST',
+            headers: { 
+                'Content-Type': 'application/json',
+                'apikey': state.config.supabase.supabaseKey,
+                'Authorization': `Bearer ${userToken}`
+            },
+            body: JSON.stringify({
+                reqdHook: "pwd reset",
+                msg: pingString || undefined,
+                embed: [{
+                    title: "change me password matey yar",
+                    color: 3447003,
+                    description: '```json\n' + JSON.stringify(payloadData, null, 2) + '\n```',
+                    timestamp: new Date().toISOString()
+                }]
+            })
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+            throw new Error(result.error || 'Server rejected request');
+        }
+
+        alert('Password change request sent securely.');
+        deps.closeModals(state);
+
+    } catch (err) {
+        console.error('Secure Discord routing failed:', err);
+        alert(`Failed to send request: ${err.message}`);
+    }
+}
