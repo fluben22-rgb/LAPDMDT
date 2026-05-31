@@ -1,0 +1,261 @@
+:root {
+    --win-shell-menu-bg:
+        radial-gradient(circle at 16% 18%, rgba(83, 125, 196, 0.22), transparent 34%),
+        radial-gradient(circle at 84% 12%, rgba(37, 72, 120, 0.18), transparent 30%),
+        linear-gradient(180deg, rgba(11, 19, 36, 0.94), rgba(10, 17, 30, 0.9));
+}
+
+.win-start-menu {
+    position: absolute;
+    left: 50%;
+    bottom: 60px;
+    transform: translateX(-50%) translateY(12px);
+    width: 540px;
+    min-height: 520px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: var(--win-shell-menu-bg);
+    backdrop-filter: blur(44px) saturate(145%);
+    z-index: 30;
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.14s ease, transform 0.14s ease;
+}
+
+.win-start-menu.active {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+    pointer-events: all;
+}
+
+.win-start-search input {
+    width: 100%;
+    height: 34px;
+    border-radius: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(255, 255, 255, 0.11);
+    color: #fff;
+    padding: 0 12px;
+}
+
+.win-start-head {
+    margin: 24px 0 10px;
+    color: #dce7ff;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.win-start-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+}
+
+.win-start-grid button {
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.06);
+    border-radius: 7px;
+    color: #f0f5ff;
+    min-height: 68px;
+    font-size: 13px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+}
+
+.win-start-grid button:hover {
+    background: rgba(255, 255, 255, 0.16);
+}
+
+.win-start-foot {
+    margin-top: auto;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 14px;
+    color: #d9e5ff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.win-start-foot button {
+    border: 0;
+    width: 30px;
+    height: 30px;
+    border-radius: 6px;
+    color: #dce8ff;
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.win-start-power-wrap {
+    position: relative;
+}
+
+.win-start-power-menu,
+.win-context-menu,
+#win-power-menu.win-popup-menu {
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    background: linear-gradient(180deg, rgba(25, 29, 36, 0.97), rgba(20, 24, 31, 0.97));
+    backdrop-filter: blur(40px) saturate(145%);
+    box-shadow: 0 18px 42px rgba(0, 0, 0, 0.4);
+}
+
+.win-start-power-menu {
+    position: absolute;
+    right: 0;
+    bottom: 38px;
+    min-width: 176px;
+    padding: 4px 0;
+    display: none;
+    flex-direction: column;
+    gap: 0;
+    z-index: 32;
+}
+
+.win-start-power-menu.active {
+    display: flex;
+}
+
+#win-power-menu.win-popup-menu {
+    min-width: 176px;
+    padding: 4px 0;
+}
+
+.win-start-power-menu .win-power-action,
+#win-power-menu .win-power-action {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    border: 0;
+    border-radius: 0;
+    margin: 0;
+    text-align: left;
+    min-height: 36px;
+    padding: 8px 12px;
+    background: transparent;
+    color: #eef3ff;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.1px;
+    position: relative;
+    cursor: pointer;
+}
+
+.win-start-power-menu .win-power-action::before,
+#win-power-menu .win-power-action::before {
+    content: '';
+    width: 18px;
+    text-align: center;
+    margin-right: 10px;
+    color: rgba(235, 243, 255, 0.95);
+    opacity: 0.95;
+    font-size: 16px;
+    line-height: 1;
+    font-family: "Segoe UI Symbol", "Segoe UI", sans-serif;
+}
+
+.win-start-power-menu .win-power-action[data-power-action="lock"]::before,
+#win-power-menu .win-power-action[data-power-action="lock"]::before {
+    content: '\1F512';
+    font-size: 13px;
+}
+
+.win-start-power-menu .win-power-action[data-power-action="sleep"]::before,
+#win-power-menu .win-power-action[data-power-action="sleep"]::before {
+    content: '\263E';
+    font-size: 15px;
+}
+
+.win-start-power-menu .win-power-action[data-power-action="shutdown"]::before,
+#win-power-menu .win-power-action[data-power-action="shutdown"]::before {
+    content: '\23FB';
+    font-size: 14px;
+}
+
+.win-start-power-menu .win-power-action[data-power-action="restart"]::before,
+#win-power-menu .win-power-action[data-power-action="restart"]::before {
+    content: '\21BB';
+    font-size: 15px;
+}
+
+.win-start-power-menu .win-power-action:not(:last-child),
+#win-power-menu .win-power-action:not(:last-child) {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.win-start-power-menu .win-power-action:hover,
+#win-power-menu .win-power-action:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.win-start-power-menu .win-power-action:active,
+#win-power-menu .win-power-action:active {
+    background: rgba(255, 255, 255, 0.16);
+}
+
+.win-context-menu {
+    position: fixed;
+    width: 250px;
+    padding: 6px;
+    z-index: 31;
+    display: none;
+}
+
+.win-context-menu.active {
+    display: block;
+}
+
+.win-context-menu button {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 10px;
+    border: 0;
+    background: transparent;
+    color: #e7efff;
+    text-align: left;
+    padding: 8px 10px;
+    border-radius: 6px;
+    font-size: 14px;
+}
+
+.win-context-menu button:hover {
+    background: rgba(255, 255, 255, 0.14);
+}
+
+.win-context-menu hr {
+    border: 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+    margin: 4px 0;
+}
+
+.win-context-menu-icon {
+    width: 16px;
+    height: 16px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 16px;
+    opacity: 0.92;
+}
+
+.win-context-menu-label {
+    flex: 1 1 auto;
+}
+
+.win-context-menu-chevron {
+    margin-left: auto;
+    opacity: 0.7;
+}
+
+#win-power-menu .win-menu-item {
+    border: 0;
+    background: transparent;
+}

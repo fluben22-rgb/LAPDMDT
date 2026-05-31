@@ -1,0 +1,84 @@
+@import url('./Windows/base-windows.css');
+@import url('./Windows/logon-area.css');
+@import url('./Windows/apps-styles.css');
+
+:root {
+    --bar-height: 32px;
+    --close-red: #c80000;
+    --header-h: 32px;
+    --footer-h: 35px;
+}
+
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: #888;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+input[data-role="input"] {
+    padding: 10px !important;
+    border-radius: 0 !important;
+    margin-bottom: 20px !important;
+    width: 80% !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
+
+html,
+body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+/* Plain native-style checkboxes - override all Metro UI custom checkbox styling */
+input[type="checkbox"][data-role="none"] {
+    appearance: auto !important;
+    -webkit-appearance: checkbox !important;
+    border-radius: 0 !important;
+    width: 13px !important;
+    height: 13px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: none !important;
+    border: none !important;
+    box-shadow: none !important;
+    outline: revert !important;
+    opacity: 1 !important;
+    position: static !important;
+    clip: unset !important;
+    clip-path: unset !important;
+    transform: none !important;
+    display: inline-block !important;
+    visibility: visible !important;
+    accent-color: auto;
+}
+
+input[type="checkbox"][data-role="none"]::before,
+input[type="checkbox"][data-role="none"]::after {
+    display: none !important;
+    content: none !important;
+}
+
+/* Kill any Metro UI checkbox wrapper pseudo-elements */
+.checkbox input[type="checkbox"]::before,
+.checkbox input[type="checkbox"]::after,
+label.checkbox::before,
+label.checkbox::after {
+    display: none !important;
+    content: none !important;
+}

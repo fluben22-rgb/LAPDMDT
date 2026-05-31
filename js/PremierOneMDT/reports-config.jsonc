@@ -1,0 +1,93 @@
+{
+    /*
+     * Input Types
+     * text - Single line text input
+     * textarea - Multi line text input 
+     * date - Date input with calendar picker
+     * time - Time input with time picker
+     * dropdown[x] - Dropdown select with options in the brackets, separate options with a comma (ex: dropdown[Option 1,Option 2,Option 3])
+     * checkbox[x] - Checkbox input with options in the brackets, separate options with a comma (ex: checkbox[Option 1,Option 2,Option 3])
+     */
+    /*
+     * Special Input Types
+     * FIRSTLASTSEPERATE - Creates two seperate fields for first and last name of the suspect
+     * PROMPTFORID - When selected, prompts for the drivers license # and automatically inptus the full name of suspect
+     * TABLECOL[X] - Creates a table input with the column names specified in the brackets, separate column names with a comma (ex: TABLECOL[Color,Year,Make,Model,Plate])
+     * INPUTUSERDATA - Will add a button below input to auto fill with the user data 
+     * null - No special input, just a normal input field
+     */
+
+     // Example row: {"name": "", "label": "", "type": "", "required": true/false, "specialInput": ""/null}
+    "reportTypes": [
+        {
+            "id": "arrestReport",
+            "name": "Arrest Report",
+            "fields": [
+                {"name": "nameOfSusp", "label": "NAME OF ARRESTE", "type": "text", "required": true, "specialInput": "FIRSTLASTSEPERATE"},
+                {"name": "dateOfArrest", "label": "DATE OF ARREST", "type": "date", "required": true, "specialInput": null},
+                {"name": "timeOfArrest", "label": "TIME OF ARREST", "type": "time", "required": true, "specialInput": null},
+                {"name": "vehiclesInvolved", "label": "VEHICLES INVOLVED", "type": "textarea", "required": false, "specialInput": "TABLECOL[Color,Year,Make,Model,Plate]"},
+                {"name": "propertySeized", "label": "PROPERTY SEIZED", "type": "textarea", "required": false, "specialInput": "TABLECOL[Item,Description,OtherInfo]"},
+                {"name": "bookingLocation", "label": "NARRATIVE", "type": "textarea", "required": true, "specialInput": null},
+                {"name": "arrestingOfficer", "label": "ARRESTING OFFICER", "type": "text", "required": true, "specialInput": "INPUTUSERDATA"}
+            ]
+        },
+        {
+            "id": "chp180",
+            "name": "CHP 180 (IMPOUND/TOW)",
+            "fields": [
+                {"name": "towingCompany", "label": "TOWING COMPANY", "type": "text", "required": true, "specialInput": null},
+                {"name": "dateOfIncident", "label": "DATE OF INCIDENT", "type": "date", "required": true, "specialInput": null},
+                {"name": "timeOfIncident", "label": "TIME OF INCIDENT", "type": "time", "required": true, "specialInput": null},
+                {"name": "locationOfIncident", "label": "LOCATION OF INCIDENT", "type": "text", "required": true, "specialInput": null},
+                {"name": "vehsTowed", "label": "VEHICLES TOWED", "type": "textarea", "required": false, "specialInput": "TABLECOL[Color,Year,Make,Model,Plate]"},
+                {"name": "vehCondition", "label": "VEHICLE(s) CONDITION", "type": "textarea", "required": true, "specialInput": null},
+                {"name": "forArrest", "label": "VEHICLE USED FOR ARREST?", "type": "text", "required": true, "specialInput": null},
+                {"name": "arrestingOfficer", "label": "ARRESTING OFFICER", "type": "text", "required": true, "specialInput": "INPUTUSERDATA"}
+            ]
+        },
+        {
+            "id": "chp555",
+            "name": "CHP 555 (TC)",
+            "fields": [
+                {"name": "dateOfIncident", "label": "DATE OF INCIDENT", "type": "date", "required": true, "specialInput": null},
+                {"name": "timeOfIncident", "label": "TIME OF INCIDENT", "type": "time", "required": true, "specialInput": null},
+                {"name": "locationOfIncident", "label": "LOCATION OF INCIDENT", "type": "text", "required": true, "specialInput": null},
+                {"name": "reasonOfTC", "label": "PRIMARY REASON FOR COLLISSION", "type": "dropdown[Visibility,Weather Conditions,Road Conditions,Speeding,Disregard of any Traffic Control Device,Obstruction in Roadway, Distracted Driver,Recklss Driving / Driving with no due regard, Other]", "required": true, "specialInput": null},
+                {"name": "typeOfTC", "label": "TYPE OF COLLISSION", "type": "dropdown[Head-On,Side Swipe,Pedestrian Involved,Parked,Train]", "required": true, "specialInput": null},
+                {"name": "partiesInvolved", "label": "PARTIES INVOLVED", "type": "textarea", "required": false, "specialInput": "TABLECOL[Name,Car Year,Make,Model,Plate]"},
+                {"name": "dmgsSustained", "label": "DAMAGES SUSTAINED", "type": "textarea", "required": true, "specialInput": null},
+                {"name": "towRequired", "label": "TOW REQUIRED?", "type": "text", "required": true, "specialInput": null},
+                {"name": "reportingOfficer", "label": "REPORTING OFFICER", "type": "text", "required": true, "specialInput": "INPUTUSERDATA"}
+            ]
+        },
+        {
+            "id": "uof",
+            "name": "Use of Force Report",
+            "fields": [
+                {"name": "dateOfIncident", "label": "DATE OF INCIDENT", "type": "date", "required": true, "specialInput": null},
+                {"name": "timeOfIncident", "label": "TIME OF INCIDENT", "type": "time", "required": true, "specialInput": null},
+                {"name": "locationOfIncident", "label": "LOCATION OF INCIDENT", "type": "text", "required": true, "specialInput": null},
+                {"name": "nameOfSusp", "label": "NAME OF PERSON INVOLVED", "type": "text", "required": true, "specialInput": "FIRSTLASTSEPERATE"},
+                {"name": "medialRequired", "label": "MEDICAL TREATMENT REQUIRED?", "type": "text", "required": true, "specialInput": null},
+                {"name": "descriptionOfForce", "label": "TYPE OF FORCED USED", "type": "checkbox[Verbal, Open Hand, Less Lethal, Lethal]", "required": true, "specialInput": null},
+                {"name": "reasonForForce", "label": "REASON FOR USE OF FORCE", "type": "checkbox[Active Resistance, Threat to Officer, Threat to Others, Self Defense, Effect Arrest, Non-Compliance, Assaultive Behavior, Defense of Others, Felony Stop, Fleeing Suspect, Suspect Armed, Prevent Escape]", "required": true, "specialInput": null},
+                {"name": "narrative", "label":"NARRATIVE", "type": "textarea", "required": true, "specialInput": null},
+                {"name": "reportingOfficer", "label": "REPORTING OFFICER", "type": "text", "required": true, "specialInput": "INPUTUSERDATA"}
+            ]
+        },
+        {
+            "id": "noticeToAppear",
+            "name": "Notice to Appear / Cite",
+            "fields": [
+                {"name": "dateOfViolation", "label": "DATE OF VIOLATION", "type": "date", "required": true, "specialInput": null},
+                {"name": "timeOfViolation", "label": "TIME OF VIOLATION", "type": "time", "required": true, "specialInput": null},
+                {"name": "nameOfViolator", "label": "NAME OF VIOLATOR", "type": "text", "required": true, "specialInput": " PROMPTFORID"},
+                {"name": "vehInfo", "label": "VEHICLE INFORMATION", "type": "text", "required": false, "specialInput": null},
+                {"name": "locOfViolation", "label": "LOCATION OF VIOLATION", "type": "text", "required": true, "specialInput": null},
+                {"name": "citeViolation", "label": "VIOLATIONS CITED FOR", "type": "textarea", "required": true, "specialInput": "TABLECOL[CPC / CVC, Description, Ammount]"},
+                {"name": "issuingOfficer", "label": "ISSUING OFFICER", "type": "text", "required": true, "specialInput": "INPUTUSERDATA"}
+            ]
+        }
+    ]
+}

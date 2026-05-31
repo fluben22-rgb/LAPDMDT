@@ -1,0 +1,1425 @@
+﻿<div id="appLoginArea"
+    style="display: none; align-items: center; justify-content: center; min-height: 100%; height: 100%; padding: 20px; background: #d9d9d9;">
+    <div class="login-box">
+        <div class="align-center">
+            <h2 style="margin-top: 0; margin-bottom: 20px; text-align: center;">Application Login</h2>
+            <input id="app-email-input" type="email" data-role="input" placeholder="Enter Email"
+                style="width: 100%; margin-bottom: 15px !important; border-radius: 0 !important; padding: 10px !important;"
+                onkeydown="if(event.key === 'Enter') submitAppLogin();">
+            <input id="app-password-input" type="password" data-role="input" placeholder="Enter Password"
+                style="width: 100%; margin-bottom: 15px !important; border-radius: 0 !important; padding: 10px !important;"
+                onkeydown="if(event.key === 'Enter') submitAppLogin();">
+            <div id="app-login-error" style="color: #c80000; margin-top: 8px; min-height: 18px;"></div>
+            <button id="app-login-submit" class="button bg-dark fg-white"
+                style="width: auto; margin: 20px auto 0; border-radius: 0 !important;"
+                onclick="submitAppLogin()">Continue</button>
+        </div>
+    </div>
+</div>
+<!-- App Login Area [unit]-->
+<div id="inputUserDataArea" style="display: none; align-items: center; justify-content: center; min-height: 100%; height: 100%; padding: 20px;">
+    <div class="login-box">
+        <div class="align-center">
+            <h2 style="margin-top: 0; margin-bottom: 20px; text-align: center;">Unit Information</h2>
+            <input id="callsign-input" type="text" data-role="input" placeholder="Enter Callsign"
+                style="width: 100%; margin-bottom: 15px !important; border-radius: 0 !important; padding: 10px !important;">
+            <select id="watch-input" data-role="select" placeholder="Select Watch"
+                style="width: 100%; margin-bottom: 15px !important; border-radius: 0 !important; padding: 10px !important;">
+                <option value="" disabled selected>Select Watch</option>
+                <option value="W1">W1 - PATROL</option>
+                <option value="W2">W2 - PATROL</option>
+                <option value="W3">W3 - PATROL</option>
+                <option value="W4">W4- XRAY / FB/ DESK (OT)</option>
+                <option value="W5">W5 - SPECIAL / XRAY (W1)</option>
+                <option value="W6">W6 - SPECIAL / XRAY (W2)</option>
+                <option value="W7">W7- SPECIAL / XRAY (W3)</option>
+                <option value="W8">W8- SPECIAL PATROL (OT)</option>
+            </select>
+            <div id="user-data-error" style="color: #c80000; margin-top: 8px; min-height: 18px;"></div>
+            <button id="user-data-submit" class="button bg-dark fg-white"
+                style="width: auto; margin: 20px auto 0; border-radius: 0 !important;"
+                onclick="submitUserData()">Submit</button>
+        </div>
+    </div>
+</div>
+<div id="robloxGpsArea" style="display: none; align-items: center; justify-content: center; min-height: 100%; height: 100%; padding: 20px; background: #d9d9d9;">
+    <div class="login-box">
+        <div class="align-center">
+            <h2 style="margin-top: 0; margin-bottom: 20px; text-align: center;">Mobile Map GPS</h2>
+            <input id="roblox-username-input" type="text" data-role="input" placeholder="Enter Roblox Username"
+                style="width: 100%; margin-bottom: 10px !important; border-radius: 0 !important; padding: 10px !important;"
+                onkeydown="if(event.key === 'Enter') submitRobloxGpsUsername();">
+            <p style="width: 260px; max-width: 100%; margin: 0 auto 10px; color: #333; font-size: 12px; line-height: 1.35;">
+                Update: To access Mobile Map GPS tracking, enter your Roblox username.
+            </p>
+            <div id="roblox-gps-error" style="color: #c80000; margin-top: 8px; min-height: 18px;"></div>
+            <button id="roblox-gps-submit" class="button bg-dark fg-white"
+                style="width: auto; margin: 20px auto 0; border-radius: 0 !important;"
+                onclick="submitRobloxGpsUsername()">Submit</button>
+        </div>
+    </div>
+</div>
+<div id="mainApp">
+    <!-- MAIN ACTION BUTTONS-->
+    <div class="container-fluid p-0" id="mainActionButtons">
+        <div class="row no-gap">
+            <button class="main-action-btns" onclick="closeIncident(); updateView('incidentsView');">
+                <p class="text-left">F1</p>
+                <img src="https://web.opendrive.com/api/v1/download/file.json/MzRfMTAwNDkwNjExXw?inline=1&preview=1"
+                    width="55px">
+                <p class="text-center">Home</p>
+            </button>
+            <button class="main-action-btns" onclick="showQueryOptsView('CAL-OP');">
+                <p class="text-left">F2</p>
+                <img src="https://web.opendrive.com/api/v1/download/file.json/MzRfMTAwNDkwNjEyXw?inline=1&preview=1"
+                    width="75px">
+                <p class="text-center">Query</p>
+            </button>
+            <button class="main-action-btns" onclick="showModal('trafficStopModal');">
+                <p class="text-left">F3</p>
+                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9d/Stop_sign_light_red.svg/250px-Stop_sign_light_red.svg.png"
+                    width="55px">
+                <p class="text-center">Traffic Stop</p>
+            </button>
+            <button class="main-action-btns" onclick="showModal('code6Modal');">
+                <p class="text-left">F4</p>
+                <img src="https://i.pinimg.com/564x/bb/24/70/bb24700cbf83f2b574e307646fc6c29c.jpg" width="55px">
+                <p class="text-center">C6</p>
+            </button>
+            <button class="main-action-btns" onclick="updateView('callsAdvTable');">
+                <p class="text-left">F5</p>
+                <img src="https://web.opendrive.com/api/v1/download/file.json/MzRfMTAwNDkwNzE0Xw?inline=1&preview=1"
+                    width="55px">
+                <p class="text-center">Calls</p>
+            </button>
+            <button class="main-action-btns" disabled>
+                <p class="text-left">F6</p>
+                <img src="https://web.opendrive.com/api/v1/download/file.json/MzRfMTAwNDkwNjE0Xw?inline=1&preview=1"
+                    width="40px">
+                <p class="text-center">Dispatch</p>
+            </button>
+            <button class="main-action-btns" onclick=" setUnitStatus('Enroute');">
+                <p class="text-left">F7</p>
+                <img src="https://web.opendrive.com/api/v1/download/file.json/MzRfMTAwNDkwNjE3Xw?inline=1&preview=1"
+                    width="100px">
+                <p class="text-center">Enroute</p>
+            </button>
+            <button class="main-action-btns" disabled>
+                <p class="text-left">F8</p>
+                <img
+                    src="https://web.opendrive.com/api/v1/download/file.json/MzRfMTAwNDkwNzEzXw?inline=1&preview=1">
+                <p class="text-center">AS</p>
+            </button>
+            <button class="main-action-btns" onclick="setUnitStatus('Station');">
+                <p class="text-left">F9</p>
+                <img src="https://web.opendrive.com/api/v1/download/file.json/MzRfMTAwNDkwNzE1Xw?inline=1&preview=1"
+                    style="max-width: 35px !important;">
+                <p class="text-center">Station</p>
+            </button>
+            <button class="main-action-btns" onclick="allowDisp()">
+                <p class="text-left">F10</p>
+                <img
+                    src="https://web.opendrive.com/api/v1/download/file.json/MzRfMTAwNDkwNzE2Xw?inline=1&preview=1">
+                <p class="text-center">Dispo</p>
+            </button>
+        </div>
+    </div>
+
+    <!-- Command Bar-->
+    <div class="px-5 mt-1">
+        <input type="text" data-role="input" placeholder="Enter commands..." id="cmdBar" style="border-radius: 0;"
+            onkeydown="if(event.key === 'Enter') { processCmd() } if(event.key === 'ArrowUp') { recallCmd('up') } if(event.key === 'ArrowDown') { recallCmd('down') }">
+    </div>
+    <!-- Unit Info  -->
+    <div class="container-fluid p-0 mt-1">
+        <div class="row no-gap align-items-stretch">
+            <div style="flex: 1 1 14.285714%; max-width: 14.285714%;">
+                <select class="status-block" style="border-radius: 0; font-size: 14px;">
+                    <option id="currentpage">Home</option>
+                </select>
+            </div>
+            <div class="pos-relative fg-grey-hover" style="flex: 1 1 14.28%; max-width: 14.28%;"
+                onclick="showModal('unitModifyModal');">
+                <div class="d-flex flex-row align-stretch border bd-default bg-white"
+                    style="height: 38px; cursor: pointer; border-left: 0;">
+                    <div class="d-flex align-center flex-justify-center px-2 text-bold"
+                        style="font-size: 16px; min-width: 28px; background-color: green; color: white;">P</div>
+                    <div class="d-flex flex-column flex-justify-center px-2 flex-grow-1" style="line-height: 1.1;">
+                        <span style="font-size: 9px; font-weight: bold; color: #666;">LOGGED
+                            IN:</span>
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <span id="current-user"
+                                style="font-size: 11px; color: #000; white-space: nowrap;"></span>
+                        </div>
+                    </div>
+                    <div class="d-flex flex-center px-1">
+                        <span class="mif-arrow-drop-down fg-black" style="font-size: 18px;"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="status-block" style="flex: 1 1 14.285714%; max-width: 14.285714%;">
+                <span class="mif-mail mif-sm fg-orange"></span>
+                <span>Unread(1)</span>
+            </div>
+            <div id="dayNightToggle" class="status-block" style="flex: 1 1 14.285714%; max-width: 14.285714%;">
+                <span class="mif-brightness-auto mif-sm"></span>
+                <span>Day</span>
+            </div>
+            <select id="unit-in-vehicle-status" class="status-block unit-cycle"
+                onchange="unitCycleState.invehicle = inVehicleOptions.indexOf(this.value); syncCurrentUnitStatus();"
+                style="border-radius: 0; flex: 1 1 14.285714%; max-width: 14.285714%;">
+                <option value="In Vehicle">In Vehicle</option>
+                <option value="Out of Vehicle">Out of Vehicle</option>
+            </select>
+            <select id="unit-in-enroute-status" class="status-block unit-cycle" onchange="setUnitStatus(this.value)"
+                style="border-radius: 0; flex: 1 1 14.285714%; max-width: 14.285714%;">
+                <option value="Start of Watch">Start of Watch</option>
+                <option value="Available">Available</option>
+                <option value="End of Watch">End of Watch</option>
+                <option value="At Scene not Investigating">At Scene not Investigating</option>
+                <option value="Code 6">Code 6</option>
+                <option value="Station">Station</option>
+                <option value="Enroute">Enroute</option>
+                <option value="Unavailable">Unavailable</option>
+            </select>
+            <div class="status-block" id="gps-status" style="flex: 1 1 14.285714%; max-width: 14.285714%;">
+
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Home Area -->
+    <div id="homeContentWrapper">
+        <div class="dashboard-container">
+            <ul data-role="tabs" id="mainTabs" data-expand="true" class="bg-lightGray" style="display: block;">
+                <li><a onclick="updateView('incidentsView')">Incidents</a></li>
+                <li><a onclick="updateView('units-table')">Unit Status</a></li>
+                <li><a onclick="updateView('queryResults')">Query</a>
+                </li>
+                <li><a disabled>Who's On</a></li>
+            </ul>
+            <ul data-role="tabs" id="advCallsTabs" data-expand="true" class="bg-lightGray" style="display: none;">
+                <li><input type="checkbox" data-role="none" id="showClosedCalls"><label for="showClosedCalls">Show
+                        Closed
+                        Calls</label></li>
+                <li style="padding-left: 5px;"><input type="checkbox" data-role="none" id="showCallsToday"><label
+                        for="showCallsToday">Show Calls for Today</label></li>
+                <li style="padding-left: 5px;"><input type="text" id="unitFilter" placeholder="Filter by Unit"></li>
+                <li style="padding-left: 10px;"><input type="date" id="dateFilter"></li>
+                <li style="margin-left:10px;"><button id="refreshCallsView" class="button">Refresh View</button>
+                </li>
+            </ul>
+            <div class="content-row">
+                <div class="table-area">
+                    <div id="incidentsView">
+                        <table class="home-table">
+                            <thead>
+                                <tr>
+                                    <th>STATUS</th>
+                                    <th>TYPE</th>
+                                    <th>PRI</th>
+                                    <th>INC LOCATION</th>
+                                    <th>UNITS</th>
+                                    <th>AREA</th>
+                                </tr>
+                            </thead>
+                            <tbody id="call-table-real">
+
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="units-table">
+                        <table class="home-table">
+                            <thead>
+                                <tr>
+                                    <th>Unit</th>
+                                    <th>ST</th>
+                                    <th>Inc #</th>
+                                    <th>Inc Location</th>
+                                    <th>Code</th>
+                                </tr>
+                            </thead>
+                            <tbody id="unit-table-real">
+
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- Advanced Call Table -->
+                    <div id="callsAdvTable" style="display:none;">
+                        <div class="callboard-sidebar-area" id="callboard-sidebar-area">
+                            <a class="side-nav-btn d-flex align-center p-2"
+                                onclick="refreshAdvCallTable('assigned');">
+                                <span class="mif-star-full mif-2x mr-2"></span>
+                                <span class="btn-text">Assigned</span>
+                            </a>
+                            <a class="side-nav-btn d-flex align-center p-2"
+                                onclick="refreshAdvCallTable('pending');">
+                                <span class="mif-star-half mif-2x mr-2"></span>
+                                <span class="btn-text">Pending</span>
+                            </a>
+                            <a class="side-nav-btn d-flex align-center p-2"
+                                onclick="refreshAdvCallTable('closed');">
+                                <span class="mif-star-empty mif-2x mr-2"></span>
+                                <span class="btn-text">Closed</span>
+                            </a>
+                            <a class="side-nav-btn d-flex align-center p-2" onclick="updateView('units-table');">
+                                <span class="mif-eye mif-2x mr-2"></span>
+                                <span class="btn-text">Monitor <span id="callsAdvMonitorCount">(0)</span></span>
+                            </a>
+                        </div>
+                        <div class="callboard-table-area" id="callboard-table-area">
+                            <table class="home-table" id="callBoardTableView">
+                                <thead>
+                                    <tr>
+                                        <th>Inc #</th>
+                                        <th>Type</th>
+                                        <th>Code</th>
+                                        <th>Location</th>
+                                        <th>RD</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="adv-call-table-real">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <!-- Standalone Query Results View -->
+                    <div id="queryResultsView" style="display:none;">
+                        <div class="query-table-area"
+                            style="display:flex; width:100%; height:100%; min-height:0; min-width:0;">
+                            <div class="query-sidebar-area">
+                                <a class="side-nav-btn active-query-tab"
+                                    onclick="switchQueryFolder('responses', this)">
+                                    <span class="mif-file-text mif-lg mr-1"></span> Responses <span
+                                        id="qcount-responses"></span>
+                                </a>
+                                <a class="side-nav-btn" onclick="switchQueryFolder('drafts', this)">
+                                    <span class="mif-pencil mif-lg mr-1"></span> Drafts <span
+                                        id="qcount-drafts"></span>
+                                </a>
+                                <a class="side-nav-btn" onclick="switchQueryFolder('pending', this)">
+                                    <span class="mif-access-time mif-lg mr-1"></span> Pending <span
+                                        id="qcount-pending"></span>
+                                </a>
+                                <a class="side-nav-btn" onclick="switchQueryFolder('posted', this)">
+                                    <span class="mif-check-circle-outline mif-lg mr-1"></span> Posted <span
+                                        id="qcount-posted"></span>
+                                </a>
+                                <a class="side-nav-btn" onclick="switchQueryFolder('trash', this)">
+                                    <span class="mif-bin mif-lg mr-1"></span> Trash <span id="qcount-trash"></span>
+                                </a>
+                            </div>
+                            <!-- Right: top table + bottom detail -->
+                            <div class="query-main-area">
+                                <div class="query-top-area" id="query-top-area">
+                                    <table class="home-table" id="queryTableView">
+                                        <thead>
+                                            <tr>
+                                                <th style="width:28px; border-radius: 0 !important;"
+                                                    class="query-check-col">
+                                                    <input type="checkbox" data-role="none" id="querySelectAll"
+                                                        title="Select all" onchange="queryToggleAll(this)">
+                                                </th>
+                                                <th style="width:28px;"><span class="mif-attachment"></span></th>
+                                                <th style="width:22%;">Query Criteria</th>
+                                                <th>Summary</th>
+                                                <th style="width:80px;">Received</th>
+                                                <th style="width: 30ch;">Response Type</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="query-table-real">
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="query-resizer" id="query-resizer"></div>
+                                <p id="query-detail-placeholder"
+                                    style="flex:1; min-height:0; margin:0; padding:10px;"><i>Click a row to view
+                                        details.</i></p>
+                                <div class="query-detail-area2" id="query-detail-area" style="display: none;">
+                                    <div class="grid">
+                                        <p id="fromheader"
+                                            style="font-size: 12px; color: #0026ff; margin-bottom: 4px;"><span
+                                                id="queryDetailFrom"></span></p>
+                                        <div class="row">
+                                            <h3 id="personHeader" style="padding-left: 5ch;"></h3>
+                                        </div>
+                                        <div class="row">
+                                            <div class="cell-1">Alert(s):</div>
+                                            <div class="cell-7" id="alertsContainer"
+                                                style="color: red; font-weight: bold;"></div>
+                                            <button class="cell-3 button" style="border-radius: 0;"
+                                                onclick="openManageAlertsModal()"><span
+                                                    class="mif-clipboard"></span>Manage Alert(s)</button>
+                                        </div>
+                                        <br />
+                                        <div class="row">
+                                            <div class="cell-1">Sex:</div>
+                                            <b class="cell-2" id="queryGenderContainer"></b>
+                                            <div class="cell-4"></div>
+                                            <div class="cell-1">Age:</div>
+                                            <b class="cell-2" id="queryAgeContainer"></b>
+                                        </div>
+                                        <div class="row">
+                                            <div class="cell-2">Infractions:</div>
+                                            <b class="cell-auto" id="queryInfractionContainer"></b>
+                                        </div>
+                                        <div class="row">
+                                            <div class="cell-2">Arrests:</div>
+                                            <b class="cell-auto" id="queryArrestContainer"></b>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="sidebar-area">
+                    <div class="sidebar-tile-btn" onclick="updateView('incidentsView')" id="sidebar-tile-incidents">
+                        <span class="tile-icon mif-warning"></span>
+                        <span class="tile-label"><u>I</u>ncident <span id="incidentCounter"></span></span>
+                        <span class="tile-key">I</span>
+                    </div>
+                    <div class="sidebar-tile-btn" onclick="updateView('units-table')" id="sidebar-tile-units">
+                        <span class="tile-icon mif-automobile"></span>
+                        <span class="tile-label"><u>U</u>nit Status</span>
+                        <span class="tile-key">U</span>
+                    </div>
+                    <div class="sidebar-tile-btn" style="opacity:0.45; cursor:not-allowed;">
+                        <span class="tile-icon mif-mail"></span>
+                        <span class="tile-label"><u>M</u>essaging</span>
+                        <span class="tile-key">E</span>
+                    </div>
+                    <div class="sidebar-tile-btn" onclick="updateView('queryResults')" id="sidebar-tile-query">
+                        <span class="tile-icon mif-search"></span>
+                        <span class="tile-label"><u>Q</u>uery</span>
+                        <span class="tile-key">Q</span>
+                    </div>
+                    <div class="sidebar-tile-btn" style="opacity:0.45; cursor:not-allowed;">
+                        <span class="tile-icon mif-earth"></span>
+                        <span class="tile-label"><u>B</u>rowser</span>
+                        <span class="tile-key">B</span>
+                    </div>
+                    <div class="sidebar-tile-btn" onclick="launchMobileMapWindow(event)" id="sidebar-tile-mobile-map">
+                        <span class="tile-icon mif-location"></span>
+                        <span class="tile-label"><u>M</u>obile Map</span>
+                        <span class="tile-key">M</span>
+                    </div>
+                    <a class="sidebar-tile-btn" onclick="updateView('reports');" id="sidebar-title-reports">
+                        <span class="tile-icon mif-file-text"></span>
+                        <span class="tile-label"><u>R</u>eports</span>
+                        <span class="tile-key">R</span>
+                    </a>
+                    <a class="sidebar-tile-btn super-only" onclick="showModal('supervisorKeyModal');">
+                        <span class="tile-icon mif-access-time"></span>
+                        <span class="tile-label">Set Inc ID</span>
+                        <span class="tile-key" style="visibility:hidden;">-</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Incident Advanced View -->
+    <div class="d-flex flex-row w-100 incident-view-wrapper"
+        style="display: none !important; position: absolute; inset: 0; z-index: var(--mdt-z-content, 1); visibility: hidden; align-items: stretch; width: 100%; max-width: 100%; height: 100%;"
+        id="inc-adv-view-wrapper">
+        <div class="inc-sidebar-area bg-lightGray border-right bd-default">
+            <a class="side-nav-btn d-flex align-center p-2 active-inc-tab" id="incSummaryNav"
+                style="border-right: none !important;" onclick="toggleIncidentSection('summary')">
+                <span class="mif-info mif-2x mr-2"></span>
+                <span class="btn-text">Summary</span>
+            </a>
+            <a class="side-nav-btn d-flex align-center p-2" id="incPerActivator">
+                <span class="mif-person mif-2x mr-2"></span>
+                <span class="btn-text" id="incPerNavCount">Persons <span id="incPerCounter"></span></span>
+            </a>
+            <a class="side-nav-btn d-flex align-center p-2" id="incVehActivator">
+                <span class="mif-automobile mif-2x mr-2"></span>
+                <span class="btn-text" id="incVehNavCount">Vehicles <span id="incVehCounter"></span></span>
+            </a>
+            <a class="side-nav-btn d-flex align-center p-2" onclick="showModal('incAdvViewAddCommantsModal')">
+                <span class="mif-pencil mif-2x mr-2"></span>
+                <span class="btn-text">Comments</span>
+            </a>
+            <a class="side-nav-btn d-flex align-center p-2 active-inc-tab" id="incInfoNav"
+                onclick="toggleIncidentSection('incidentInfo')">
+                <span class="mif-info2 mif-2x mr-2"></span>
+                <span class="btn-text">Incident Info</span>
+            </a>
+            <a class="side-nav-btn d-flex align-center p-2 active-inc-tab" id="incUnitDetailsNav"
+                onclick="toggleIncidentSection('unitDetails')">
+                <span class="mif-group mif-2x mr-2"></span>
+                <span class="btn-text ">Unit Details <span id="incUnitCounter"></span></span>
+            </a>
+            <a class="side-nav-btn d-flex align-center p-2" id="incHistoryDetails"
+                onclick="showModal('incHistoryCommentsView');">
+                <span class="mif-history mif-2x mr-2"></span>
+                <span class="btn-text ">Incident History <span id="incHistoryCounter"></span></span>
+            </a>
+            <a class="side-nav-btn d-flex align-center p-2" id="incQueryResultsNav"
+                onclick="openIncQueryResultsModal();">
+                <span class="mif-search mif-2x mr-2"></span>
+                <span class="btn-text">Query Results <span id="incQueryCounter"></span></span>
+            </a>
+        </div>
+
+        <div class="inc-content flex-grow-1 p-4 bg-white" id="inc-content">
+            <div class="text-center" id="incInfoHeader">
+                <a id="inc-location" style="font-size: 20px; line-height: 20px; overflow: hidden;"></a>
+            </div>
+            <div class="grid" style="padding-top: 2px;">
+                <div class="row" id="incInfoStatusRow">
+                    <h3 class="cell-11" style="color: rgb(0, 183, 255);" id="inc-status"></h3>
+                    <button class="cell-auto button cycle small bg-blue">?</button>
+                </div>
+                <div id="incSummarySection">
+                    <div class="row">
+                        <div class="cell-6" id="inc-type"></div>
+                        <div class="cell-6" id="inc-id"></div>
+                    </div>
+                    <div class="row">
+                        <div class="cell-6" id="inc-location2"></div>
+                        <div class="cell-6" id="inc-status2"></div>
+                    </div>
+                </div>
+                <div class="row" id="incUnitDetailsSection">
+                    <div class="cell-4">Units:</div><u class="cell-auto" id="incUnits"></u>
+                </div>
+                <div class="row">
+                    <div class="cell-6">Incident initiated</div>
+                    <div class="cell-6" id="incStart"></div>
+                </div>
+                <div class="row">
+                    <div class="cell-4">Beat:</div>
+                    <u class="cell-4" id="rd"></u>
+                    <button class="button cell-4">Refresh Comments</button>
+                </div>
+            </div>
+            <code id="inc-adv-view-cmts"
+                style="display: block; border: 2px solid black; padding: 10px; white-space: pre-wrap; border-radius: 0;">
+            </code>
+        </div>
+    </div>
+    <!-- Query Options View -->
+    <div id="query-opts-view"
+        style="display: none; flex-direction: row; width: 100%; position: absolute; inset: 0; z-index: var(--mdt-z-content, 1); background:#fff;">
+        <div class="inc-sidebar-area bg-lightGray border-right bd-default">
+            <a class="side-nav-btn d-flex align-center p-2" disabled>
+                <span class="btn-text">1_CODE10</span>
+            </a>
+            <a class="side-nav-btn d-flex align-center p-2 active-query-tab" data-qtype="CAL-OP"
+                onclick="switchQueryInputPanel('CAL-OP')">
+                <span class="btn-text">2_CAL-OP - Reg Veh</span>
+            </a>
+            <a class="side-nav-btn d-flex align-center p-2" data-qtype="PERSON"
+                onclick="switchQueryInputPanel('PERSON')">
+                <span class="btn-text">3_Wants_Warrants_DMV</span>
+            </a>
+            <a class="side-nav-btn d-flex align-center p-2" disabled>
+                <span class="btn-text">Property</span>
+            </a>
+            <a class="side-nav-btn d-flex align-center p-2" disabled>
+                <span class="btn-text">Firearm</span>
+            </a>
+            <a class="side-nav-btn d-flex align-center p-2" disabled>
+                <span class="btn-text">6_COP</span>
+            </a>
+            <a class="side-nav-btn d-flex align-center p-2" disabled>
+                <span class="btn-text">7_LoJack</span>
+            </a>
+            <a class="side-nav-btn d-flex align-center p-2" disabled>
+                <span class="btn-text">8_Boat</span>
+            </a>
+        </div>
+        <!-- Input Plate Info for Query area-->
+        <div class="inc-content flex-grow-1 p-4 bg-white" id="input-plate-info">
+            <br />
+            <div class="grid" style="padding-top: 2px;">
+                <div class="row">
+                    <input class="cell-auto" type="checkbox" disabled checked id="cali">
+                    <label class="cell-2" for="cali">California</label>
+                </div>
+                <br />
+                <div class="row">
+                    <button id="resetFields" class="button cell-2">Reset</button>
+                </div>
+                <br />
+                <div class="row">
+                    <label class="cell-2" style="font-size:13px; font-weight:600; margin-bottom:4px;"
+                        for="plateInput"><br>Plate</label>
+                    <input class="cell-10" type="text" id="plateInput" placeholder="SAM 123"
+                        onkeydown="if(event.key == 'Enter') alert('Querying for this type is not supported.');"
+                        style="height: 100%; width:100%; font-size:2.4rem; font-weight:700; padding:10px 14px; border:2px solid #333; border-radius:0; letter-spacing:4px; text-transform:uppercase;">
+                </div>
+                <div class="row">
+                    <label class="cell-3">Plate Type</label>
+                    <select class="cell-9" id="plateTyp" style="border-radius: 0;">
+                        <option value="1">PC-PASSANGER</option>
+                        <option value="2">CA-EXEMPT</option>
+                        <option value="3">PC-MEDIA</option>
+                        <option value="4">NPC-AMATURE RADIO</option>
+                        <option value="5">NPC-ANT MOTO</option>
+                        <option value="6">PC-APPORTIONED</option>
+                    </select>
+                </div>
+                <div class="row">
+                    <label class="cell-3" for="plateState">State</label>
+                    <select class="cell-9" id="plateState" style="border-radius: 0;">
+                        <option value="CA">California</option>
+                        <option value="AL">Alabama</option>
+                        <option value="AK">Alaska</option>
+                        <option value="AZ">Arizona</option>
+                        <option value="AR">Arkansas</option>
+                        <option value="CO">Colorado</option>
+                        <option value="CT">Connecticut</option>
+                        <option value="DE">Delaware</option>
+                        <option value="DC">District Of Columbia</option>
+                        <option value="FL">Florida</option>
+                        <option value="GA">Georgia</option>
+                        <option value="HI">Hawaii</option>
+                        <option value="ID">Idaho</option>
+                        <option value="IL">Illinois</option>
+                        <option value="IN">Indiana</option>
+                        <option value="IA">Iowa</option>
+                        <option value="KS">Kansas</option>
+                        <option value="KY">Kentucky</option>
+                        <option value="LA">Louisiana</option>
+                        <option value="ME">Maine</option>
+                        <option value="MD">Maryland</option>
+                        <option value="MA">Massachusetts</option>
+                        <option value="MI">Michigan</option>
+                        <option value="MN">Minnesota</option>
+                        <option value="MS">Mississippi</option>
+                        <option value="MO">Missouri</option>
+                        <option value="MT">Montana</option>
+                        <option value="NE">Nebraska</option>
+                        <option value="NV">Nevada</option>
+                        <option value="NH">New Hampshire</option>
+                        <option value="NJ">New Jersey</option>
+                        <option value="NM">New Mexico</option>
+                        <option value="NY">New York</option>
+                        <option value="NC">North Carolina</option>
+                        <option value="ND">North Dakota</option>
+                        <option value="OH">Ohio</option>
+                        <option value="OK">Oklahoma</option>
+                        <option value="OR">Oregon</option>
+                        <option value="PA">Pennsylvania</option>
+                        <option value="RI">Rhode Island</option>
+                        <option value="SC">South Carolina</option>
+                        <option value="SD">South Dakota</option>
+                        <option value="TN">Tennessee</option>
+                        <option value="TX">Texas</option>
+                        <option value="UT">Utah</option>
+                        <option value="VT">Vermont</option>
+                        <option value="VA">Virginia</option>
+                        <option value="WA">Washington</option>
+                        <option value="WV">West Virginia</option>
+                        <option value="WI">Wisconsin</option>
+                        <option value="WY">Wyoming</option>
+                    </select>
+                </div>
+                <div class="row">
+                    <label class="cell-2" for="vin">VIN</label>
+                    <input type="text" class="cell-10" id="vin" style="border-radius: 0;">
+                </div>
+                <div class="row">
+                    <label class="cell-5" for="plateYr">LicensePlateYear</label>
+                    <input type="text" class="cell-7" id="licensePlateYear" style="border-radius: 0;">
+                </div>
+                <div class="row">
+                    <label class="cell-4" for="purpCode">Purpose Code</label>
+                    <select id="purpCode" class="cell-8" style="border-radius: 0;">
+                        <option value="1">C-Criminal Justice</option>
+                        <option value="2">G-Government</option>
+                        <option value="3">M-Military</option>
+                        <option value="4">P-Private</option>
+                        <option value="5">R-Research</option>
+                        <option value="6">T-Transportation</option>
+                    </select>
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- Input Person info for Query Area -->
+        <div class="inc-content flex-grow-1 p-4 bg-white" id="input-person-info" style="display:none;">
+            <br />
+            <div class="grid">
+                <div class="row">
+                    <input class="cell-auto" type="checkbox" disabled checked id="cali">
+                    <label class="cell-2" for="cali">California</label>
+                </div>
+                <br />
+                <div class="row">
+                    <button id="resetFields" class="button cell-2">Reset</button>
+                </div>
+                <br />
+                <div class="row">
+                    <label class="cell-2" style="font-size:13px; font-weight:600; margin-bottom:4px;"
+                        for="personInput"><br>DL #</label>
+                    <input class="cell-10" type="text" id="personInput" placeholder="3693166712"
+                        style="height: 100%; width:100%; font-size:2.4rem; font-weight:700; padding:10px 14px; border:2px solid #333; border-radius:0; letter-spacing:4px; text-transform:uppercase;"
+                        onkeydown="if(event.key == 'Enter') query('person');">
+                </div>
+                <div class="row">
+                    <div class="cell-3">Last Name</div>
+                    <input class="cell-9" type="text" id="lastNameInput" placeholder="Doe"
+                        style="height: 50%; width:100%; font-size:1.2rem; font-weight:700; padding:10px 14px; border:1.5px solid #333; border-radius:0; letter-spacing:4px; text-transform:uppercase;">
+                </div>
+                <div class="row">
+                    <div class="cell-3">First Name</div>
+                    <input class="cell-9" type="text" id="firstNameInput" placeholder="John"
+                        style="height: 50%; width:100%; font-size:1.2rem; font-weight:700; padding:10px 14px; border:1.5px solid #333; border-radius:0; letter-spacing:4px; text-transform:uppercase;">
+                </div>
+                <div class="row">
+                    <div class="cell-4">Date Of Birth</div>
+                    <input class="cell-8" type="date" id="dobInput"
+                        style="height: 5%; width:100%; font-weight:700; padding:10px 14px; border:1px solid #333; border-radius:0;">
+                </div>
+                <div class="row">
+                    <div class="cell-2">SSN</div>
+                    <input class="cell-10" type="text" id="ssnInput"
+                        style=" width:100%;  font-weight:700; padding:10px 14px; border:1px solid #333; border-radius:0; letter-spacing:4px;">
+                </div>
+                <div class="row">
+                    <div class="cell-4">Incident #</div>
+                    <input class="cell-8" type="text" id="incidentInput"
+                        style="width:100%;font-weight:700; padding:10px 14px; border:1px solid #333; border-radius:0; letter-spacing:4px;">
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <!-- Mobile Map Area [Home Screen]-->
+    <div class="d-flex flex-row w-100 mobile-map-view-wrapper"
+        style="display: none !important; position: absolute; inset: 0; z-index: var(--mdt-z-content, 1); visibility: hidden; align-items: stretch; width: 100%; max-width: 100%; height: 100%;"
+        id="mobile-map-area">
+        <div class="mobile-map-toolbar">
+            <button class="mobile-map-tool" onclick="resetMobileMapCamera()">Reset</button>
+            <button class="mobile-map-tool" onclick="setMobileMapCameraMode('top')">Top</button>
+            <button class="mobile-map-tool" onclick="setMobileMapCameraMode('north')">North Up</button>
+            <span class="mobile-map-scale">1:3000</span>
+            <span class="mobile-map-status" id="mobile-map-status">Loading map...</span>
+        </div>
+        <div class="mobile-map-stage" id="mobile-map-stage">
+            <canvas id="mobile-map-canvas"></canvas>
+        </div>
+    </div>
+
+    <!-- Reports Area [Home Screen]-->
+    <div class="d-flex flex-row w-100 reports-view-wrapper"
+        style="display: none !important; position: absolute; inset: 0; z-index: var(--mdt-z-content, 1); visibility: hidden; align-items: stretch; width: 100%; max-width: 100%; height: 100%;"
+        id="reports-area">
+        <div class="inc-sidebar-area reports-sidebar">
+            <div class="reports-sidebar-section-label">ACTIONS</div>
+            <a class="side-nav-btn reports-sidebar-btn d-flex align-center p-2"
+                id="reports-btn-new" onclick="showReportStartSelector();" style="border-right: none !important;">
+                <span class="mif-plus mif-2x mr-2"></span>
+                <span class="btn-text">Start New Report</span>
+            </a>
+            <div class="reports-sidebar-divider"></div>
+            <div class="reports-sidebar-section-label">FILTER</div>
+            <a class="side-nav-btn reports-sidebar-btn reports-filter-btn d-flex align-center p-2 active-reports-tab"
+                id="reports-btn-all" onclick="filterReports('all');">
+                <span class="mif-menu mif-2x mr-2"></span>
+                <span class="btn-text">All Reports</span>
+            </a>
+            <a class="side-nav-btn reports-sidebar-btn reports-filter-btn d-flex align-center p-2"
+                id="reports-btn-pending" onclick="filterReports('pending');">
+                <span class="mif-pending-actions mif-2x mr-2"></span>
+                <span class="btn-text">Pending Reports</span>
+            </a>
+            <a class="side-nav-btn reports-sidebar-btn reports-filter-btn d-flex align-center p-2"
+                id="reports-btn-approved" onclick="filterReports('approved');">
+                <span class="mif-check-lib mif-2x mr-2"></span>
+                <span class="btn-text">Accepted Reports</span>
+            </a>
+            <!-- Will flash red if a report needs attention-->
+            <a class="side-nav-btn reports-sidebar-btn reports-filter-btn d-flex align-center p-2"
+                id="reports-btn-declined" onclick="filterReports('declined');">
+                <span class="mif-priority-high mif-2x mr-2"></span>
+                <span class="btn-text">Reports Needing Review</span>
+            </a>
+            <div class="reports-sidebar-divider"></div>
+            <div class="reports-sidebar-section-label">DRAFTS</div>
+            <div id="reports-drafts-list" class="reports-drafts-list">
+                <div class="reports-draft-empty">No drafts yet.</div>
+            </div>
+        </div>
+
+        <div class="inc-content flex-grow-1 bg-white" style="padding: 0 !important;">
+            <div id="reports-content-header" class="reports-content-header">ALL REPORTS</div>
+            <div id="reports-list-view" class="reports-table-scroll">
+                <table class="reports-table home-table">
+                    <thead>
+                        <tr>
+                            <th>Report #</th>
+                            <th>Incident #</th>
+                            <th>Type</th>
+                            <th>Date &amp; Time</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="reports-table-body">
+                    </tbody>
+                </table>
+            </div>
+            <div id="reports-compose-view" class="reports-compose-view" style="display:none;">
+                <div id="reports-compose-chooser" class="reports-compose-chooser">
+                    <h5>Choose a report to start</h5>
+                    <hr>
+                    <div class="reports-compose-controls">
+                        <select id="startNewReportSelect" class="report-input reports-compose-select">
+                            <option value="arrestReport">Arrest Report</option>
+                            <option value="chp555">CHP 555 (TC)</option>
+                            <option value="chp180">CHP 180 (IMPOUND/TOW)</option>
+                        </select>
+                        <button class="button bg-green" onclick="startNewReport();">Start Report</button>
+                        <button class="button" onclick="exitReportCompose();">Cancel</button>
+                    </div>
+                </div>
+                <div id="reports-compose-host" class="start-new-report-form-host" style="display:none;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modals Area-->
+<div class="modal-overlay">
+    <div class="modal-content" id="incidentInitModal" style="display: none;">
+        <div class="modal-header">
+            <h3>New Incident</h3>
+        </div>
+        <div class="modal-body">
+            <p>Please input the circumstances and location of the incident:</p>
+            <div class="grid">
+                <div class="row">
+                    <input class="cell-6" id="customIncType" type="text" data-role="input"
+                        placeholder="Call Type..." style="border-radius: 0px !important; padding: 5px;">
+                    <input class="cell-6" id="customIncLocation" type="text" data-role="input"
+                        placeholder="Location..." style="border-radius: 0px !important; padding: 5px;">
+                </div>
+            </div>
+            <div class="row">
+                <input class="cell-12" id="customIncNarrative" type="text" data-role="input" placeholder="Narrative"
+                    style="border-radius: 0px !important; padding: 5px;">
+            </div>
+            <div class="row">
+                <button class="button bg-green fg-white cell-6" onclick="createCustomIncident();">Create
+                    Incident</button>
+                <button class="button cell-6" onclick="closeModal('incidentInitModal')">Cancel</button>
+            </div>
+        </div>
+    </div>
+    <!-- Modify Unit Modal -->
+    <div class="modal-content" id="unitModifyModal" style="display: none;">
+        <div class="modal-header">
+            <h3>Modify Unit Info</h3>
+        </div>
+        <div class="modal-body">
+            <div class="grid">
+                <div class="row">
+                    <button class="button bg-green fg-white cell-4" style="border-radius: 0px !important;"
+                        onclick="closeModal('unitModifyModal'); showModal('editUnitInfoModal')">Update Unit
+                        Info</button>
+                    <button class="button bg-red fg-white cell-4" style="border-radius: 0px !important;"
+                        onclick="logoff();">Logoff</button>
+                    <button class="button cell-4" onclick="closeModal('unitModifyModal');">Close</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <!-- Edit Unit Info Modal -->
+    <div class="modal-content" id="editUnitInfoModal" style="display: none;">
+        <div class="modal-header">
+            <h3>Edit Unit Info</h3>
+        </div>
+        <div class="modal-body">
+            <div class="grid">
+                <div class="row">
+                    <input id="newCallsign" class="cell-6" type="text" data-role="input" placeholder="New Callsign">
+                    <select id="newWatch" data-role="select" placeholder="Select Watch" class="cell-6"
+                        style="background-color: white !important; border-radius: 0px;">
+                        <option value="" disabled selected>Select Watch</option>
+                        <option value="W1">W1 - PATROL</option>
+                        <option value="W2">W2 - PATROL</option>
+                        <option value="W3">W3 - PATROL</option>
+                        <option value="W4">W4- XRAY / FB/ DESK (OT)</option>
+                        <option value="W5">W5 - SPECIAL / XRAY (W1)</option>
+                        <option value="W6">W6 - SPECIAL / XRAY (W2)</option>
+                        <option value="W7">W7- SPECIAL / XRAY (W3)</option>
+                        <option value="W8">W8- SPECIAL PATROL (OT)</option>
+                    </select>
+                </div>
+            </div>
+            <div class="grid">
+                <div class="row">
+                    <button class="button bg-green fg-white mt-2 cell-6" style="border-radius: 0px !important;"
+                        onclick="updateUser();">Save Info</button>
+                    <button class="button mt-2 cell-6" style="border-radius: 0px !important;"
+                        onclick="closeModal('editUnitInfoModal')">Close</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div class="modal-content" id="trafficStopModal" style="display: none;">
+        <div class="modal-header">
+            <h3>Initiate Traffic Stop</h3>
+        </div>
+        <div class="modal-body">
+            <div class="grid">
+                <div class="row">
+                    <input type="text" id="trafficStopLocation" class="cell-6" placeholder="Location"
+                        style="border-radius: 0px !important; padding: 5px;">
+                    <input type="text" id="trafficStopNarrative" class="cell-6" placeholder="Narrative"
+                        style="border-radius: 0px !important; padding: 5px;">
+                </div>
+                <div id="trafficStopVehHolder" style="margin-top: 5px;"></div>
+                <div class="row">
+                    <button class="button bg-green fg-white cell-6" onclick="addTrafficStopVehicle()"
+                        style="border-radius: 0px !important;">Add Vehicle</button>
+                    <button class="button bg-red fg-white cell-6" onclick="removeTrafficStopVehicle()"
+                        style="border-radius: 0px !important;">Remove Vehicle</button>
+                </div>
+                <hr style="margin-top: 10px;" />
+                <div class="grid" style="margin-top: 10px;">
+                    <div class="row">
+                        <button class="button bg-green fg-white cell-6" style="border-radius: 0px !important;"
+                            onclick="finalizeTrafficStop()">Start Traffic Stop</button>
+                        <button class="button cell-6" onclick="closeModal('trafficStopModal')">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-content" id="code6Modal" style="display: none;">
+        <div class="modal-header">
+            <h3>Initiate Code 6</h3>
+        </div>
+        <div class="modal-body">
+            <div class="grid">
+                <div class="row">
+                    <input type="text" id="code6Location" class="cell-6" placeholder="Location"
+                        style="border-radius: 0px !important; padding: 5px;">
+                    <input type="text" id="code6Narrative" class="cell-6" placeholder="Narrative"
+                        style="border-radius: 0px !important; padding: 5px;">
+                </div>
+                <div id="code6VehHolder" style="margin-top: 5px;"></div>
+                <div class="row">
+                    <button class="button bg-green fg-white cell-6" onclick="addCode6Person()"
+                        style="border-radius: 0px !important;">Add Person</button>
+                    <button class="button bg-red fg-white cell-6" onclick="removeCode6Person()"
+                        style="border-radius: 0px !important;">Remove Person</button>
+                </div>
+                <hr style="margin-top: 10px;" />
+                <div class="grid" style="margin-top: 10px;">
+                    <div class="row">
+                        <button class="button bg-green fg-white cell-6" style="border-radius: 0px !important;"
+                            onclick="finalizeCode6()">Start Code 6</button>
+                        <button class="button cell-6" onclick="closeModal('code6Modal')">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-content" id="incVehModal" style="display: none;">
+        <div class="modal-header">
+            <h3>Vehicles</h3>
+        </div>
+        <div class="modal-body">
+            <p id="incVehCountText"><b>0</b> vehicles found attached to incident:</p>
+            <hr />
+            <div id="incVehHolder" style="margin-top: 5px;"></div>
+            <div class="grid">
+                <div class="row">
+                    <button id="addIncVehBtn" class="button bg-green fg-white cell-6"
+                        style="border-radius: 0px !important;" onclick="addIncVehicle()">Add New
+                        Vehicle</button>
+                    <button id="removeIncVehBtn" class="button bg-red fg-white cell-6"
+                        style="border-radius: 0px !important;" onclick="toggleRemoveIncVehMode()">Remove
+                        Vehicle</button>
+                </div>
+                <div class="row">
+                    <button class="button" onclick="closeModal('incVehModal'); resetIncVehModal()">Close</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div class="modal-content" id="incPerModal" style="display: none;">
+        <div class="modal-header">
+            <h3>Persons</h3>
+        </div>
+        <div class="modal-body">
+            <p id="incPerCountText"><b>0</b> persons found attached to incident:</p>
+            <hr />
+            <div id="incPerHolder" style="margin-top: 5px;"></div>
+            <div class="grid">
+                <div class="row">
+                    <button id="addIncPerBtn" class="button bg-green fg-white cell-6"
+                        style="border-radius: 0px !important;" onclick="addIncPerson()">Add New Person</button>
+                    <button id="removeIncPerBtn" class="button bg-red fg-white cell-6"
+                        style="border-radius: 0px !important;" onclick="toggleRemoveIncPerMode()">Remove
+                        Person</button>
+                </div>
+                <div class="row">
+                    <button class="button" onclick="closeModal('incPerModal'); resetIncPerModal()">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-content" id="dispositionModal" style="display: none;">
+        <div class="modal-header">
+            <h3 id="dispHeader"></h3>
+        </div>
+        <div class="modal-body">
+            <h6 id="dispIncId"></h6>
+            <div class="grid">
+                <div class="row" style="gap: 12px;">
+                    <div class="cell-6">
+                        <label for="top-disposition"
+                            style="display:block; margin-bottom:6px; font-weight:700;">Disposition</label>
+                        <select class="cell-12" id="top-disposition" disabled
+                            style="width: 100%; border-radius: 0 !important; padding: 10px !important; background: #f5f5f5; border: 1px solid #ccc;">
+                            <option>OFCR COMPLETED CALL</option>
+                        </select>
+                    </div>
+                    <div class="cell-6">
+                        <label for="disp-cmts"
+                            style="display:block; margin-bottom:6px; font-weight:700;">Comments</label>
+                        <input class="cell-12" type="text" id="disp-cmts"
+                            style="width: 100%; border-radius: 0 !important; padding: 10px !important;">
+                    </div>
+                </div>
+                <div class="row" style="gap: 12px; margin-top: 10px;">
+                    <div class="cell-6">
+                        <label id="primaryCallsLabel"
+                            style="display:block; margin-bottom:6px; font-weight:700;"></label>
+                        <select class="cell-12" id="primaryAction"
+                            style="width: 100%; border-radius: 0 !important; padding: 10px !important;">
+                            <option value="">Select action taken by primary unit</option>
+                            <option>PERSON RELEASED NO FURTHER ACTION</option>
+                            <option>REPORT TAKEN</option>
+                            <option>ARREST MADE</option>
+                            <option>PEACE RESTORED</option>
+                            <option>NO OFFENSE FOUND</option>
+                            <option>GONE ON ARRIVAL</option>
+                            <option>CIVIL CITATION ISSUED</option>
+                        </select>
+                    </div>
+                    <div class="cell-6" id="supervisorArea" style="display:none;">
+                        <label style="display:block; margin-bottom:6px; font-weight:700;">
+                            <input class="cell-12" type="text" id="supervisorCallsignInput"
+                                placeholder="Supervisor Callsign"
+                                style="width: 100%; border-radius: 0 !important; padding: 10px !important;"
+                                oninput="updateSupervisorActionState()" onblur="finalizeSupervisorCallsign()"
+                                onkeypress="if(event.key === 'Enter'){ event.preventDefault(); finalizeSupervisorCallsign(); }">
+                        </label>
+                        <div id="supervisorCallsignLabel"
+                            style="display:none; width: 100%; border-radius: 0 !important; padding: 10px !important; background: #f5f5f5; border: 1px solid #ccc; cursor: pointer; margin-top: 4px;"
+                            onclick="editSupervisorCallsign()"></div>
+                        <select class="cell-12" id="supervisorAction" disabled
+                            style="width: 100%; border-radius: 0 !important; padding: 10px !important; margin-top: 12px;">
+                            <option value="">Select supervisor action</option>
+                            <option>DIRECTED OFFICER</option>
+                            <option>REVIEWED INCIDENT</option>
+                            <option>CONDUCTED INCIDENT DE-BRIEF</option>
+                            <option>ASSISTED WITH OFFICER ACTION</option>
+                            <option>CLEARED WITH NO ACTION</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="cell-6">
+                        <label for="disp-rept" style="display:block; margin-bottom:6px; font-weight:700;">Report
+                            #</label>
+                        <input class="cell-12" type="text" id="disp-rept"
+                            style="width: 100%; border-radius: 0 !important; padding: 10px !important;">
+                    </div>
+                </div>
+                <div class="row" style="gap: 12px; margin-top: 16px; align-items: center;">
+                    <div class="cell-4">
+                        <label style="display:flex; align-items:center; gap:6px;">
+                            <input type="checkbox" data-role="none" id="disp-super"
+                                onclick="toggleSupervisorPresent(this.checked)">
+                            Supervisor Present
+                        </label>
+                    </div>
+                    <div class="cell-4">
+                        <label style="display:flex; align-items:center; gap:6px;">
+                            <input type="checkbox" data-role="none" id="disp-bwv">
+                            Body Worn Video [BWV]
+                        </label>
+                    </div>
+                    <div class="cell-4">
+                        <label style="display:flex; align-items:center; gap:6px;">
+                            <input type="checkbox" data-role="none" id="disp-dicv">
+                            Digital In Car Video [DICV]
+                        </label>
+                    </div>
+                </div>
+                <div class="row" style="gap: 12px; margin-top: 20px; justify-content: center;">
+                    <button class="button bg-green fg-white mt-2 cell-3" id="dispSubmitBtn"
+                        style="border-radius: 0px !important;">Ok</button>
+                    <button class="button bg-red fg-white mt-2 cell-3" style="border-radius: 0px !important;"
+                        onclick="closeModal('dispositionModal')">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-content" id="incAdvViewAddCommantsModal" style="display: none;">
+        <div class="modal-header">
+            <h3>Add Call Comments</h3>
+        </div>
+        <div class="modal-body">
+            <input type="text" id="incAdvViewAddCmtsInput" data-role="input" placeholder="Input your comments here"
+                style="border-radius: 0px !important; padding: 5px;">
+            <div class="grid">
+                <div class="row">
+                    <button class="button bg-green fg-white mt-2 cell-6" id="incAdvViewAddCmtsSubmit"
+                        style="border-radius: 0px !important;">Save Info</button>
+                    <button class="button bg-red fg-white mt-2 cell-6" style="border-radius: 0px !important;"
+                        onclick="closeModal('incAdvViewAddCommantsModal')">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-content" id="manageAlertsModal" style="display: none;">
+        <div class="modal-header">
+            <h3>Manage Alerts <span id="manageAlertsIdLabel" style="font-size:14px; font-weight:normal;"></span>
+            </h3>
+        </div>
+        <div class="modal-body">
+            <p style="font-size:12px; color:#666; margin-bottom:8px;">Do not abuse alerts in any way, shape, or
+                form.</p>
+            <div id="manageAlertsHolder" style="min-height:60px; margin-bottom:12px;"></div>
+            <hr />
+            <br />
+            <div class="row" style="gap:6px; align-items:center;">
+                <input class="cell-9" type="text" id="newAlertInput" data-role="input"
+                    placeholder="Enter alert text..." style="border-radius:0 !important;">
+                <button class="cell-3 button bg-green fg-white" style="border-radius:0 !important;"
+                    onclick="addAlertToSubject()">Add Alert</button>
+            </div>
+            <p id="manageAlertsStatus" style="color:#c80000; margin-top:6px; min-height:16px; font-size:12px;"></p>
+        </div>
+        <div class="modal-footer" style="justify-content:flex-end;">
+            <button class="button" onclick="closeModal('manageAlertsModal')">Close</button>
+        </div>
+    </div>
+    <div class="modal-content" id="unitRequestActionModal" style="display: none;">
+        <div class="modal-header">
+            <h3>Incident Request</h3>
+        </div>
+        <div class="modal-body">
+            <p><strong>Incident:</strong> <span id="unitReqIncidentId">N/A</span></p>
+            <p><strong>Type:</strong> <span id="unitReqIncidentType">N/A</span></p>
+            <p><strong>Location:</strong> <span id="unitReqIncidentLocation">N/A</span></p>
+            <p>Dispatch requested your unit. Choose an action:</p>
+        </div>
+        <div class="modal-footer" style="justify-content:flex-end;">
+            <button class="button bg-red" onclick="handleIncomingUnitRequestIgnore()">Ignore</button>
+            <button class="button" onclick="handleIncomingUnitRequestView()">View
+                Incident</button>
+            <button class="button bg-green fg-white" onclick="handleIncomingUnitRequestRespond()">View +
+                Respond</button>
+        </div>
+    </div>
+    <div class="modal-content" id="makePrimaryConfirmModal" style="display: none;">
+        <div class="modal-header">
+            <h3>Become Primary Unit</h3>
+        </div>
+        <div class="modal-body">
+            <p>Are you sure you wish to become primary of this incident?</p>
+            <div class="grid">
+                <div class="row">
+                    <button class="button bg-green fg-white mt-2 cell-6" style="border-radius:0 !important;"
+                        onclick="becomePrimaryOfCurrentIncident()">Yes</button>
+                    <button class="button bg-light fg-dark mt-2 cell-6" style="border-radius:0 !important;"
+                        onclick="closeModal('makePrimaryConfirmModal')">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-content" id="supervisorKeyModal" style="display: none;">
+        <div class="modal-header">
+            <h3>Supervisor Key Required</h3>
+        </div>
+        <div class="modal-body">
+            <input type="password" id="supervisorKeyInput" data-role="input" placeholder="Supervisor Key"
+                style="width:100%; border-radius:0 !important; padding:5px !important;"
+                onkeypress="if(event.key==='Enter'){ event.preventDefault(); requestKey('supervisorKeyInput', 'supervisorKeyError', 'SUPERVISOR KEY', () => { acceptSupervisorKey(); }); }">
+            <div id="supervisorKeyError" style="color:#c80000; min-height:18px; margin-top:3px;"></div>
+            <div class="grid">
+                <div class="row">
+                    <button class="button bg-green fg-white cell-6"
+                        onclick="requestKey('supervisorKeyInput', 'supervisorKeyError', 'INCIDENT ID KEY', () => { acceptSupervisorKey(); });">Submit</button>
+                    <button class="button cell-6" onclick="closeModal('supervisorKeyModal')">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-content" id="supervisorSetIncidentModal" style="display: none;">
+        <div class="modal-header">
+            <h3>Set Incident ID</h3>
+        </div>
+        <div class="modal-body">
+            <input type="text" id="incidentIdInput" data-role="input" placeholder="0000"
+                style="width:100%; border-radius:0 !important; padding:10px !important;"
+                onkeypress="if(event.key==='Enter'){ event.preventDefault(); setIncidentID(); }">
+            <div id="incidentIdError" style="color:#c80000; min-height:18px; margin-top:6px;"></div>
+            <div class="grid">
+                <div class="row">
+                    <button class="button bg-green fg-white cell-6" onclick="setIncidentID()">Set Incident
+                        ID</button>
+                    <button class="button cell-6" onclick="closeModal('supervisorSetIncidentModal')">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-content" id="closeIncidentFullIdModal" style="display: none;">
+        <div class="modal-header">
+            <h3>Close Incident</h3>
+        </div>
+        <div class="modal-body">
+            <p id="closeIncidentFullIdHint" style="margin-bottom: 8px;">No incident found for today. Enter
+                full
+                incident ID:</p>
+            <input type="text" id="closeIncidentFullIdInput" data-role="input" placeholder="PD/MMDDYY-0000"
+                style="width:100%; border-radius:0 !important; padding:10px !important;"
+                onkeypress="if(event.key==='Enter'){ event.preventDefault(); submitCloseIncidentFullId(); }">
+            <div id="closeIncidentFullIdError" style="color:#c80000; min-height:18px; margin-top:6px;">
+            </div>
+            <div class="grid">
+                <div class="row">
+                    <button class="button bg-green fg-white mt-2 cell-6" style="border-radius:0 !important;"
+                        onclick="submitCloseIncidentFullId()">Close Incident</button>
+                    <button class="button bg-light fg-dark mt-2 cell-6" style="border-radius:0 !important;"
+                        onclick="closeModal('closeIncidentFullIdModal')">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-content" id="printCallsModal" style="display: none;">
+        <div class="modal-header">
+            <h3>Print Calls</h3>
+        </div>
+        <div class="modal-body">
+            <label style="display:block; margin-bottom:6px; font-weight:700;">Start Date</label>
+            <input type="date" id="printCallsDate" data-role="input"
+                style="width:100%; border-radius:0 !important; padding:10px !important; margin-bottom:10px;">
+            <label style="display:block; margin-bottom:6px; font-weight:700;">End Date (optional)</label>
+            <input type="date" id="printCallsDateEnd" data-role="input"
+                style="width:100%; border-radius:0 !important; padding:10px !important; margin-bottom:8px;">
+            <div id="printCallsStatus" style="min-height:18px; margin-bottom:6px; color:#666;"></div>
+            <div class="grid">
+                <div class="row">
+                    <button class="button mt-2" style="width:100%; border-radius:0 !important;"
+                        onclick="exportCallsCsvByDateRange()">Export CSV</button>
+                    <button class="button cell-6" onclick="closeModal('printCallsModal')">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-content" id="editIncidentModal" style="display: none;">
+        <div class="modal-header">
+            <h3>Edit Incident Data</h3>
+        </div>
+        <div class="modal-body">
+            <div class="grid">
+                <div class="row">
+                    <input class="cell-6" id="editIncType" type="text" data-role="input" placeholder="Call Type"
+                        style="border-radius: 0px !important; padding: 5px;">
+                    <input class="cell-6" id="editIncLocation" type="text" data-role="input" placeholder="Location"
+                        style="border-radius: 0px !important; padding: 5px;">
+                </div>
+                <div class="row">
+                    <textarea class="cell-12" id="editIncNarrative" placeholder="Narrative"
+                        style="border-radius: 0px !important; padding: 5px; width: 100%; min-height: 80px; border: 1px solid #999; box-sizing: border-box; resize: vertical;"></textarea>
+                </div>
+                <div class="row">
+                    <select class="cell-6" id="editIncPriority"
+                        style="border-radius: 0px !important; padding: 5px; border: 1px solid #999;">
+                        <option value="">Select Priority</option>
+                        <option value="1">1 - High</option>
+                        <option value="2">2 - Medium</option>
+                        <option value="3">3 - Low</option>
+                    </select>
+                </div>
+                <div class="row">
+                    <button id="editIncSubmitBtn" class="button bg-green fg-white mt-2 cell-6"
+                        style="border-radius: 0px !important;">Save Changes</button>
+                    <button class="button bg-red fg-white mt-2 cell-6" style="border-radius: 0px !important;"
+                        onclick="closeModal('editIncidentModal')">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Incident History Modal -->
+    <div class="modal-content" id="incHistoryCommentsView" style="display: none;">
+        <div class="modal-header">
+            <h3>Incident History</h3>
+        </div>
+        <div class="modal-body">
+            <h5 id="incHistoryHeader"></h5>
+            <hr>
+            <br />
+            <div class="incidentHistory" id="incidentHistory"></div>
+            <br />
+            <button class="button mt-2" onclick="closeModal('incHistoryCommentsView')">Close</button>
+        </div>
+    </div>
+    <!-- Inc Query Results Modal -->
+    <div class="modal-content" id="incQueryResultsModal" style="display: none;">
+        <div class="modal-header">
+            <h3>Query Results</h3>
+            <br />
+        </div>
+        <div class="modal-body" style="padding:0;">
+            <div id="incQueryResultsHolder" style="overflow-y:auto; max-height:60vh; padding:10px;"></div>
+            <br />
+            <button class="button mt-2" onclick="closeModal('incQueryResultsModal')">Close</button>
+        </div>
+    </div>
+    <!-- Report Prompt For ID Modal -->
+    <div class="modal-content" id="reportPromptForIdModal" style="display: none;">
+        <div class="modal-header">
+            <h3>Lookup By Person ID</h3>
+        </div>
+        <div class="modal-body">
+            <p>Enter the person ID. This will fill the report field with Name + DL#.</p>
+            <input id="reportPromptForIdInput" type="text" data-role="input" placeholder="Enter person ID"
+                style="border-radius: 0 !important;"
+                onkeydown="if(event.key === 'Enter'){ event.preventDefault(); submitReportPromptForId(); }">
+            <div id="reportPromptForIdStatus" style="margin-top: 8px; min-height: 18px; color: #333;">Enter a person ID to lookup.</div>
+            <div class="grid" style="margin-top: 10px;">
+                <div class="row">
+                    <button class="button cell-6 bg-green" onclick="submitReportPromptForId()">Lookup & Fill</button>
+                    <button class="button cell-6" onclick="closeModal('reportPromptForIdModal')">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Incident History Modal -->
+    <div class="modal-content" id="startNewReport" style="display: none;">
+        <div class="modal-header">
+            <h3>Start New Report</h3>
+        </div>
+        <div class="modal-body">
+            <div id="startNewReportChooser">
+                <h5>Choose a report to start</h5>
+                <hr>
+                <br />
+                <select id="startNewReportSelect" class="cell-6" style="border-radius: 0px !important; padding: 5px; border: 1px solid #999;">
+                    <option value="arrestReport">Arrest Report</option>
+                    <option value="chp555">CHP 555 (TC)</option>
+                    <option value="chp180">CHP 180 (IMPOUND/TOW)</option>
+                </select>
+                <br />
+                <div class="grid">
+                    <div class="row">
+                        <button class="button cell-6 bg-green" onclick="startNewReport();">Start</button>
+                        <button class="button cell-6" onclick="closeModal('startNewReport')">Close</button>
+                    </div>
+                </div>
+            </div>
+            <div id="startNewReportFormHost" class="start-new-report-form-host" style="display:none;"></div>
+        </div>
+    </div>
+</div>
+
+<!-- Home Footer -->
+<footer id="home-foot">
+    <div class="footer-btn w-sm"></div>
+    <a class="footer-btn w-md" href="https://drive.google.com/file/d/1GfbJwrWv6pCmZWdTQ-zz_Afoh5oGSbsk/view"
+        target="_blank">Help</a>
+    <div class="footer-group">
+        <a class="footer-btn"
+            href="https://www.motorolasolutions.com/en_us/products/command-center-software/public-safety-software/premierone/premierone-mobile.html"
+            target="_blank">About Mobile</a>
+        <div class="footer-btn" disabled>Send Message</div>
+    </div>
+    <div class="footer-btn w-sm"></div>
+    <div class="footer-btn w-sm"></div>
+    <div class="footer-group">
+        <div class="footer-btn"></div>
+        <div class="footer-btn"></div>
+        <div class="footer-btn"></div>
+    </div>
+    <div class="footer-btn w-lg"></div>
+    <div class="footer-btn w-sm"></div>
+    <div class="footer-btn w-sm"></div>
+    <div class="footer-btn w-sm"></div>
+    <div class="footer-btn w-sm"></div>
+</footer>
+
+<footer id="reports-compose-foot" style="display: none;">
+    <div class="footer-btn w-sm" onclick="showReportStartSelector()">Change Type</div>
+    <div class="footer-btn w-md" onclick="clearReportFields()">Clear Form</div>
+    <div class="footer-btn w-md" onclick="autofillReportOfficerFields()">Autofill Officer</div>
+    <div class="footer-btn w-md" onclick="logActiveDraftToConsole()">Log Draft</div>
+    <div class="footer-btn w-md" onclick="clearActiveDraftData()">Clear Draft Data</div>
+    <div class="footer-btn w-sm"></div>
+    <div class="footer-btn" style="flex:1;"></div>
+    <div class="footer-btn w-md" onclick="showReportStartSelector()">New Draft</div>
+    <div class="footer-btn w-md" onclick="exitReportCompose()">Back To Reports</div>
+    <div class="footer-btn w-sm"></div>
+</footer>
+
+<!-- Incident Footer-->
+<footer id="inc-foot" style="display: none;">
+    <div class="footer-group">
+        <div class="footer-btn" onclick="movePages('prev')">&lt;</div>
+        <div class="footer-btn" onclick="movePages('next')">&gt;</div>
+        <div class="footer-btn" onclick="showModal('editIncidentModal');">Edit</div>
+        <div class="footer-btn" onclick="closeIncident()">Clear</div>
+        <div class="footer-btn" id="footerBtnClose" onclick="footerCloseIncident()">Close</div>
+        <div class="footer-btn" onclick="handlePrimaryButtonClick()">Primary</div>
+
+        <div class="footer-btn" id="attachToggleBtn" onclick="handleAttachToggle();">Attach</div>
+        <div class="footer-btn" id="locateMobileMapBtn" onclick="locateCurrentIncidentOnMobileMap()">Locate on Mobile Map</div>
+        <div class="footer-btn"></div>
+        <div class="footer-btn"></div>
+    </div>
+</footer>
+
+<!-- Query Table Footer -->
+<footer id="query-foot" style="display: none;">
+    <div class="footer-btn w-sm" onclick="movePages('prev')">&lt;</div>
+    <div class="footer-btn w-sm" onclick="movePages('next')">&gt;</div>
+    <div class="footer-btn w-md" onclick="showQueryOptsView('CAL-OP')">New Query</div>
+    <div class="footer-btn w-sm" onclick="viewSelectedQueryRows()">View</div>
+    <div class="footer-btn w-sm" onclick="deleteSelectedQueryRows()">Delete</div>
+    <div class="footer-btn w-md" onclick="closeIncident(); updateView('incidentsView');">Close View</div>
+    <div class="footer-btn w-lg" onclick="createTrafficStopFromQuery()">Create Traffic Stop</div>
+    <div class="footer-btn w-lg" onclick="sendQryToInc()">SendQryToInc</div>
+    <div class="footer-btn" style="flex:1;"></div>
+</footer>
+
+<!-- Submit Query Info Footer -->
+<footer id="submit-query-foot">
+    <div class="footer-btn w-sm"></div>
+    <div class="footer-btn w-md" onclick="submitQueryForm()">Submit</div>
+    <div class="footer-btn w-md" onclick="saveQueryDraft()">Save Draft</div>
+    <div class="footer-btn w-md" onclick="resetQueryFields()">Restore Default</div>
+    <div class="footer-btn w-sm" onclick="closeIncident(); updateView('incidentsView');">Cancel</div>
+    <div class="footer-btn w-md" onclick="resetQueryFields()">Clear Form</div>
+    <div class="footer-btn w-md" disabled style="pointer-events:none;">Passcode</div>
+    <div class="footer-btn" style="flex:1;"></div>
+</footer>
+
+<!-- Adv Call Table Footer -->
+<footer id="adv-call-table-foot" style="display: none;">
+    <div class="footer-btn w-sm" onclick="movePages('prev')">&lt;</div>
+    <div class="footer-btn w-sm" onclick="movePages('next')">&gt;</div>
+    <div class="footer-btn w-md" onclick="callsAdvView()">View</div>
+    <div class="footer-btn w-md" style="pointer-events:none;" disabled>Locate on Map</div>
+    <div class="footer-btn w-md" onclick="callsAdvSelfDispatch()">Self Dispatch</div>
+    <div class="footer-btn w-md" style="pointer-events:none;" disabled>Monitor Area</div>
+    <div class="footer-btn" style="flex:1;"></div>
+    <div class="footer-btn w-md" onclick="updateView('incidentsView')">Close View</div>
+    <div class="footer-btn w-md" id="callsAdvOptionsBtn" onclick="toggleCallsAdvOptions()">&#8593; Options</div>
+</footer>

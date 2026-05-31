@@ -1,0 +1,52 @@
+{
+  "apps": [
+    {
+      "id": "PremierOneMDT",
+      "label": "PremierOne MDT",
+      "iconUrl": "",
+      "showOnDesktop": true,
+      "showInStart": true,
+      "showOnTaskbar": true
+    },
+    {
+      "id": "PremierOneReportMonitor",
+      "label": "PremierOne Records",
+      "iconUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8f/Motorola_M_symbol_blue.svg/960px-Motorola_M_symbol_blue.svg.png?utm_source=commons.wikimedia.org&utm_campaign=index&utm_content=thumbnail",
+      "showOnDesktop": true,
+      "showInStart": true,
+      "showOnTaskbar": false
+    },
+    {
+      "id": "Notepad",
+      "label": "Notepad",
+      "iconUrl": "https://img.icons8.com/color/48/notepad.png",
+      "showOnDesktop": true,
+      "showInStart": true,
+      "showOnTaskbar": true
+    },
+    {
+      "id": "Outlook",
+      "label": "Outlook",
+      "iconUrl": "https://img.icons8.com/color/48/ms-outlook.png",
+      "showOnDesktop": true,
+      "showInStart": true,
+      "showOnTaskbar": false
+    },
+    {
+      "id": "Google",
+      "label": "Google",
+      "iconUrl": "https://www.google.com/favicon.ico",
+      "showOnDesktop": true,
+      "showInStart": true,
+      "showOnTaskbar": true
+    },
+    {
+      "id": "MobileMap",
+      "label": "MOBILE MAP",
+      "iconUrl": "https://img.icons8.com/color/48/worldwide-location.png",
+      "showOnDesktop": false,
+      "showInStart": false,
+      "showOnTaskbar": false
+    }
+  ]
+}

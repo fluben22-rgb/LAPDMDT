@@ -1,0 +1,81 @@
+#loginArea {
+    background-image: url('https://i.sstatic.net/lubGc.jpg');
+    background-size: cover;
+    background-position: center;
+    width: 100%;
+    height: 100%;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    z-index: 999;
+}
+
+#loginArea::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.14), rgba(0, 0, 0, 0.28));
+    pointer-events: none;
+}
+
+#loginArea::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    box-shadow: inset 0 120px 120px rgba(2, 6, 23, 0.32);
+    pointer-events: none;
+}
+
+#loginArea .login-box {
+    width: 30%;
+    min-width: 300px;
+    max-width: 450px;
+    background: #fff;
+    border: 1px solid #aaa;
+    border-radius: 0 !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+#loginArea .align-center {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#inputUserDataArea {
+    display: none;
+    align-items: center !important;
+    justify-content: center !important;
+    min-height: 100% !important;
+    background: #d9d9d9 !important;
+    padding: 20px !important;
+}
+
+/*=== UNIT DATA STYLES ===*/
+
+.select .button-group {
+    display: none !important;
+}
+
+.select .input-wrapper {
+    padding-right: 0 !important;
+    border-radius: 0 !important;
+}
+
+.select .title {
+    padding-right: 8px !important;
+    width: 100% !important;
+}
+
+.select {
+    border-radius: 0 !important;
+}

@@ -1,0 +1,15 @@
+{
+  "flags": {
+    "loadByDefault": false
+  },
+  "supabase": {
+    "supabaseUrl": "https://lgajaitgqqznzlzjazxn.supabase.co",
+    "supabaseKey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxnYWphaXRncXF6bnpsemphenhuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAzMDg2NzQsImV4cCI6MjA4NTg4NDY3NH0.Sm_Y4XiwCwjVtdvNEALNsDNY4EDGVI2KIWXkp3VdmfQ"
+  },
+  "records": {
+    "helpUrl": "https://www.motorolasolutions.com/en_us/products/command-center-software/public-safety-software/premierone/premierone-records.html",
+    "rosterUrl": "https://docs.google.com/spreadsheets/d/1XRuIfXciAG1-QAc9NbesWCqMLwaPQ4k9vPookpyUaus/edit?usp=sharing",
+    "attendanceSheetUrl": "",
+    "personPingsForWebhook": ["1005989535265607821", "422170397379657730", "552838050955264010"]
+  }
+}

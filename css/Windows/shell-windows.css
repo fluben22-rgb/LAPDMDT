@@ -1,0 +1,123 @@
+.win-window-layer {
+    position: absolute;
+    inset: 0;
+    z-index: 4;
+    pointer-events: none;
+}
+
+.win-app-window {
+    position: absolute;
+    width: min(1120px, calc(100vw - 80px));
+    height: min(720px, calc(100vh - 140px));
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    background: rgba(6, 10, 18, 0.9);
+    overflow: hidden;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.35);
+    pointer-events: auto;
+}
+
+.win-app-window.active {
+    border-color: rgba(255, 255, 255, 0.36);
+}
+
+.win-app-window.maximized {
+    left: 0 !important;
+    top: 0 !important;
+    width: 100vw !important;
+    height: calc(100vh - 52px) !important;
+    border-radius: 0;
+}
+
+.win-app-window-titlebar {
+    height: 32px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 146px 0 8px;
+    background: #1f2c54;
+    color: #eef4ff;
+    cursor: move;
+    user-select: none;
+}
+
+.win-app-window.theme-mdt .win-app-window-titlebar {
+    background: #ffffff;
+    color: #111;
+}
+
+.win-app-window.theme-mdt .win-app-window-actions button {
+    color: #111;
+}
+
+.win-app-window.theme-dark .win-app-window-titlebar {
+    background: #000;
+    color: #f2f6ff;
+}
+
+.win-app-window-title {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+}
+
+.win-app-window-icon {
+    width: 16px;
+    height: 16px;
+    object-fit: contain;
+    display: none;
+}
+
+.win-app-window-actions {
+    display: inline-flex;
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    align-items: stretch;
+    gap: 0;
+}
+
+.win-app-window-actions button {
+    width: 46px;
+    height: 100%;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    color: #f2f6ff;
+    cursor: pointer;
+}
+
+.win-app-window-actions button:hover {
+    background: rgba(255, 255, 255, 0.16);
+}
+
+.win-app-window-actions button.danger:hover {
+    background: rgba(232, 54, 54, 0.9);
+}
+
+.win-app-window-body {
+    height: calc(100% - 32px);
+    background: #fff;
+    position: relative;
+    overflow: hidden;
+}
+
+.win-app-window-body iframe,
+.win-app-window-body textarea {
+    width: 100%;
+    height: 100%;
+    border: 0;
+}
+
+.win-app-window-resizer {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    width: 14px;
+    height: 14px;
+    cursor: nwse-resize;
+    background: linear-gradient(135deg, transparent 45%, rgba(255, 255, 255, 0.45) 46%, rgba(255, 255, 255, 0.45) 54%, transparent 55%);
+}

@@ -1,0 +1,1350 @@
+﻿<style id="cad-inline-fallback">
+#dispatchingArea,
+#dispatchingArea * {
+    box-sizing: border-box;
+}
+
+.dispatcher-menu-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 38px;
+}
+
+.dispatcher-menu-buttons {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+}
+
+.menu-btn {
+    min-width: 74px;
+    min-height: 28px;
+    padding: 4px 12px;
+    font-size: 12px;
+}
+
+.dispatcher-command-inline {
+    display: flex;
+    align-items: center;
+    min-height: 30px;
+    min-width: 220px;
+    flex: 1;
+}
+
+.command-input-inline {
+    width: 100%;
+    min-height: 26px;
+    padding: 4px 8px;
+    font-size: 12px;
+}
+
+.incident-subtabs {
+    display: flex;
+    gap: 4px;
+    flex-wrap: nowrap;
+}
+
+.incident-subtab {
+    min-height: 28px;
+    padding: 6px 12px;
+    font-size: 12px;
+}
+
+#dispatchLoginArea input[data-role="input"],
+#dispatchUserLoginArea input[data-role="input"] {
+    width: min(420px, 92%) !important;
+    min-height: 38px;
+    padding: 10px 12px !important;
+    font-size: 14px;
+}
+
+#dispatchLoginArea .button,
+#dispatchUserLoginArea .button {
+    width: min(420px, 92%) !important;
+    min-height: 40px;
+    font-size: 14px;
+    font-weight: 600;
+}
+</style>
+
+<div id="dispatchLoginArea" style="display: none; align-items: center; justify-content: center; padding: 20px;">
+<div class="login-box">
+    <div class="align-center">
+        <h2 style="margin-top: 0; margin-bottom: 20px; text-align: center;">Dispatch Login</h2>
+        <input id="dispatch-email-input" type="email" data-role="input" placeholder="Email"
+            style="display: none; margin-bottom: 15px !important; border-radius: 0 !important;"
+            onkeydown="if(event.key === 'Enter') submitDispatchAppLogin();">
+        <input id="dispatch-password-input" type="password" data-role="input" placeholder="Password"
+            style="margin-bottom: 15px !important; border-radius: 0 !important;"
+            onkeydown="if(event.key === 'Enter') submitDispatchAppLogin();">
+        <button class="button bg-dark fg-white"
+            style="width: auto; margin: 6px auto 0; border-radius: 0 !important;"
+            onclick="submitDispatchAppLogin()">Continue</button>
+        <p id="dispatch-login-error" style="color: #c80000; margin-top: 8px; min-height: 18px;"></p>
+    </div>
+</div>
+</div>
+
+<div class="d-flex flex-row w-100 incident-view-wrapper"
+style="display: none !important; position: fixed; top: 14rem; left: 0; right: 0; bottom: 35px; z-index: 1000; visibility: hidden; align-items: stretch; width: 100%; max-width: 100%;"
+id="inc-adv-view-wrapper">
+<div class="inc-sidebar-area bg-lightGray border-right bd-default">
+    <a class="side-nav-btn d-flex align-center p-2 active-inc-tab" id="incSummaryNav"
+        style="border-right: none !important;" onclick="toggleIncidentSection('summary')">
+        <span class="mif-info mif-2x mr-2"></span>
+        <span class="btn-text">Summary</span>
+    </a>
+    <a class="side-nav-btn d-flex align-center p-2" id="incPerActivator">
+        <span class="mif-person mif-2x mr-2"></span>
+        <span class="btn-text" id="incPerNavCount">Persons <span id="incPerCounter"></span></span>
+    </a>
+    <a class="side-nav-btn d-flex align-center p-2" id="incVehActivator">
+        <span class="mif-automobile mif-2x mr-2"></span>
+        <span class="btn-text" id="incVehNavCount">Vehicles <span id="incVehCounter"></span></span>
+    </a>
+    <a class="side-nav-btn d-flex align-center p-2" onclick="showModal('incAdvViewAddCommantsModal')">
+        <span class="mif-pencil mif-2x mr-2"></span>
+        <span class="btn-text">Comments</span>
+    </a>
+    <a class="side-nav-btn d-flex align-center p-2 active-inc-tab" id="incInfoNav"
+        onclick="toggleIncidentSection('incidentInfo')">
+        <span class="mif-info2 mif-2x mr-2"></span>
+        <span class="btn-text">Incident Info</span>
+    </a>
+    <a class="side-nav-btn d-flex align-center p-2 active-inc-tab" id="incUnitDetailsNav"
+        onclick="toggleIncidentSection('unitDetails')">
+        <span class="mif-group mif-2x mr-2"></span>
+        <span class="btn-text ">Unit Details <span id="incUnitCounter"></span></span>
+    </a>
+    <a class="side-nav-btn d-flex align-center p-2" id="incHistoryDetails"
+        onclick="showModal('incHistoryCommentsView');">
+        <span class="mif-history mif-2x mr-2"></span>
+        <span class="btn-text ">Incident History <span id="incHistoryCounter"></span></span>
+    </a>
+    <a class="side-nav-btn d-flex align-center p-2" id="incQueryResultsNav" onclick="openIncQueryResultsModal();">
+        <span class="mif-search mif-2x mr-2"></span>
+        <span class="btn-text">Query Results <span id="incQueryCounter"></span></span>
+    </a>
+</div>
+
+<div class="inc-content flex-grow-1 p-4 bg-white" id="inc-content">
+    <div class="text-center" id="incInfoHeader">
+        <a id="inc-location" style="font-size: 20px; line-height: 20px; overflow: hidden;"></a>
+    </div>
+    <div class="grid" style="padding-top: 2px;">
+        <div class="row" id="incInfoStatusRow">
+            <h3 class="cell-11" style="color: rgb(0, 183, 255);" id="inc-status"></h3>
+            <button class="cell-auto button cycle small bg-blue">?</button>
+        </div>
+        <div id="incSummarySection">
+            <div class="row">
+                <div class="cell-6" id="inc-type"></div>
+                <div class="cell-6" id="inc-id"></div>
+            </div>
+            <div class="row">
+                <div class="cell-6" id="inc-location2"></div>
+                <div class="cell-6" id="inc-status2"></div>
+            </div>
+        </div>
+        <div class="row" id="incUnitDetailsSection">
+            <div class="cell-4">Units:</div><u class="cell-auto" id="incUnits"></u>
+        </div>
+        <div class="row">
+            <div class="cell-6">Incident initiated</div>
+            <div class="cell-6" id="incStart"></div>
+        </div>
+        <div class="row">
+            <div class="cell-4">Beat:</div>
+            <u class="cell-4" id="rd"></u>
+            <button class="button cell-4">Refresh Comments</button>
+        </div>
+    </div>
+    <code id="inc-adv-view-cmts"
+        style="display: block; border: 2px solid black; padding: 10px; white-space: pre-wrap; border-radius: 0;">
+            </code>
+</div>
+</div>
+<div id="query-opts-view"
+style="display: none; flex-direction: row; width: 100%; max-width: 100%; position: fixed; top: var(--header-h); left: 0; right: 0; bottom: var(--footer-h); z-index: 900; background:#fff;">
+<div class="inc-sidebar-area bg-lightGray border-right bd-default">
+    <a class="side-nav-btn d-flex align-center p-2" disabled>
+        <span class="btn-text">1_CODE10</span>
+    </a>
+    <a class="side-nav-btn d-flex align-center p-2 active-query-tab" data-qtype="CAL-OP"
+        onclick="switchQueryInputPanel('CAL-OP')">
+        <span class="btn-text">2_CAL-OP - Reg Veh</span>
+    </a>
+    <a class="side-nav-btn d-flex align-center p-2" data-qtype="PERSON" onclick="switchQueryInputPanel('PERSON')">
+        <span class="btn-text">3_Wants_Warrants_DMV</span>
+    </a>
+    <a class="side-nav-btn d-flex align-center p-2" disabled>
+        <span class="btn-text">Property</span>
+    </a>
+    <a class="side-nav-btn d-flex align-center p-2" disabled>
+        <span class="btn-text">Firearm</span>
+    </a>
+    <a class="side-nav-btn d-flex align-center p-2" disabled>
+        <span class="btn-text">6_COP</span>
+    </a>
+    <a class="side-nav-btn d-flex align-center p-2" disabled>
+        <span class="btn-text">7_LoJack</span>
+    </a>
+    <a class="side-nav-btn d-flex align-center p-2" disabled>
+        <span class="btn-text">8_Boat</span>
+    </a>
+</div>
+<!-- Input Plate Info for Query area-->
+<div class="inc-content flex-grow-1 p-4 bg-white" id="input-plate-info">
+    <br />
+    <div class="grid" style="padding-top: 2px;">
+        <div class="row">
+            <input class="cell-auto" type="checkbox" disabled checked id="cali">
+            <label class="cell-2" for="cali">California</label>
+        </div>
+        <br />
+        <div class="row">
+            <button id="resetFields" class="button cell-2">Reset</button>
+        </div>
+        <br />
+        <div class="row">
+            <label class="cell-2" style="font-size:13px; font-weight:600; margin-bottom:4px;"
+                for="plateInput"><br>Plate</label>
+            <input class="cell-10" type="text" id="plateInput" placeholder="SAM 123"
+                onkeydown="if(event.key == 'Enter') alert('Querying for this type is not supported.');"
+                style="height: 100%; width:100%; font-size:2.4rem; font-weight:700; padding:10px 14px; border:2px solid #333; border-radius:0; letter-spacing:4px; text-transform:uppercase;">
+        </div>
+        <div class="row">
+            <label class="cell-3">Plate Type</label>
+            <select class="cell-9" id="plateTyp" style="border-radius: 0;">
+                <option value="1">PC-PASSANGER</option>
+                <option value="2">CA-EXEMPT</option>
+                <option value="3">PC-MEDIA</option>
+                <option value="4">NPC-AMATURE RADIO</option>
+                <option value="5">NPC-ANT MOTO</option>
+                <option value="6">PC-APPORTIONED</option>
+            </select>
+        </div>
+        <div class="row">
+            <label class="cell-3" for="plateState">State</label>
+            <select class="cell-9" id="plateState" style="border-radius: 0;">
+                <option value="CA">California</option>
+                <option value="AL">Alabama</option>
+                <option value="AK">Alaska</option>
+                <option value="AZ">Arizona</option>
+                <option value="AR">Arkansas</option>
+                <option value="CO">Colorado</option>
+                <option value="CT">Connecticut</option>
+                <option value="DE">Delaware</option>
+                <option value="DC">District Of Columbia</option>
+                <option value="FL">Florida</option>
+                <option value="GA">Georgia</option>
+                <option value="HI">Hawaii</option>
+                <option value="ID">Idaho</option>
+                <option value="IL">Illinois</option>
+                <option value="IN">Indiana</option>
+                <option value="IA">Iowa</option>
+                <option value="KS">Kansas</option>
+                <option value="KY">Kentucky</option>
+                <option value="LA">Louisiana</option>
+                <option value="ME">Maine</option>
+                <option value="MD">Maryland</option>
+                <option value="MA">Massachusetts</option>
+                <option value="MI">Michigan</option>
+                <option value="MN">Minnesota</option>
+                <option value="MS">Mississippi</option>
+                <option value="MO">Missouri</option>
+                <option value="MT">Montana</option>
+                <option value="NE">Nebraska</option>
+                <option value="NV">Nevada</option>
+                <option value="NH">New Hampshire</option>
+                <option value="NJ">New Jersey</option>
+                <option value="NM">New Mexico</option>
+                <option value="NY">New York</option>
+                <option value="NC">North Carolina</option>
+                <option value="ND">North Dakota</option>
+                <option value="OH">Ohio</option>
+                <option value="OK">Oklahoma</option>
+                <option value="OR">Oregon</option>
+                <option value="PA">Pennsylvania</option>
+                <option value="RI">Rhode Island</option>
+                <option value="SC">South Carolina</option>
+                <option value="SD">South Dakota</option>
+                <option value="TN">Tennessee</option>
+                <option value="TX">Texas</option>
+                <option value="UT">Utah</option>
+                <option value="VT">Vermont</option>
+                <option value="VA">Virginia</option>
+                <option value="WA">Washington</option>
+                <option value="WV">West Virginia</option>
+                <option value="WI">Wisconsin</option>
+                <option value="WY">Wyoming</option>
+            </select>
+        </div>
+        <div class="row">
+            <label class="cell-2" for="vin">VIN</label>
+            <input type="text" class="cell-10" id="vin" style="border-radius: 0;">
+        </div>
+        <div class="row">
+            <label class="cell-5" for="plateYr">LicensePlateYear</label>
+            <input type="text" class="cell-7" id="licensePlateYear" style="border-radius: 0;">
+        </div>
+        <div class="row">
+            <label class="cell-4" for="purpCode">Purpose Code</label>
+            <select id="purpCode" class="cell-8" style="border-radius: 0;">
+                <option value="1">C-Criminal Justice</option>
+                <option value="2">G-Government</option>
+                <option value="3">M-Military</option>
+                <option value="4">P-Private</option>
+                <option value="5">R-Research</option>
+                <option value="6">T-Transportation</option>
+            </select>
+        </div>
+
+    </div>
+
+</div>
+
+<!-- Input Person info for Query Area -->
+<div class="inc-content flex-grow-1 p-4 bg-white" id="input-person-info" style="display:none;">
+    <br />
+    <div class="grid">
+        <div class="row">
+            <input class="cell-auto" type="checkbox" disabled checked id="cali">
+            <label class="cell-2" for="cali">California</label>
+        </div>
+        <br />
+        <div class="row">
+            <button id="resetFields" class="button cell-2">Reset</button>
+        </div>
+        <br />
+        <div class="row">
+            <label class="cell-2" style="font-size:13px; font-weight:600; margin-bottom:4px;"
+                for="personInput"><br>DL #</label>
+            <input class="cell-10" type="text" id="personInput" placeholder="3693166712"
+                style="height: 100%; width:100%; font-size:2.4rem; font-weight:700; padding:10px 14px; border:2px solid #333; border-radius:0; letter-spacing:4px; text-transform:uppercase;"
+                onkeydown="if(event.key == 'Enter') query('person');">
+        </div>
+        <div class="row">
+            <div class="cell-3">Last Name</div>
+            <input class="cell-9" type="text" id="lastNameInput" placeholder="Doe"
+                style="height: 50%; width:100%; font-size:1.2rem; font-weight:700; padding:10px 14px; border:1.5px solid #333; border-radius:0; letter-spacing:4px; text-transform:uppercase;">
+        </div>
+        <div class="row">
+            <div class="cell-3">First Name</div>
+            <input class="cell-9" type="text" id="firstNameInput" placeholder="John"
+                style="height: 50%; width:100%; font-size:1.2rem; font-weight:700; padding:10px 14px; border:1.5px solid #333; border-radius:0; letter-spacing:4px; text-transform:uppercase;">
+        </div>
+        <div class="row">
+            <div class="cell-4">Date Of Birth</div>
+            <input class="cell-8" type="date" id="dobInput"
+                style="height: 5%; width:100%; font-weight:700; padding:10px 14px; border:1px solid #333; border-radius:0;">
+        </div>
+        <div class="row">
+            <div class="cell-2">SSN</div>
+            <input class="cell-10" type="text" id="ssnInput"
+                style=" width:100%;  font-weight:700; padding:10px 14px; border:1px solid #333; border-radius:0; letter-spacing:4px;">
+        </div>
+        <div class="row">
+            <div class="cell-4">Incident #</div>
+            <input class="cell-8" type="text" id="incidentInput"
+                style="width:100%;font-weight:700; padding:10px 14px; border:1px solid #333; border-radius:0; letter-spacing:4px;">
+        </div>
+
+    </div>
+</div>
+</div>
+</div><!-- close query-opts-view (was missing, causing dispatchingArea to be hidden) -->
+<!-- dispatch area-->
+<div id="dispatchingArea">
+<div class="dispatcher-overlay" id="dispatcherOverlay">
+    <!-- TOP ROW: Menu Bar, Command Bar, Status Area (Horizontal) -->
+    <div class="dispatcher-menu-row">
+        <div class="dispatcher-menu-buttons">
+            <div class="menu-group">
+                <button class="menu-btn" onclick="toggleSubmenu('dispatchMenu')">Dispatch</button>
+                <div class="submenu" id="dispatchMenu" style="display: none;">
+                    <button class="submenu-item" onclick="dispatcherAction('push_incident')"
+                        id="pushIncidentBtn">Push Incident to Units <span>Ctrl+Alt+1</span></button>
+                    <button class="submenu-item" onclick="dispatcherAction('create_incident')">Create
+                        Incident
+                        <span>Ctrl+Alt+2</span></button>
+                    <button class="submenu-item" onclick="dispatcherAction('refresh_incident')">Refresh
+                        Incident
+                        <span>Ctrl+Alt+3</span></button>
+                    <button class="submenu-item" onclick="dispatcherAction('add_comment')">Add Comment
+                        <span>Ctrl+Alt+4</span></button>
+                    <button class="submenu-item" onclick="dispatcherAction('close_incident')">Close
+                        Incident
+                        <span>Ctrl+Alt+5</span></button>
+                </div>
+            </div>
+            <div class="menu-group">
+                <button class="menu-btn" onclick="toggleSubmenu('unitMenu')">Units</button>
+                <div class="submenu" id="unitMenu" style="display: none;">
+                    <button class="submenu-item" onclick="dispatcherAction('show_all_units')">View All
+                        <span>Ctrl+Alt+6</span></button>
+                    <button class="submenu-item" onclick="dispatcherAction('show_available_units')">Available
+                        <span>Ctrl+Alt+7</span></button>
+                    <button class="submenu-item" onclick="dispatcherAction('show_unavailable_units')">Unavailable
+                        <span>Ctrl+Alt+8</span></button>
+                </div>
+            </div>
+            <div class="menu-group">
+                <button class="menu-btn" onclick="toggleSubmenu('callMenu')">Calls</button>
+                <div class="submenu" id="callMenu" style="display: none;">
+                    <button class="submenu-item" onclick="dispatcherAction('calls_all')">All Calls
+                        <span>Ctrl+Alt+9</span></button>
+                    <button class="submenu-item" onclick="dispatcherAction('calls_active')">Active
+                        <span>Ctrl+Alt+0</span></button>
+                    <button class="submenu-item" onclick="dispatcherAction('calls_closed')">Closed
+                        <span>Ctrl+Alt+F10</span></button>
+                    <button class="submenu-item" onclick="dispatcherAction('print_calls')">Print</button>
+                </div>
+            </div>
+            <button class="menu-btn" onclick="toggleCommandBar()">Console</button>
+            <div class="menu-group">
+                <button class="menu-btn" onclick="toggleSubmenu('queryMenu')">Query</button>
+                <div class="submenu" id="queryMenu" style="display: none;">
+                    <button class="submenu-item" onclick="openDispatchQuery('vehicle')">Vehicle /
+                        Plate</button>
+                    <button class="submenu-item" onclick="openDispatchQuery('person')">Person / ID</button>
+                </div>
+            </div>
+        </div><!-- end dispatcher-menu-buttons -->
+
+        <div class="dispatcher-command-inline" id="dispatcherCommandBar" style="display: flex;">
+            <input type="text" class="command-input-inline" id="dispatcherCmdInput" placeholder="Enter command..."
+                onkeypress="if(event.key==='Enter') executeDispatchCommand()">
+        </div>
+
+        <div class="dispatcher-status-inline">
+            <span class="status-icon">&#10003;</span>
+            <span class="status-text">Ready</span>
+        </div>
+    </div>
+
+    <!-- CLOCK ROW: Clock Display (Horizontal) -->
+    <div class="dispatcher-clock-row">
+        <div class="clock-left">
+            <div class="clock-display" id="dispatcherClock">14:45:44</div>
+            <div class="clock-label">TIME</div>
+        </div>
+        <div class="incident-subtabs" id="incidentSubtabs">
+            <button class="incident-subtab active" data-tab="general"
+                onclick="openIncidentSubtab('general')">General</button>
+            <button class="incident-subtab" data-tab="dispatch"
+                onclick="openIncidentSubtab('dispatch')">Dispatch</button>
+            <button class="incident-subtab" data-tab="history"
+                onclick="openIncidentSubtab('history')">History</button>
+            <button class="incident-subtab" data-tab="persons" onclick="openIncidentSubtab('persons')">Persons
+                (0)</button>
+            <button class="incident-subtab" data-tab="vehicles" onclick="openIncidentSubtab('vehicles')">Vehicles
+                (0)</button>
+        </div>
+    </div>
+
+    <!-- DATE ROW: Date and Day of Week (Horizontal) -->
+    <div class="dispatcher-date-row">
+        <div class="time-date-display" id="dispatcherTimeDate">
+            Thursday, December 14, 2023
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT AREA: Tabs (Left, Vertical) | Incident Details (Middle) | Calls (Right) -->
+    <div class="dispatcher-main-area">
+        <!-- Left: Tabs (Vertical) -->
+        <div class="dispatcher-tabs-panel" id="dispatcherTabsPanel">
+            <div class="dispatcher-tabs" id="dispatcherTabs"></div>
+        </div>
+
+        <!-- Middle: Incident Details -->
+        <div class="dispatcher-content-area">
+            <!-- Tab Contents -->
+            <div class="dispatcher-tab-content" id="dispatcherTabContent">
+                <!-- Tab 1 (Blank) -->
+                <div class="tab-pane" id="tab-1" style="display: none;"></div>
+
+                <!-- Tab 2 (Incident Details) -->
+                <div class="tab-pane" id="tab-2" style="display: flex;">
+                    <div class="incident-content">
+                        <div class="incident-header-section">
+                            <div class="incident-name" id="incidentNameDisplay">// INC NAME</div>
+                            <div class="incident-location" id="incidentLocationDisplay">// LOCATION
+                            </div>
+                        </div>
+
+                        <div class="incident-subtab-content">
+                            <!-- General Subtab -->
+                            <div class="subtab-pane" id="subtab-general" style="display: block;">
+                                <div class="incident-form">
+                                    <div class="form-group full-width">
+                                        <label>Location</label>
+                                        <textarea class="dispatcher-field" id="dispatcherLocation"
+                                            placeholder="Location..."></textarea>
+                                    </div>
+                                    <div class="form-group full-width">
+                                        <label>Comments</label>
+                                        <textarea class="dispatcher-field full-height" id="dispatcherComments"
+                                            placeholder="Comments..."></textarea>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Dispatch Subtab -->
+                            <div class="subtab-pane" id="subtab-dispatch" style="display: none;">
+                                <div class="dispatch-subtab">
+                                    <div class="row" style="gap: 8px;">
+                                        <div class="cell-2">
+                                            <label>Status</label>
+                                            <select id="dispatchStatus" class="dispatcher-field">
+                                                <option value="Pending">Pending</option>
+                                                <option value="Active">Active</option>
+                                            </select>
+                                        </div>
+                                        <div class="cell-2">
+                                            <label>Inc Type</label>
+                                            <input type="text" id="dispatchIncType" class="dispatcher-field"
+                                                placeholder="Incident type...">
+                                        </div>
+                                        <div class="cell-2">
+                                            <label>Area</label>
+                                            <input type="text" class="dispatcher-field" id="dispatchArea"
+                                                value="HWD">
+                                        </div>
+                                        <div class="cell-1">
+                                            <label>PRI</label>
+                                            <select id="dispatchPriority" class="dispatcher-field">
+                                                <option>0</option>
+                                                <option>1</option>
+                                                <option>2</option>
+                                                <option>3</option>
+                                            </select>
+                                        </div>
+                                        <div class="cell-2">
+                                            <label>Beat</label>
+                                            <input type="text" class="dispatcher-field" id="dispatchBeat"
+                                                placeholder="Beat...">
+                                        </div>
+                                    </div>
+
+                                    <div class="divider"></div>
+
+                                    <div class="form-group full-width">
+                                        <label>Attached Units</label>
+                                        <div id="dispatchAttachedUnits" class="dispatch-attached-units">
+                                            6L30-W2
+                                        </div>
+                                    </div>
+
+                                    <div class="unit-table-wrapper">
+                                        <table class="unit-table" id="dispatchUnitTable"></table>
+                                    </div>
+
+                                    <div class="dispatch-footer">
+                                        <button class="dispatch-footer-btn"
+                                            onclick="showModal('dispReqUnit')"><span>Request</span><span
+                                                class="dispatch-footer-arrow">></span></button>
+                                        <button class="dispatch-footer-btn"
+                                            onclick="showModal('dispRespList')"><span>Resp
+                                                List</span><span class="dispatch-footer-arrow">></span></button>
+                                        <button class="dispatch-footer-btn"
+                                            onclick="saveDispatchFieldsToIncident()"><span>Update</span><span
+                                                class="dispatch-footer-arrow">></span></button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- History Subtab -->
+                            <div class="subtab-pane" id="subtab-history"
+                                style="display: none; padding: 8px; background: #fff; border: 1px solid #ddd;">
+                                <p>History entries will be shown here.</p>
+                            </div>
+
+                            <!-- Persons Subtab -->
+                            <div class="subtab-pane" id="subtab-persons"
+                                style="display: none; padding: 8px; background: #fff; border: 1px solid #ddd;">
+                                <p id="personsCountText"><b></b></p>
+                                <hr />
+                                <div id="personsContent"></div>
+                                <div class="row" style="margin-top: 10px;">
+                                    <button class="button bg-green fg-white cell-6"
+                                        style="border-radius: 0px !important;" onclick="addPersonToIncident()">Add
+                                        New Person</button>
+                                    <button class="button bg-red fg-white cell-6"
+                                        style="border-radius: 0px !important;"
+                                        onclick="toggleRemovePersonMode()">Remove Person</button>
+                                </div>
+                            </div>
+
+                            <!-- Vehicles Subtab -->
+                            <div class="subtab-pane" id="subtab-vehicles"
+                                style="display: none; padding: 8px; background: #fff; border: 1px solid #ddd;">
+                                <p id="vehiclesCountText"><b></b></p>
+                                <hr />
+                                <div id="vehiclesContent"></div>
+                                <div class="row" style="margin-top: 10px;">
+                                    <button class="button bg-green fg-white cell-6"
+                                        style="border-radius: 0px !important;" onclick="addVehicleToIncident()">Add
+                                        New Vehicle</button>
+                                    <button class="button bg-red fg-white cell-6"
+                                        style="border-radius: 0px !important;"
+                                        onclick="toggleRemoveVehicleMode()">Remove Vehicle</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Right: Calls/Call Stack / Dispatch context -->
+        <div class="dispatcher-calls-panel">
+
+
+            <div id="callsListView" class="calls-list" style="display: none;">
+                <p>Calls will be listed here.</p>
+            </div>
+
+            <!-- Right Panel: Incident Info + Queries Tabs -->
+            <div id="dispRightPanel" style="display:none; flex-direction:column; flex:1; overflow:hidden;">
+                <!-- Tab bar -->
+                <div class="disp-right-tabs">
+                    <button class="disp-right-tab active" id="dispRightTabInfo"
+                        onclick="switchDispRightTab('info')">Incident Info</button>
+                    <button class="disp-right-tab" id="dispRightTabQueries"
+                        onclick="switchDispRightTab('queries')">Queries (0)</button>
+                </div>
+                <!-- Incident Info pane -->
+                <div id="dispRightInfoPane" style="display:flex; flex-direction:column; flex:1; overflow-y:auto;">
+                    <div id="dispatchSidebar" class="dispatch-sidebar">
+                        <div class="dispatch-sidebar-actions">
+                            <button id="dispatchSummaryBtn" onclick="openDispatchSidebarPanel('summary')">Dispatch
+                                Summary (0)</button>
+                            <button id="dispatchCommentsBtn" onclick="openDispatchSidebarPanel('comments')">Comments
+                                (0)</button>
+                            <button id="dispatchResponsesBtn"
+                                onclick="openDispatchSidebarPanel('responses')">Response Msgs (0)</button>
+                        </div>
+                        <div id="dispatchSidebarContent" class="dispatch-sidebar-content">
+                            <div id="summaryPanel" class="dispatch-panel" style="display:block;">
+                                <h4>Dispatch Summary</h4>
+                                <div>Location: <span id="summaryLocation"></span></div>
+                                <div>Units Responding: <span id="summaryResponding"></span></div>
+                                <div>Units On Scene: <span id="summaryOnScene"></span></div>
+                            </div>
+                            <div id="commentsPanel" class="dispatch-panel" style="display:none;">
+                                <h4>Comments</h4>
+                                <div id="commentsList">No comments.</div>
+                            </div>
+                            <div id="responsesPanel" class="dispatch-panel" style="display:none;">
+                                <h4>Response Messages</h4>
+                                <div id="responsesList">No response messages.</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Queries pane -->
+                <div id="dispRightQueriesPane"
+                    style="display:none; flex-direction:column; flex:1; overflow-y:auto; padding:6px; background:#fff;">
+                    <div id="dispRightQueriesList" style="font-size:11px; color:#555;">No queries attached
+                        to
+                        this incident.</div>
+                </div>
+            </div>
+
+            <!-- Dispatch Query Panel -->
+            <div id="dispatchQueryPanel"
+                style="display:none; flex-direction:column; height:100%; background:#111; color:#0f0; font-family:monospace; font-size:12px;">
+                <div
+                    style="display:flex; align-items:center; background:#000; padding:4px 8px; border-bottom:1px solid #333; gap:6px;">
+                    <span style="color:#0f0; font-weight:bold;" id="dispQueryTypeLabel">VEHICLE QUERY</span>
+                    <button onclick="switchDispatchQueryType()"
+                        style="background:#222; color:#0f0; border:1px solid #0f0; padding:2px 8px; cursor:pointer; font-size:11px; font-family:monospace;">SWITCH</button>
+                    <button onclick="closeDispatchQuery()"
+                        style="background:#600; color:#fff; border:1px solid #900; padding:2px 8px; cursor:pointer; font-size:11px; font-family:monospace; margin-left:auto;">CLOSE</button>
+                </div>
+                <div style="padding:8px; border-bottom:1px solid #222;">
+                    <div id="dispQueryVehicleInputs">
+                        <input id="dispQueryPlate" type="text" placeholder="LICENSE PLATE"
+                            style="width:100%; background:#000; color:#0f0; border:1px solid #0f0; padding:4px; font-family:monospace; font-size:13px; margin-bottom:4px;"
+                            onkeydown="if(event.key==='Enter') runDispatchQuery()">
+                    </div>
+                    <div id="dispQueryPersonInputs" style="display:none;">
+                        <input id="dispQueryId" type="text" placeholder="LICENSE / ID NUMBER"
+                            style="width:100%; background:#000; color:#0f0; border:1px solid #0f0; padding:4px; font-family:monospace; font-size:13px; margin-bottom:4px;"
+                            onkeydown="if(event.key==='Enter') runDispatchQuery()">
+                    </div>
+                    <button onclick="runDispatchQuery()"
+                        style="width:100%; background:#0a400a; color:#0f0; border:1px solid #0f0; padding:5px; cursor:pointer; font-family:monospace; font-size:12px; font-weight:bold;">[
+                        RUN QUERY ]</button>
+                </div>
+                <div id="dispQueryOutput"
+                    style="flex:1; overflow-y:auto; padding:8px; white-space:pre-wrap; line-height:1.5;">
+                    <span style="color:#555;">// Ready. Enter a plate or ID and press RUN QUERY.</span>
+                </div>
+                <div style="padding:6px 8px; border-top:1px solid #222; display:flex; gap:6px;">
+                    <button onclick="attachDispatchQueryToInc()"
+                        style="background:#003366; color:#0af; border:1px solid #0af; padding:3px 10px; cursor:pointer; font-family:monospace; font-size:11px;">ATTACH
+                        TO INC</button>
+                    <button onclick="clearDispatchQueryOutput()"
+                        style="background:#222; color:#888; border:1px solid #444; padding:3px 10px; cursor:pointer; font-family:monospace; font-size:11px;">CLEAR</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+<!-- Modals Area-->
+<div class="modal-overlay">
+<div class="modal-content" id="incidentInitModal" style="display: none;">
+    <div class="modal-header">
+        <h3>New Incident</h3>
+    </div>
+    <div class="modal-body">
+        <p>Please input the circumstances and location of the incident:</p>
+        <div class="grid">
+            <div class="row">
+                <input class="cell-6" id="customIncType" type="text" data-role="input" placeholder="Call Type..."
+                    style="border-radius: 0px !important; padding: 5px;">
+                <input class="cell-6" id="customIncLocation" type="text" data-role="input" placeholder="Location..."
+                    style="border-radius: 0px !important; padding: 5px;">
+            </div>
+        </div>
+        <div class="row">
+            <input class="cell-12" id="customIncNarrative" type="text" data-role="input" placeholder="Narrative"
+                style="border-radius: 0px !important; padding: 5px;">
+        </div>
+        <div class="row">
+            <button class="button bg-green fg-white cell-6" onclick="createCustomIncident();">Create
+                Incident</button>
+            <button class="button cell-6" onclick="closeModal('incidentInitModal')">Cancel</button>
+        </div>
+    </div>
+</div>
+<!-- Modify Unit Modal -->
+<div class="modal-content" id="unitModifyModal" style="display: none;">
+    <div class="modal-header">
+        <h3>Modify Unit Info</h3>
+    </div>
+    <div class="modal-body">
+        <div class="grid">
+            <div class="row">
+                <button class="button bg-green fg-white cell-4" style="border-radius: 0px !important;"
+                    onclick="closeModal('unitModifyModal'); showModal('editUnitInfoModal')">Update Unit
+                    Info</button>
+                <button class="button bg-red fg-white cell-4" style="border-radius: 0px !important;"
+                    onclick="logoff();">Logoff</button>
+                <button class="button cell-4" onclick="closeModal('unitModifyModal');">Close</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+<!-- Edit Unit Info Modal -->
+<div class="modal-content" id="editUnitInfoModal" style="display: none;">
+    <div class="modal-header">
+        <h3>Edit Unit Info</h3>
+    </div>
+    <div class="modal-body">
+        <div class="grid">
+            <div class="row">
+                <input id="newCallsign" class="cell-6" type="text" data-role="input" placeholder="New Callsign">
+                <select id="newWatch" data-role="select" placeholder="Select Watch" class="cell-6"
+                    style="background-color: white !important; border-radius: 0px;">
+                    <option value="" disabled selected>Select Watch</option>
+                    <option value="W1">W1 - PATROL</option>
+                    <option value="W2">W2 - PATROL</option>
+                    <option value="W3">W3 - PATROL</option>
+                    <option value="W4">W4- XRAY / FB/ DESK (OT)</option>
+                    <option value="W5">W5 - SPECIAL / XRAY (W1)</option>
+                    <option value="W6">W6 - SPECIAL / XRAY (W2)</option>
+                    <option value="W7">W7- SPECIAL / XRAY (W3)</option>
+                    <option value="W8">W8- SPECIAL PATROL (OT)</option>
+                </select>
+            </div>
+        </div>
+        <div class="grid">
+            <div class="row">
+                <button class="button bg-green fg-white mt-2 cell-6" style="border-radius: 0px !important;"
+                    onclick="updateUser();">Save Info</button>
+                <button class="button mt-2 cell-6" style="border-radius: 0px !important;"
+                    onclick="closeModal('editUnitInfoModal')">Close</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+<div class="modal-content" id="trafficStopModal" style="display: none;">
+    <div class="modal-header">
+        <h3>Initiate Traffic Stop</h3>
+    </div>
+    <div class="modal-body">
+        <div class="grid">
+            <div class="row">
+                <input type="text" id="trafficStopLocation" class="cell-6" placeholder="Location"
+                    style="border-radius: 0px !important; padding: 5px;">
+                <input type="text" id="trafficStopNarrative" class="cell-6" placeholder="Narrative"
+                    style="border-radius: 0px !important; padding: 5px;">
+            </div>
+            <div id="trafficStopVehHolder" style="margin-top: 5px;"></div>
+            <div class="row">
+                <button class="button bg-green fg-white cell-6" onclick="addTrafficStopVehicle()"
+                    style="border-radius: 0px !important;">Add Vehicle</button>
+                <button class="button bg-red fg-white cell-6" onclick="removeTrafficStopVehicle()"
+                    style="border-radius: 0px !important;">Remove Vehicle</button>
+            </div>
+            <hr style="margin-top: 10px;" />
+            <div class="grid" style="margin-top: 10px;">
+                <div class="row">
+                    <button class="button bg-green fg-white cell-6" style="border-radius: 0px !important;"
+                        onclick="finalizeTrafficStop()">Start Traffic Stop</button>
+                    <button class="button cell-6" onclick="closeModal('trafficStopModal')">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal-content" id="code6Modal" style="display: none;">
+    <div class="modal-header">
+        <h3>Initiate Code 6</h3>
+    </div>
+    <div class="modal-body">
+        <div class="grid">
+            <div class="row">
+                <input type="text" id="code6Location" class="cell-6" placeholder="Location"
+                    style="border-radius: 0px !important; padding: 5px;">
+                <input type="text" id="code6Narrative" class="cell-6" placeholder="Narrative"
+                    style="border-radius: 0px !important; padding: 5px;">
+            </div>
+            <div id="code6VehHolder" style="margin-top: 5px;"></div>
+            <div class="row">
+                <button class="button bg-green fg-white cell-6" onclick="addCode6Person()"
+                    style="border-radius: 0px !important;">Add Person</button>
+                <button class="button bg-red fg-white cell-6" onclick="removeCode6Person()"
+                    style="border-radius: 0px !important;">Remove Person</button>
+            </div>
+            <hr style="margin-top: 10px;" />
+            <div class="grid" style="margin-top: 10px;">
+                <div class="row">
+                    <button class="button bg-green fg-white cell-6" style="border-radius: 0px !important;"
+                        onclick="finalizeCode6()">Start Code 6</button>
+                    <button class="button cell-6" onclick="closeModal('code6Modal')">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal-content" id="incVehModal" style="display: none;">
+    <div class="modal-header">
+        <h3>Vehicles</h3>
+    </div>
+    <div class="modal-body">
+        <p id="incVehCountText"><b>0</b> vehicles found attached to incident:</p>
+        <hr />
+        <div id="incVehHolder" style="margin-top: 5px;"></div>
+        <div class="grid">
+            <div class="row">
+                <button id="addIncVehBtn" class="button bg-green fg-white cell-6"
+                    style="border-radius: 0px !important;" onclick="addIncVehicle()">Add New
+                    Vehicle</button>
+                <button id="removeIncVehBtn" class="button bg-red fg-white cell-6"
+                    style="border-radius: 0px !important;" onclick="toggleRemoveIncVehMode()">Remove
+                    Vehicle</button>
+            </div>
+            <div class="row">
+                <button class="button" onclick="closeModal('incVehModal'); resetIncVehModal()">Close</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+<div class="modal-content" id="incPerModal" style="display: none;">
+    <div class="modal-header">
+        <h3>Persons</h3>
+    </div>
+    <div class="modal-body">
+        <p id="incPerCountText"><b>0</b> persons found attached to incident:</p>
+        <hr />
+        <div id="incPerHolder" style="margin-top: 5px;"></div>
+        <div class="grid">
+            <div class="row">
+                <button id="addIncPerBtn" class="button bg-green fg-white cell-6"
+                    style="border-radius: 0px !important;" onclick="addIncPerson()">Add New Person</button>
+                <button id="removeIncPerBtn" class="button bg-red fg-white cell-6"
+                    style="border-radius: 0px !important;" onclick="toggleRemoveIncPerMode()">Remove
+                    Person</button>
+            </div>
+            <div class="row">
+                <button class="button" onclick="closeModal('incPerModal'); resetIncPerModal()">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal-content" id="dispositionModal" style="display: none;">
+    <div class="modal-header">
+        <h3 id="dispHeader"></h3>
+    </div>
+    <div class="modal-body">
+        <h6 id="dispIncId"></h6>
+        <div class="grid">
+            <div class="row" style="gap: 12px;">
+                <div class="cell-6">
+                    <label for="top-disposition"
+                        style="display:block; margin-bottom:6px; font-weight:700;">Disposition</label>
+                    <select class="cell-12" id="top-disposition" disabled
+                        style="width: 100%; border-radius: 0 !important; padding: 10px !important; background: #f5f5f5; border: 1px solid #ccc;">
+                        <option>OFCR COMPLETED CALL</option>
+                    </select>
+                </div>
+                <div class="cell-6">
+                    <label for="disp-cmts"
+                        style="display:block; margin-bottom:6px; font-weight:700;">Comments</label>
+                    <input class="cell-12" type="text" id="disp-cmts"
+                        style="width: 100%; border-radius: 0 !important; padding: 10px !important;">
+                </div>
+            </div>
+            <div class="row" style="gap: 12px; margin-top: 10px;">
+                <div class="cell-6">
+                    <label id="primaryCallsLabel"
+                        style="display:block; margin-bottom:6px; font-weight:700;"></label>
+                    <select class="cell-12" id="primaryAction"
+                        style="width: 100%; border-radius: 0 !important; padding: 10px !important;">
+                        <option value="">Select action taken by primary unit</option>
+                        <option>PERSON RELEASED NO FURTHER ACTION</option>
+                        <option>REPORT TAKEN</option>
+                        <option>ARREST MADE</option>
+                        <option>PEACE RESTORED</option>
+                        <option>NO OFFENSE FOUND</option>
+                        <option>GONE ON ARRIVAL</option>
+                        <option>CIVIL CITATION ISSUED</option>
+                    </select>
+                </div>
+                <div class="cell-6" id="supervisorArea" style="display:none;">
+                    <label style="display:block; margin-bottom:6px; font-weight:700;">
+                        <input class="cell-12" type="text" id="supervisorCallsignInput"
+                            placeholder="Supervisor Callsign"
+                            style="width: 100%; border-radius: 0 !important; padding: 10px !important;"
+                            oninput="updateSupervisorActionState()" onblur="finalizeSupervisorCallsign()"
+                            onkeypress="if(event.key === 'Enter'){ event.preventDefault(); finalizeSupervisorCallsign(); }">
+                    </label>
+                    <div id="supervisorCallsignLabel"
+                        style="display:none; width: 100%; border-radius: 0 !important; padding: 10px !important; background: #f5f5f5; border: 1px solid #ccc; cursor: pointer; margin-top: 4px;"
+                        onclick="editSupervisorCallsign()"></div>
+                    <select class="cell-12" id="supervisorAction" disabled
+                        style="width: 100%; border-radius: 0 !important; padding: 10px !important; margin-top: 12px;">
+                        <option value="">Select supervisor action</option>
+                        <option>DIRECTED OFFICER</option>
+                        <option>REVIEWED INCIDENT</option>
+                        <option>CONDUCTED INCIDENT DE-BRIEF</option>
+                        <option>ASSISTED WITH OFFICER ACTION</option>
+                        <option>CLEARED WITH NO ACTION</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row">
+                <div class="cell-6">
+                    <label for="disp-rept" style="display:block; margin-bottom:6px; font-weight:700;">Report
+                        #</label>
+                    <input class="cell-12" type="text" id="disp-rept"
+                        style="width: 100%; border-radius: 0 !important; padding: 10px !important;">
+                </div>
+            </div>
+            <div class="row" style="gap: 12px; margin-top: 16px; align-items: center;">
+                <div class="cell-4">
+                    <label style="display:flex; align-items:center; gap:6px;">
+                        <input type="checkbox" data-role="none" id="disp-super"
+                            onclick="toggleSupervisorPresent(this.checked)">
+                        Supervisor Present
+                    </label>
+                </div>
+                <div class="cell-4">
+                    <label style="display:flex; align-items:center; gap:6px;">
+                        <input type="checkbox" data-role="none" id="disp-bwv">
+                        Body Worn Video [BWV]
+                    </label>
+                </div>
+                <div class="cell-4">
+                    <label style="display:flex; align-items:center; gap:6px;">
+                        <input type="checkbox" data-role="none" id="disp-dicv">
+                        Digital In Car Video [DICV]
+                    </label>
+                </div>
+            </div>
+            <div class="row" style="gap: 12px; margin-top: 20px; justify-content: center;">
+                <button class="button bg-green fg-white mt-2 cell-3" id="dispSubmitBtn"
+                    style="border-radius: 0px !important;">Ok</button>
+                <button class="button bg-red fg-white mt-2 cell-3" style="border-radius: 0px !important;"
+                    onclick="closeModal('dispositionModal')">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal-content" id="incAdvViewAddCommantsModal" style="display: none;">
+    <div class="modal-header">
+        <h3>Add Call Comments</h3>
+    </div>
+    <div class="modal-body">
+        <input type="text" id="incAdvViewAddCmtsInput" data-role="input" placeholder="Input your comments here"
+            style="border-radius: 0px !important; padding: 5px;">
+        <div class="grid">
+            <div class="row">
+                <button class="button bg-green fg-white mt-2 cell-6" id="incAdvViewAddCmtsSubmit"
+                    style="border-radius: 0px !important;">Save Info</button>
+                <button class="button bg-red fg-white mt-2 cell-6" style="border-radius: 0px !important;"
+                    onclick="closeModal('incAdvViewAddCommantsModal')">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal-content" id="dispReqUnit" style="display: none;">
+    <div class="modal-header">
+        <h3>Request Unit</h3>
+    </div>
+    <div class="modal-body">
+        <label style="display:block; margin-bottom:8px; font-weight:700;">Select Unit</label>
+        <select data-role="select" id="dispatchRequestUnitSelect"
+            style="width:100%; border-radius:0 !important; padding:10px !important;">
+        </select>
+        <button class="button bg-dark fg-white mt-2" style="width:100%; border-radius:0 !important;"
+            onclick="addRequestedDispatchUnit()">Add Another Unit</button>
+        <div id="dispatchRequestedUnitsList"
+            style="margin-top:12px; min-height:80px; border:1px solid #ccc; padding:8px; background:#fafafa;">
+            <div style="color:#999;">No units requested yet.</div>
+        </div>
+        <div class="grid">
+            <div class="row">
+                <button class="button bg-green fg-white mt-2 cell-6" style="border-radius: 0px !important;"
+                    onclick="saveRequestedUnits()">Save
+                    Request</button>
+                <button class="button bg-red fg-white mt-2 cell-6" style="border-radius: 0px !important;"
+                    onclick="closeModal('dispReqUnit')">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal-content" id="dispRespList" style="display: none;">
+    <div class="modal-header">
+        <h3>Response List</h3>
+    </div>
+    <div class="modal-body">
+        <div id="dispatchResponseList" style="min-height: 120px;">
+            <div style="color:#999;">No responding units yet.</div>
+        </div>
+        <button class="button bg-dark fg-white mt-2" style="width:100%; border-radius:0 !important;"
+            onclick="closeModal('dispRespList')">Close</button>
+    </div>
+</div>
+<div class="modal-content" id="manageAlertsModal" style="display: none;">
+    <div class="modal-header">
+        <h3>Manage Alerts <span id="manageAlertsIdLabel" style="font-size:14px; font-weight:normal;"></span>
+        </h3>
+    </div>
+    <div class="modal-body">
+        <p style="font-size:12px; color:#666; margin-bottom:8px;">Do not abuse alerts in any way, shape, or
+            form.</p>
+        <div id="manageAlertsHolder" style="min-height:60px; margin-bottom:12px;"></div>
+        <hr />
+        <br />
+        <div class="row" style="gap:6px; align-items:center;">
+            <input class="cell-9" type="text" id="newAlertInput" data-role="input" placeholder="Enter alert text..."
+                style="border-radius:0 !important;">
+            <button class="cell-3 button bg-green fg-white" style="border-radius:0 !important;"
+                onclick="addAlertToSubject()">Add Alert</button>
+        </div>
+        <p id="manageAlertsStatus" style="color:#c80000; margin-top:6px; min-height:16px; font-size:12px;">
+        </p>
+    </div>
+    <div class="modal-footer" style="justify-content:flex-end;">
+        <button class="button" onclick="closeModal('manageAlertsModal')">Close</button>
+    </div>
+</div>
+<div class="modal-content" id="unitRequestActionModal" style="display: none;">
+    <div class="modal-header">
+        <h3>Incident Request</h3>
+    </div>
+    <div class="modal-body">
+        <p><strong>Incident:</strong> <span id="unitReqIncidentId">N/A</span></p>
+        <p><strong>Type:</strong> <span id="unitReqIncidentType">N/A</span></p>
+        <p><strong>Location:</strong> <span id="unitReqIncidentLocation">N/A</span></p>
+        <p>Dispatch requested your unit. Choose an action:</p>
+    </div>
+    <div class="modal-footer" style="justify-content:flex-end;">
+        <button class="button bg-red" onclick="handleIncomingUnitRequestIgnore()">Ignore</button>
+        <button class="button" onclick="handleIncomingUnitRequestView()">View
+            Incident</button>
+        <button class="button bg-green fg-white" onclick="handleIncomingUnitRequestRespond()">View +
+            Respond</button>
+    </div>
+</div>
+<div class="modal-content" id="dispatchCommentModal" style="display: none;">
+    <div class="modal-header">
+        <h3>Add Dispatch Comment</h3>
+    </div>
+    <div class="modal-body">
+        <textarea id="dispatchCommentInput" data-role="textarea" placeholder="Type comment here..."
+            style="width:100%; height:100px; border-radius:0 !important; padding:10px !important;"></textarea>
+        <div class="grid">
+            <div class="row">
+                <button class="button bg-green fg-white cell-6" onclick="saveDispatchComment()">Save
+                    Comment</button>
+                <button class="button cell-6" onclick="closeModal('dispatchCommentModal')">Cancel</button>
+            </div>
+        </div>
+    </div>
+    <div class="modal-content" id="dispatchCloseConfirmModal" style="display: none;">
+        <div class="modal-header">
+            <h3>Close Incident</h3>
+        </div>
+        <div class="modal-body">
+            <p>Closing this incident will prevent officers from filing a disposition. Are you sure?</p>
+            <div class="grid">
+                <div class="row">
+                    <button class="button bg-red fg-white mt-2 cell-6" style="border-radius:0 !important;"
+                        onclick="confirmCloseDispatchIncident()">Yes, Close</button>
+                    <button class="button bg-light fg-dark mt-2 cell-6" style="border-radius:0 !important;"
+                        onclick="closeModal('dispatchCloseConfirmModal')">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-content" id="makePrimaryConfirmModal" style="display: none;">
+        <div class="modal-header">
+            <h3>Become Primary Unit</h3>
+        </div>
+        <div class="modal-body">
+            <p>Are you sure you wish to become primary of this incident?</p>
+            <div class="grid">
+                <div class="row">
+                    <button class="button bg-green fg-white mt-2 cell-6" style="border-radius:0 !important;"
+                        onclick="becomePrimaryOfCurrentIncident()">Yes</button>
+                    <button class="button bg-light fg-dark mt-2 cell-6" style="border-radius:0 !important;"
+                        onclick="closeModal('makePrimaryConfirmModal')">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-content" id="supervisorKeyModal" style="display: none;">
+        <div class="modal-header">
+            <h3>Supervisor Key Required</h3>
+        </div>
+        <div class="modal-body">
+            <input type="password" id="supervisorKeyInput" data-role="input" placeholder="Supervisor Key"
+                style="width:100%; border-radius:0 !important; padding:5px !important;"
+                onkeypress="if(event.key==='Enter'){ event.preventDefault(); requestKey('supervisorKeyInput', 'supervisorKeyError', 'SUPERVISOR KEY', () => { acceptSupervisorKey(); }); }">
+            <div id="supervisorKeyError" style="color:#c80000; min-height:18px; margin-top:3px;"></div>
+            <div class="grid">
+                <div class="row">
+                    <button class="button bg-green fg-white cell-6"
+                        onclick="requestKey('supervisorKeyInput', 'supervisorKeyError', 'INCIDENT ID KEY', () => { acceptSupervisorKey(); });">Submit</button>
+                    <button class="button cell-6" onclick="closeModal('supervisorKeyModal')">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-content" id="supervisorSetIncidentModal" style="display: none;">
+        <div class="modal-header">
+            <h3>Set Incident ID</h3>
+        </div>
+        <div class="modal-body">
+            <input type="text" id="incidentIdInput" data-role="input" placeholder="0000"
+                style="width:100%; border-radius:0 !important; padding:10px !important;"
+                onkeypress="if(event.key==='Enter'){ event.preventDefault(); setIncidentID(); }">
+            <div id="incidentIdError" style="color:#c80000; min-height:18px; margin-top:6px;"></div>
+            <div class="grid">
+                <div class="row">
+                    <button class="button bg-green fg-white cell-6" onclick="setIncidentID()">Set Incident
+                        ID</button>
+                    <button class="button cell-6" onclick="closeModal('supervisorSetIncidentModal')">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-content" id="closeIncidentFullIdModal" style="display: none;">
+        <div class="modal-header">
+            <h3>Close Incident</h3>
+        </div>
+        <div class="modal-body">
+            <p id="closeIncidentFullIdHint" style="margin-bottom: 8px;">No incident found for today. Enter
+                full
+                incident ID:</p>
+            <input type="text" id="closeIncidentFullIdInput" data-role="input" placeholder="PD/MMDDYY-0000"
+                style="width:100%; border-radius:0 !important; padding:10px !important;"
+                onkeypress="if(event.key==='Enter'){ event.preventDefault(); submitCloseIncidentFullId(); }">
+            <div id="closeIncidentFullIdError" style="color:#c80000; min-height:18px; margin-top:6px;">
+            </div>
+            <div class="grid">
+                <div class="row">
+                    <button class="button bg-green fg-white mt-2 cell-6" style="border-radius:0 !important;"
+                        onclick="submitCloseIncidentFullId()">Close Incident</button>
+                    <button class="button bg-light fg-dark mt-2 cell-6" style="border-radius:0 !important;"
+                        onclick="closeModal('closeIncidentFullIdModal')">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-content" id="printCallsModal" style="display: none;">
+        <div class="modal-header">
+            <h3>Print Calls</h3>
+        </div>
+        <div class="modal-body">
+            <label style="display:block; margin-bottom:6px; font-weight:700;">Start Date</label>
+            <input type="date" id="printCallsDate" data-role="input"
+                style="width:100%; border-radius:0 !important; padding:10px !important; margin-bottom:10px;">
+            <label style="display:block; margin-bottom:6px; font-weight:700;">End Date (optional)</label>
+            <input type="date" id="printCallsDateEnd" data-role="input"
+                style="width:100%; border-radius:0 !important; padding:10px !important; margin-bottom:8px;">
+            <div id="printCallsStatus" style="min-height:18px; margin-bottom:6px; color:#666;"></div>
+            <div class="grid">
+                <div class="row">
+                    <button class="button mt-2" style="width:100%; border-radius:0 !important;"
+                        onclick="exportCallsCsvByDateRange()">Export CSV</button>
+                    <button class="button cell-6" onclick="closeModal('printCallsModal')">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal-content" id="editIncidentModal" style="display: none;">
+        <div class="modal-header">
+            <h3>Edit Incident Data</h3>
+        </div>
+        <div class="modal-body">
+            <div class="grid">
+                <div class="row">
+                    <input class="cell-6" id="editIncType" type="text" data-role="input" placeholder="Call Type"
+                        style="border-radius: 0px !important; padding: 5px;">
+                    <input class="cell-6" id="editIncLocation" type="text" data-role="input" placeholder="Location"
+                        style="border-radius: 0px !important; padding: 5px;">
+                </div>
+                <div class="row">
+                    <textarea class="cell-12" id="editIncNarrative" placeholder="Narrative"
+                        style="border-radius: 0px !important; padding: 5px; width: 100%; min-height: 80px; border: 1px solid #999; box-sizing: border-box; resize: vertical;"></textarea>
+                </div>
+                <div class="row">
+                    <select class="cell-6" id="editIncPriority"
+                        style="border-radius: 0px !important; padding: 5px; border: 1px solid #999;">
+                        <option value="">Select Priority</option>
+                        <option value="1">1 - High</option>
+                        <option value="2">2 - Medium</option>
+                        <option value="3">3 - Low</option>
+                    </select>
+                </div>
+                <div class="row">
+                    <button id="editIncSubmitBtn" class="button bg-green fg-white mt-2 cell-6"
+                        style="border-radius: 0px !important;">Save Changes</button>
+                    <button class="button bg-red fg-white mt-2 cell-6" style="border-radius: 0px !important;"
+                        onclick="closeModal('editIncidentModal')">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Incident History Modal -->
+    <div class="modal-content" id="incHistoryCommentsView" style="display: none;">
+        <div class="modal-header">
+            <h3>Incident History</h3>
+        </div>
+        <div class="modal-body">
+            <h5 id="incHistoryHeader"></h5>
+            <hr>
+            <br />
+            <div class="incidentHistory" id="incidentHistory"></div>
+            <br />
+            <button class="button mt-2" onclick="closeModal('incHistoryCommentsView')">Close</button>
+        </div>
+    </div>
+    <!-- Inc Query Results Modal -->
+    <div class="modal-content" id="incQueryResultsModal" style="display: none;">
+        <div class="modal-header">
+            <h3>Query Results</h3>
+            <br />
+        </div>
+        <div class="modal-body" style="padding:0;">
+            <div id="incQueryResultsHolder" style="overflow-y:auto; max-height:60vh; padding:10px;"></div>
+            <br />
+            <button class="button mt-2" onclick="closeModal('incQueryResultsModal')">Close</button>
+        </div>
+    </div>
+
+</div><!-- end modal-overlay -->
+
+<!-- Home Footer -->
+<footer id="home-foot">
+    <div class="footer-btn w-sm"></div>
+    <a class="footer-btn w-md" href="https://drive.google.com/file/d/1GfbJwrWv6pCmZWdTQ-zz_Afoh5oGSbsk/view"
+        target="_blank">Help</a>
+    <div class="footer-group">
+        <a class="footer-btn"
+            href="https://www.motorolasolutions.com/en_us/products/command-center-software/public-safety-software/premierone/premierone-mobile.html"
+            target="_blank">About Mobile</a>
+        <div class="footer-btn" disabled>Send Message</div>
+    </div>
+    <div class="footer-btn w-sm"></div>
+    <div class="footer-btn w-sm"></div>
+    <div class="footer-group">
+        <div class="footer-btn"></div>
+        <div class="footer-btn"></div>
+        <div class="footer-btn"></div>
+    </div>
+    <div class="footer-btn w-lg"></div>
+    <div class="footer-btn w-sm"></div>
+    <div class="footer-btn w-sm"></div>
+    <div class="footer-btn w-sm"></div>
+    <div class="footer-btn w-sm"></div>
+</footer>
+
+<!-- Incident Footer-->
+<footer id="inc-foot" style="display: none;">
+    <div class="footer-group">
+        <div class="footer-btn" onclick="movePages('prev')">&lt;</div>
+        <div class="footer-btn" onclick="movePages('next')">&gt;</div>
+        <div class="footer-btn" onclick="showModal('editIncidentModal');">Edit</div>
+        <div class="footer-btn" onclick="closeIncident()">Clear</div>
+        <div class="footer-btn" id="footerBtnClose" onclick="footerCloseIncident()">Close</div>
+        <div class="footer-btn" onclick="handlePrimaryButtonClick()">Primary</div>
+
+        <div class="footer-btn" id="attachToggleBtn" onclick="handleAttachToggle();">Attach</div>
+        <div class="footer-btn"></div>
+        <div class="footer-btn"></div>
+        <div class="footer-btn"></div>
+    </div>
+</footer>
+
+<!-- Query Table Footer -->
+<footer id="query-foot" style="display: none;">
+    <div class="footer-btn w-sm" onclick="movePages('prev')">&lt;</div>
+    <div class="footer-btn w-sm" onclick="movePages('next')">&gt;</div>
+    <div class="footer-btn w-md" onclick="showQueryOptsView('CAL-OP')">New Query</div>
+    <div class="footer-btn w-sm" onclick="viewSelectedQueryRows()">View</div>
+    <div class="footer-btn w-sm" onclick="deleteSelectedQueryRows()">Delete</div>
+    <div class="footer-btn w-md" onclick="closeIncident(); updateView('incidentsView');">Close View</div>
+    <div class="footer-btn w-lg" onclick="createTrafficStopFromQuery()">Create Traffic Stop</div>
+    <div class="footer-btn w-lg" onclick="sendQryToInc()">SendQryToInc</div>
+    <div class="footer-btn" style="flex:1;"></div>
+</footer>
+
+<!-- Submit Query Info Footer -->
+<footer id="submit-query-foot">
+    <div class="footer-btn w-sm"></div>
+    <div class="footer-btn w-md" onclick="submitQueryForm()">Submit</div>
+    <div class="footer-btn w-md" onclick="saveQueryDraft()">Save Draft</div>
+    <div class="footer-btn w-md" onclick="resetQueryFields()">Restore Default</div>
+    <div class="footer-btn w-sm" onclick="closeIncident(); updateView('incidentsView');">Cancel</div>
+    <div class="footer-btn w-md" onclick="resetQueryFields()">Clear Form</div>
+    <div class="footer-btn w-md" disabled style="pointer-events:none;">Passcode</div>
+    <div class="footer-btn" style="flex:1;"></div>
+</footer>
+
+<!-- Adv Call Table Footer -->
+<footer id="adv-call-table-foot" style="display: none;">
+    <div class="footer-btn w-sm" onclick="movePages('prev')">&lt;</div>
+    <div class="footer-btn w-sm" onclick="movePages('next')">&gt;</div>
+    <div class="footer-btn w-md" onclick="callsAdvView()">View</div>
+    <div class="footer-btn w-md" style="pointer-events:none;" disabled>Locate on Map</div>
+    <div class="footer-btn w-md" onclick="callsAdvSelfDispatch()">Self Dispatch</div>
+    <div class="footer-btn w-md" style="pointer-events:none;" disabled>Monitor Area</div>
+    <div class="footer-btn" style="flex:1;"></div>
+    <div class="footer-btn w-md" onclick="updateView('incidentsView')">Close View</div>
+    <div class="footer-btn w-md" id="callsAdvOptionsBtn" onclick="toggleCallsAdvOptions()">&#8593; Options
+    </div>
+</footer>

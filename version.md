@@ -45,3 +45,27 @@ FIXES:
 5. Help button in bottom footer now works
 6. About button in bottom footer now works
 7. Fixed the mystical "ghost" call
+
+# [V. 0.2.0]
+##### June 1st, 2026 - Reports + Reworks
+
+ADDITIONS:
+1. Upon logging on, now go to a windows homescreen instead of straight to your select application
+2. Apps now behave like windows apps
+3. Multiple apps added, full list is: Outlook, Google, PremierOne Records, PremierOne MDT, PremierOne CAD, and Notepad
+4. In MDT, can now publish reports using the sidebar button on homescreen
+5. Publishing reports created on MDT, can view your submitted reports etc
+6. PremierOne Records created, most of the information about this is classified 🤫
+7. PremierOne CAD created instead of it being baked into the MDT, same as last time
+8. Outlook created as a placeholder for a future update
+9. Notepad created, simple text editor
+10. Google created, i frame of real google no browser bar maybe in future
+
+CHANGES:
+1. Accessing the dispatch panel has changed competley
+2. Dispatch app bar icon changed to the Motorolla APX 8000
+3. Power menu updated
+4. Ui changed completly and how handled for this update
+
+FIXES:
+1. Minor ui bugs fixed
