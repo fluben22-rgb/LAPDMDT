@@ -23,6 +23,20 @@ function getUnitLiveSoundSignature(row) {
     });
 }
 
+function isVisibleUnitRow(unit) {
+    const status = String(unit?.status || '').trim().toLowerCase();
+    const combinedStatus = [
+        unit?.status,
+        unit?.invehicle,
+        unit?.inVehicle
+    ].map(value => String(value || '').trim().toLowerCase()).filter(Boolean).join(' ');
+
+    if (!status && !unit?.unit) return false;
+    if (status === 'end of watch' || status === 'eow') return false;
+    if (combinedStatus.includes('end of watch') || combinedStatus.includes('eow')) return false;
+    return true;
+}
+
 function seedUnitLiveSoundSignatures(rows) {
     if (!Array.isArray(rows)) return;
     rows.forEach(row => {
@@ -146,19 +160,31 @@ async function logoff(shouldReload = true) {
             const authClient = getRlsClient();
 
             if (currentUnit) {
-                await detachUnitFromAllIncidents(currentUnit, authClient);
+                try {
+                    await detachUnitFromAllIncidents(currentUnit, authClient);
+                } catch (detachError) {
+                    console.warn('Logoff continuing after detach failed:', detachError);
+                }
             }
-            await authClient
-                .from('units')
-                .update({
-                    roblox_username: null,
-                    gps_x: null,
-                    gps_y: null,
-                    gps_z: null,
-                    gps_heading: null,
-                    gps_updated_at: null
-                })
-                .eq('user', currentUserParts[0]);
+
+            try {
+                const { error: gpsClearError } = await authClient
+                    .from('units')
+                    .update({
+                        roblox_username: null,
+                        gps_x: null,
+                        gps_y: null,
+                        gps_z: null,
+                        gps_heading: null,
+                        gps_updated_at: null
+                    })
+                    .eq('user', currentUserParts[0]);
+
+                if (gpsClearError) throw gpsClearError;
+            } catch (gpsClearError) {
+                console.warn('Logoff continuing after GPS cleanup failed:', gpsClearError);
+            }
+
             await unsubscribeUnitRequestAlertMonitor();
             await unsubscribeLogoffRequestLiveMonitor();
 
@@ -328,11 +354,12 @@ async function refreshUnitsTable() {
     unitTable.innerHTML = '';
 
     if (!Array.isArray(data)) return [];
+    const visibleUnits = data.filter(isVisibleUnitRow);
 
     const monitorCountEl = document.getElementById('callsAdvMonitorCount');
-    if (monitorCountEl) monitorCountEl.textContent = `(${data.length})`;
+    if (monitorCountEl) monitorCountEl.textContent = `(${visibleUnits.length})`;
 
-    data.forEach(unit => {
+    visibleUnits.forEach(unit => {
         const row = document.createElement('tr');
         const unitRowKey = unit.id ?? unit.user ?? unit.unit ?? Math.random().toString(36).slice(2);
         row.id = `unit-${unitRowKey}`;
@@ -346,7 +373,7 @@ async function refreshUnitsTable() {
         unitTable.appendChild(row);
     });
 
-    return data;
+    return visibleUnits;
 }
 
 //-- Setup live monitor [Units]--\\
