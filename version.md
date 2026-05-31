@@ -69,3 +69,19 @@ CHANGES:
 
 FIXES:
 1. Minor ui bugs fixed
+
+# [V. 0.2.1]
+##### May 31st, 2026 - Mobile Map GPS Patch
+
+ADDITIONS:
+1. Added live Roblox vehicle GPS markers on the Mobile Map.
+2. Added a GPS Online status with voice playback after MDT login.
+3. Added a server-backed GPS list endpoint for loading department units on the map.
+
+CHANGES:
+1. Mobile Map now loads all live GPS units instead of only the current unit.
+2. Mobile Map reports how many GPS units were loaded.
+
+FIXES:
+1. Fixed Mobile Map only showing one tracked unit when multiple department units are online.
+2. Fixed the GitHub Pages entry file showing the old MDT.
