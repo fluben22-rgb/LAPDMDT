@@ -5,6 +5,47 @@ function isLogoffTrueDbFlag(value) {
     return norm === 'true' || norm === '1' || norm === 't' || norm === 'yes' || norm === 'y';
 }
 
+const unitLiveSoundSignatures = new Map();
+
+function getUnitLiveSoundKey(row) {
+    return String(row?.user || row?.unit || row?.id || '').trim();
+}
+
+function getUnitLiveSoundSignature(row) {
+    if (!row) return '';
+    return JSON.stringify({
+        unit: row.unit ?? '',
+        status: row.status ?? '',
+        inc: row.inc ?? '',
+        incLocation: row.incLocation ?? '',
+        code: row.code ?? '',
+        invehicle: row.invehicle ?? row.inVehicle ?? ''
+    });
+}
+
+function seedUnitLiveSoundSignatures(rows) {
+    if (!Array.isArray(rows)) return;
+    rows.forEach(row => {
+        const key = getUnitLiveSoundKey(row);
+        if (key) unitLiveSoundSignatures.set(key, getUnitLiveSoundSignature(row));
+    });
+}
+
+function shouldPlayUnitLiveSound(payload) {
+    if (!payload || payload.eventType === 'DELETE') return false;
+
+    const row = payload.new || payload.old || null;
+    const key = getUnitLiveSoundKey(row);
+    if (!key) return false;
+
+    const nextSignature = getUnitLiveSoundSignature(payload.new || row);
+    const previousSignature = unitLiveSoundSignatures.get(key) || getUnitLiveSoundSignature(payload.old);
+    unitLiveSoundSignatures.set(key, nextSignature);
+
+    if (payload.eventType === 'INSERT') return true;
+    return previousSignature && nextSignature !== previousSignature;
+}
+
 //-- Unsubscribe from logoff request live monitor after logoff --\\
 async function unsubscribeLogoffRequestLiveMonitor() {
     if (sbClient && logoffRequestChannel) {
@@ -214,17 +255,17 @@ function runUnloadLogoff() {
 //-- Refresh Unit table for live monitor --\\
 async function refreshUnitsTable() {
     const unitTable = document.getElementById('unit-table-real');
-    if (!unitTable || !sbClient) return;
+    if (!unitTable || !sbClient) return [];
 
     const { data, error } = await sbClient.from('units').select('*');
     if (error) {
         console.error('Error fetching units for live monitor:', error);
-        return;
+        return [];
     }
 
     unitTable.innerHTML = '';
 
-    if (!Array.isArray(data)) return;
+    if (!Array.isArray(data)) return [];
 
     const monitorCountEl = document.getElementById('callsAdvMonitorCount');
     if (monitorCountEl) monitorCountEl.textContent = `(${data.length})`;
@@ -239,16 +280,19 @@ async function refreshUnitsTable() {
                     <td class="unit-inc">${unit.inc ?? ''}</td>
                     <td class="unit-location">${unit.incLocation ?? ''}</td>
                     <td class="unit-code">${unit.code ?? ''}</td>
-                `;
+        `;
         unitTable.appendChild(row);
     });
+
+    return data;
 }
 
 //-- Setup live monitor [Units]--\\
 async function setupUnitLiveMonitor() {
     if (!sbClient) return;
 
-    await refreshUnitsTable();
+    const initialRows = await refreshUnitsTable();
+    seedUnitLiveSoundSignatures(initialRows);
     await syncCurrentUserStatusFromUnitsTable();
 
     if (unitLiveMonitorChannel) return;
@@ -256,10 +300,11 @@ async function setupUnitLiveMonitor() {
     unitLiveMonitorChannel = sbClient
         .channel('units-live-monitor')
         .on('postgres_changes', { event: '*', schema: 'public', table: 'units' }, async (payload) => {
+            const shouldPlaySound = shouldPlayUnitLiveSound(payload);
             await refreshUnitsTable();
             await syncCurrentUserStatusFromUnitsTable();
 
-            if (payload?.eventType === 'INSERT' || payload?.eventType === 'UPDATE') {
+            if (shouldPlaySound) {
                 const currentUser = sessionStorage.getItem('userInfo') ? sessionStorage.getItem('userInfo').split(',')[0] : null;
                 const payloadUser = payload?.new?.user || payload?.old?.user || null;
                 const isOwnRecentUpdate = currentUser && payloadUser === currentUser && Date.now() < suppressOwnUnitUpdateSoundUntil;
