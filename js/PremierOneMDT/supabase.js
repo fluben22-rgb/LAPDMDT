@@ -99,6 +99,7 @@ function clearAuthState() {
     const activeClient = sbClient;
     sessionStorage.removeItem('userToken');
     sessionStorage.removeItem('userInfo');
+    sessionStorage.removeItem('robloxUsername');
     sbClient = sbAnonClient;
     sbClientToken = null;
     rlsClient = null;

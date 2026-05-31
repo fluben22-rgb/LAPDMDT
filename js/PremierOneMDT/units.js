@@ -178,15 +178,77 @@ async function logoff(shouldReload = true) {
         }
 
         clearAuthState();
+        resetMdtUiAfterLogoff();
         if (shouldReload) {
             location.reload();
         }
     } catch (e) {
         console.error('Error during logoff:', e);
+        clearAuthState();
+        resetMdtUiAfterLogoff();
         if (shouldReload) {
             alert('An error occurred during logoff. Please try again.');
         }
     }
+}
+
+function resetMdtUiAfterLogoff() {
+    const idsToClear = [
+        'current-user',
+        'cmdBar',
+        'callsign-input',
+        'roblox-username-input',
+        'app-email-input',
+        'app-password-input',
+        'app-login-error',
+        'user-data-error',
+        'roblox-gps-error',
+        'gps-status',
+        'call-table-real',
+        'adv-call-table-real',
+        'unit-table-real',
+        'query-table-real'
+    ];
+
+    idsToClear.forEach(id => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        if ('value' in el) el.value = '';
+        else el.textContent = '';
+        if (id === 'gps-status') el.style.backgroundColor = '';
+    });
+
+    const watchInput = document.getElementById('watch-input');
+    if (watchInput) watchInput.value = '';
+
+    currentIncidentId = null;
+    currentAdvCallsView = 'assigned';
+    surfedPages = [];
+    currentPageIndex = -1;
+    incomingUnitRequestQueue = [];
+    activeIncomingUnitRequest = null;
+    seenIncomingUnitRequestKeys.clear();
+    unitLiveSoundSignatures.clear();
+
+    ['home-foot', 'inc-foot', 'query-foot', 'submit-query-foot', 'adv-call-table-foot', 'reports-compose-foot'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.style.display = 'none';
+    });
+
+    document.querySelectorAll('.modal-overlay.active, .modal-content').forEach(el => {
+        if (el.classList.contains('active')) el.classList.remove('active');
+        if (el.classList.contains('modal-content')) el.style.display = 'none';
+    });
+
+    const appLoginArea = document.getElementById('appLoginArea');
+    const inputUserDataArea = document.getElementById('inputUserDataArea');
+    const robloxGpsArea = document.getElementById('robloxGpsArea');
+    const mainApp = document.getElementById('mainApp');
+
+    if (appLoginArea) appLoginArea.style.display = 'flex';
+    if (inputUserDataArea) inputUserDataArea.style.display = 'none';
+    if (robloxGpsArea) robloxGpsArea.style.display = 'none';
+    if (mainApp) mainApp.style.display = 'none';
 }
 
 
