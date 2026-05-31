@@ -397,7 +397,7 @@ async function fetchLiveUnitGpsRowsViaFunction() {
     const authToken = sessionStorage.getItem("userToken") || anonKey;
     if (!baseUrl || !anonKey || !authToken) return null;
 
-    const response = await fetch(`${baseUrl}/functions/v1/list-unit-gps`, {
+    const response = await fetch(`${baseUrl}/functions/v1/gps`, {
         method: "GET",
         headers: {
             "apikey": anonKey,
@@ -407,7 +407,7 @@ async function fetchLiveUnitGpsRowsViaFunction() {
 
     if (!response.ok) {
         const text = await response.text().catch(() => "");
-        throw new Error(text || `list-unit-gps failed with ${response.status}`);
+        throw new Error(text || `gps list failed with ${response.status}`);
     }
 
     const result = await response.json();
