@@ -28,30 +28,39 @@ var currentPageIndex = -1;
 var mdtGlobalInitComplete = false;
 var mdtLayoutResizeBound = false;
 
+function speakGpsOnline() {
+    if (!('speechSynthesis' in window) || typeof SpeechSynthesisUtterance === 'undefined') return;
+
+    const sayOnline = () => {
+        const utterance = new SpeechSynthesisUtterance('GPS online');
+        utterance.rate = 0.95;
+        utterance.pitch = 1.15;
+        utterance.volume = 0.9;
+
+        const voices = window.speechSynthesis.getVoices();
+        const preferredVoice = voices.find(voice => /female|zira|samantha|aria|jenny|natural/i.test(voice.name))
+            || voices.find(voice => /^en[-_]/i.test(voice.lang));
+
+        if (preferredVoice) utterance.voice = preferredVoice;
+
+        window.speechSynthesis.cancel();
+        window.speechSynthesis.speak(utterance);
+    };
+
+    if (window.speechSynthesis.getVoices().length) {
+        sayOnline();
+    } else {
+        window.speechSynthesis.onvoiceschanged = sayOnline;
+    }
+}
+
 function startGpsOfflineSequence() {
     const gpsEl = document.getElementById('gps-status');
     if (!gpsEl) return;
 
-    gpsEl.style.backgroundColor = 'grey';
-    gpsEl.textContent = 'GPS Loading...';
-
-    setTimeout(() => {
-        gpsEl.style.backgroundColor = 'orange';
-        gpsEl.textContent = 'GPS Offline';
-    }, 900);
-
-    setTimeout(() => {
-        gpsEl.style.backgroundColor = 'red';
-    }, 1300);
-
-    setTimeout(() => {
-        gpsEl.style.backgroundColor = 'orange';
-    }, 1700);
-
-    setTimeout(() => {
-        gpsEl.style.backgroundColor = 'red';
-        playSound('gpsOffline');
-    }, 2100);
+    gpsEl.style.backgroundColor = 'green';
+    gpsEl.textContent = 'GPS Online';
+    setTimeout(speakGpsOnline, 2000);
 }
 
 //-- Request any type of key --\\
@@ -335,6 +344,7 @@ function applyLoginState() {
     const loginArea = document.getElementById('loginArea');
     const appLoginArea = document.getElementById('appLoginArea');
     const inputUserDataArea = document.getElementById('inputUserDataArea');
+    const robloxGpsArea = document.getElementById('robloxGpsArea');
     const mainApp = document.getElementById('mainApp');
     const homeFoot = document.getElementById('home-foot');
     const loginEnabled = window.loginEnabled !== false;
@@ -344,6 +354,7 @@ function applyLoginState() {
     if (isWindowsShellLaunch) {
         if (loginArea) loginArea.style.display = 'none';
         if (inputUserDataArea) inputUserDataArea.style.display = 'none';
+        if (robloxGpsArea) robloxGpsArea.style.display = 'none';
         if (loginEnabled) {
             if (appLoginArea) appLoginArea.style.display = 'flex';
             if (mainApp) mainApp.style.display = 'none';
@@ -361,12 +372,14 @@ function applyLoginState() {
         if (loginArea) loginArea.style.display = 'flex';
         if (appLoginArea) appLoginArea.style.display = 'none';
         if (inputUserDataArea) inputUserDataArea.style.display = 'none';
+        if (robloxGpsArea) robloxGpsArea.style.display = 'none';
         if (mainApp) mainApp.style.display = 'none';
         if (homeFoot) homeFoot.style.display = 'none';
     } else {
         if (loginArea) loginArea.style.display = 'none';
         if (appLoginArea) appLoginArea.style.display = 'none';
         if (inputUserDataArea) inputUserDataArea.style.display = 'none';
+        if (robloxGpsArea) robloxGpsArea.style.display = 'none';
         if (mainApp) mainApp.style.display = 'flex';
         if (homeFoot) homeFoot.style.display = 'flex';
         if (typeof updateView === 'function') updateView('incidentsView');
@@ -635,6 +648,11 @@ function restoreMainUI() {
         reportsArea.style.display = 'none';
         reportsArea.style.visibility = 'hidden';
     }
+    const mobileMapArea = document.getElementById('mobile-map-area');
+    if (mobileMapArea) {
+        mobileMapArea.style.display = 'none';
+        mobileMapArea.style.visibility = 'hidden';
+    }
     const homeContentWrapper = document.getElementById('homeContentWrapper');
     if (homeContentWrapper) homeContentWrapper.style.display = '';
     const incFoot = document.getElementById('inc-foot');
@@ -692,6 +710,21 @@ function positionMdtOverlayWithinWorkspace(overlayEl) {
 
 window.positionMdtOverlayWithinWorkspace = positionMdtOverlayWithinWorkspace;
 
+async function launchMobileMapWindow(event) {
+    if (event && typeof event.stopPropagation === 'function') {
+        event.stopPropagation();
+    }
+
+    if (typeof openWindowsApp === 'function') {
+        await openWindowsApp('MobileMap');
+        return;
+    }
+
+    await updateView('mobileMap');
+}
+
+window.launchMobileMapWindow = launchMobileMapWindow;
+
 // shoutout to the clank
 function flickerIn(el) {
     if (!el) return;
@@ -736,6 +769,11 @@ async function updateView(viewId) {
     if (reportsArea && viewId !== 'reports') {
         reportsArea.style.setProperty('display', 'none', 'important');
         reportsArea.style.setProperty('visibility', 'hidden', 'important');
+    }
+    const mobileMapArea = document.getElementById('mobile-map-area');
+    if (mobileMapArea && viewId !== 'mobileMap') {
+        mobileMapArea.style.setProperty('display', 'none', 'important');
+        mobileMapArea.style.setProperty('visibility', 'hidden', 'important');
     }
     if (advCallFoot) advCallFoot.style.display = 'none';
     if (reportsComposeFoot) reportsComposeFoot.style.display = 'none';
@@ -860,6 +898,45 @@ async function updateView(viewId) {
         if (queryFoot) queryFoot.style.setProperty('display', 'flex', 'important');
         if (homeFoot) homeFoot.style.setProperty('display', 'none', 'important');
         flickerIn(queryResultsView);
+        await syncLiveMonitorsForCurrentView();
+    } else if (viewId === 'mobileMap') {
+        const mainActionButtons = document.getElementById('mainActionButtons');
+        if (mainActionButtons) mainActionButtons.style.removeProperty('display');
+        document.querySelectorAll('#mainApp > .px-5, #mainApp > .container-fluid').forEach(el => {
+            el.style.removeProperty('display');
+        });
+        const homeContentWrapper = document.getElementById('homeContentWrapper');
+        if (homeContentWrapper) homeContentWrapper.style.display = 'none';
+        if (unitsTable) unitsTable.style.display = 'none';
+        if (incidentsView) incidentsView.style.display = 'none';
+        if (callsAdvTable) callsAdvTable.style.display = 'none';
+        if (advCallsTabs) advCallsTabs.style.setProperty('display', 'none', 'important');
+        if (mainTabs) mainTabs.style.display = 'none';
+        if (sidebarArea) sidebarArea.style.display = 'none';
+        if (tableArea) tableArea.style.width = '';
+        if (dispatchLogonArea) dispatchLogonArea.style.display = 'none';
+        if (queryFoot) queryFoot.style.setProperty('display', 'none', 'important');
+        if (homeFoot) homeFoot.style.setProperty('display', 'flex', 'important');
+        if (reportsComposeFoot) reportsComposeFoot.style.display = 'none';
+        if (advCallFoot) advCallFoot.style.setProperty('display', 'none', 'important');
+        if (viewIndicator) viewIndicator.textContent = 'Mobile Map';
+        if (queryResultsView) queryResultsView.style.display = 'none';
+        if (mobileMapArea) {
+            mobileMapArea.style.setProperty('display', 'flex', 'important');
+            mobileMapArea.style.setProperty('visibility', 'visible', 'important');
+            positionMdtOverlayWithinWorkspace(mobileMapArea);
+        }
+        currentView = 'mobileMap';
+        lastMainView = currentView;
+        if (typeof initMobileMapView === 'function') {
+            await initMobileMapView();
+        }
+        if (surfedPages.length < 7) {
+            surfedPages.push('mobileMap');
+        } else {
+            surfedPages.pop();
+            surfedPages.push('mobileMap');
+        }
         await syncLiveMonitorsForCurrentView();
     }  else if (viewId === 'dispatchLogon') {
         /* if (unitsTable) unitsTable.style.display = 'none';

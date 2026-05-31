@@ -39,6 +39,14 @@
       "showOnDesktop": true,
       "showInStart": true,
       "showOnTaskbar": true
+    },
+    {
+      "id": "MobileMap",
+      "label": "MOBILE MAP",
+      "iconUrl": "https://img.icons8.com/color/48/worldwide-location.png",
+      "showOnDesktop": false,
+      "showInStart": false,
+      "showOnTaskbar": false
     }
   ]
 }

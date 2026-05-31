@@ -84,10 +84,13 @@
             if (!resizeState) return;
             const dx = event.clientX - resizeState.startX;
             const dy = event.clientY - resizeState.startY;
-            const width = Math.max(360, Math.min(window.innerWidth - 20, resizeState.width + dx));
-            const height = Math.max(220, Math.min(window.innerHeight - 70, resizeState.height + dy));
+            const minWidth = 360;
+            const minHeight = 220;
+            const width = Math.max(minWidth, Math.min(window.innerWidth - 20, resizeState.width + dx));
+            const height = Math.max(minHeight, Math.min(window.innerHeight - 70, resizeState.height + dy));
             windowObj.el.style.width = `${width}px`;
             windowObj.el.style.height = `${height}px`;
+            windowObj.el.dispatchEvent(new CustomEvent('shell-window-resize', { bubbles: true }));
         });
 
         document.addEventListener('mouseup', () => {
@@ -113,6 +116,7 @@
             windowObj.restoreRect = { left: rect.left, top: rect.top, width: rect.width, height: rect.height };
             windowObj.el.classList.add('maximized');
             windowObj.maximized = true;
+            windowObj.el.dispatchEvent(new CustomEvent('shell-window-resize', { bubbles: true }));
             return;
         }
 
@@ -124,6 +128,7 @@
             windowObj.el.style.width = `${windowObj.restoreRect.width}px`;
             windowObj.el.style.height = `${windowObj.restoreRect.height}px`;
         }
+        windowObj.el.dispatchEvent(new CustomEvent('shell-window-resize', { bubbles: true }));
     }
 
     function closeWindow(windowId) {
@@ -171,7 +176,7 @@
         setActiveWindow(windowId);
     }
 
-    function createAppWindow({ appId, title, iconUrl, contentHtml, contentNode, detachOnClose = false, theme = '' }) {
+    function createAppWindow({ appId, title, iconUrl, contentHtml, contentNode, detachOnClose = false, theme = '', initialRect = null }) {
         const layer = shell.ensureWindowLayer();
         if (!layer) return null;
 
@@ -183,8 +188,10 @@
         wrapper.dataset.windowId = id;
         wrapper.dataset.appId = appId;
         if (theme) wrapper.classList.add(`theme-${theme}`);
-        wrapper.style.left = `${80 + (state.winWindowCounter % 5) * 28}px`;
-        wrapper.style.top = `${70 + (state.winWindowCounter % 4) * 22}px`;
+        wrapper.style.left = `${initialRect?.left ?? (80 + (state.winWindowCounter % 5) * 28)}px`;
+        wrapper.style.top = `${initialRect?.top ?? (70 + (state.winWindowCounter % 4) * 22)}px`;
+        if (initialRect?.width) wrapper.style.width = initialRect.width;
+        if (initialRect?.height) wrapper.style.height = initialRect.height;
 
         const header = document.createElement('header');
         header.className = 'win-app-window-titlebar';

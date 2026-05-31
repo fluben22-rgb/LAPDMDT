@@ -216,7 +216,7 @@ async function openShellHtmlApp(appId, appMeta, options) {
     const existing = window.findTopWindowForApp(appId);
     if (existing) {
         window.restoreWindow(existing.id);
-        return;
+        return existing;
     }
 
     try {
@@ -228,7 +228,8 @@ async function openShellHtmlApp(appId, appMeta, options) {
             title: appMeta.label || options.title || appId,
             iconUrl: appMeta.iconUrl,
             contentHtml: html,
-            theme: options.theme || ''
+            theme: options.theme || '',
+            initialRect: options.initialRect || null
         });
 
         await loadShellAppScripts(options, appId);
@@ -236,9 +237,10 @@ async function openShellHtmlApp(appId, appMeta, options) {
         if (options.initName && typeof window[options.initName] === 'function') {
             window[options.initName](shellWindow);
         }
+        return shellWindow;
     } catch (err) {
         console.error(`Failed to open ${appId}:`, err);
-        window.createAppWindow({
+        return window.createAppWindow({
             appId,
             title: appMeta.label || options.title || appId,
             iconUrl: appMeta.iconUrl,
@@ -327,6 +329,29 @@ async function openWindowsApp(appId) {
             initName: 'initNotepadApp',
             theme: 'dark'
         });
+        return;
+    }
+
+    if (appId === 'MobileMap' || appId === 'MOBILEMAP') {
+        const mobileMapWindow = await openShellHtmlApp(appId, appMeta, {
+            title: 'MOBILE MAP',
+            htmlPath: './html/MobileMap/app.html',
+            styles: ['./css/MobileMap/app.css'],
+            scriptPath: './js/MobileMap/index.js',
+            initName: 'initMobileMapApp',
+            theme: 'mobile-map',
+            initialRect: {
+                left: 8,
+                top: 20,
+                width: 'min(1040px, calc(100vw - 16px))',
+                height: 'min(560px, calc(100vh - 90px))'
+            }
+        });
+        if (mobileMapWindow && !mobileMapWindow.maximized) {
+            mobileMapWindow.el.classList.add('maximized');
+            mobileMapWindow.maximized = true;
+            mobileMapWindow.el.dispatchEvent(new CustomEvent('shell-window-resize', { bubbles: true }));
+        }
         return;
     }
 

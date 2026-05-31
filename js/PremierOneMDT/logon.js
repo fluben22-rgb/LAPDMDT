@@ -54,23 +54,31 @@ async function submitAppLogin() {
 
 //-- User Data Login --\\
 async function submitUserData() {
-    const callsign = document.getElementById('callsign-input').value.trim();
-    const watch = document.getElementById('watch-input').value.trim();
+    const callsignInput = document.getElementById('callsign-input');
+    const watchInput = document.getElementById('watch-input');
+    const errorEl = document.getElementById('user-data-error');
+    if (errorEl) errorEl.textContent = '';
+
+    const callsign = callsignInput ? callsignInput.value.trim() : '';
+    const watch = watchInput ? watchInput.value.trim() : '';
 
     const currentUser = sessionStorage.getItem('userInfo') ? sessionStorage.getItem('userInfo').split(',')[0] : null;
     const userToken = sessionStorage.getItem('userToken');
 
     if (!callsign || !watch) {
-        alert('Please fill in all fields');
+        if (errorEl) errorEl.textContent = 'Please fill in all fields';
+        else alert('Please fill in all fields');
         return;
     }
 
     if (!currentUser || !userToken) {
-        alert('No active user session found. Please log in again.');
+        if (errorEl) errorEl.textContent = 'No active user session found. Please log in again.';
+        else alert('No active user session found. Please log in again.');
         return;
     }
 
     try {
+        if (errorEl) errorEl.textContent = 'Saving unit information...';
         const response = await fetch('https://lgajaitgqqznzlzjazxn.supabase.co/functions/v1/handle-unit', {
             method: 'POST',
             headers: {
@@ -86,9 +94,11 @@ async function submitUserData() {
 
         if (!response.ok || !result.success) {
             console.error('Error saving unit data:', result.error);
-            alert('An error occurred while saving your data: ' + (result.error || 'Access denied'));
+            if (errorEl) errorEl.textContent = 'Failed to save unit data: ' + (result.error || 'Access denied');
+            else alert('An error occurred while saving your data: ' + (result.error || 'Access denied'));
             return;
         }
+        if (errorEl) errorEl.textContent = '';
 
         // Success logic continues normally
         let storedData = sessionStorage.getItem('userInfo');
@@ -99,10 +109,69 @@ async function submitUserData() {
         }
 
         const inputArea = document.getElementById('inputUserDataArea');
+        const robloxGpsArea = document.getElementById('robloxGpsArea');
+
+        if (inputArea) inputArea.style.display = 'none';
+        if (robloxGpsArea) robloxGpsArea.style.display = 'flex';
+
+        const robloxInput = document.getElementById('roblox-username-input');
+        if (robloxInput) robloxInput.focus();
+
+    } catch (e) {
+        console.error('Error saving unit data:', e);
+        if (errorEl) errorEl.textContent = 'Failed to save unit data. Please try again.';
+        else alert('An error occurred while saving your data. Please try again.');
+    }
+}
+
+async function submitRobloxGpsUsername() {
+    const input = document.getElementById('roblox-username-input');
+    const errorEl = document.getElementById('roblox-gps-error');
+    const currentUser = sessionStorage.getItem('userInfo') ? sessionStorage.getItem('userInfo').split(',')[0] : null;
+    const robloxUsername = input ? input.value.trim() : '';
+
+    if (errorEl) errorEl.textContent = '';
+
+    if (!robloxUsername) {
+        if (errorEl) errorEl.textContent = 'Enter Roblox username for GPS tracking.';
+        return;
+    }
+
+    if (!currentUser) {
+        if (errorEl) errorEl.textContent = 'No active user session found. Please log in again.';
+        return;
+    }
+
+    try {
+        if (errorEl) errorEl.textContent = 'Saving GPS username...';
+        const { error: gpsUserError } = await sbClient
+            .from('units')
+            .update({ roblox_username: robloxUsername })
+            .eq('user', currentUser);
+
+        if (gpsUserError) {
+            console.error('Error saving Roblox GPS username:', gpsUserError);
+            if (errorEl) errorEl.textContent = 'Failed to save Roblox username for GPS tracking.';
+            return;
+        }
+
+        if (errorEl) errorEl.textContent = '';
+        sessionStorage.setItem('robloxUsername', robloxUsername);
+        await finishUnitLogin();
+    } catch (e) {
+        console.error('Error saving Roblox GPS username:', e);
+        if (errorEl) errorEl.textContent = 'Failed to save Roblox username for GPS tracking.';
+    }
+}
+
+async function finishUnitLogin() {
+        const inputArea = document.getElementById('inputUserDataArea');
+        const robloxGpsArea = document.getElementById('robloxGpsArea');
         const mainApp = document.getElementById('mainApp');
         const homeFoot = document.getElementById('home-foot');
 
         if (inputArea) inputArea.style.display = 'none';
+        if (robloxGpsArea) robloxGpsArea.style.display = 'none';
         if (mainApp) mainApp.style.display = 'flex';
         if (homeFoot) homeFoot.style.display = 'flex';
 
@@ -118,9 +187,8 @@ async function submitUserData() {
         await setupUnitRequestAlertMonitor();
         startGpsOfflineSequence();
         await logoffRequestLiveMonitor();
-
-    } catch (e) {
-        console.error('Error saving unit data:', e);
-        alert('An error occurred while saving your data. Please try again.');
-    }
 }
+
+window.submitAppLogin = submitAppLogin;
+window.submitUserData = submitUserData;
+window.submitRobloxGpsUsername = submitRobloxGpsUsername;

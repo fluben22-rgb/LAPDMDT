@@ -107,6 +107,17 @@ async function logoff(shouldReload = true) {
             if (currentUnit) {
                 await detachUnitFromAllIncidents(currentUnit, authClient);
             }
+            await authClient
+                .from('units')
+                .update({
+                    roblox_username: null,
+                    gps_x: null,
+                    gps_y: null,
+                    gps_z: null,
+                    gps_heading: null,
+                    gps_updated_at: null
+                })
+                .eq('user', currentUserParts[0]);
             await unsubscribeUnitRequestAlertMonitor();
             await unsubscribeLogoffRequestLiveMonitor();
 

@@ -51,6 +51,18 @@
 			"./js/Notepad/index.js"
 		]
 	},
+	"MobileMap": {
+		"title": "MOBILE MAP",
+		"iconUrl": "https://img.icons8.com/color/48/worldwide-location.png",
+		"htmlPath": "./html/MobileMap/app.html",
+		"initFunction": "initMobileMapApp",
+		"styles": [
+			"./css/MobileMap/app.css"
+		],
+		"scripts": [
+			"./js/MobileMap/index.js"
+		]
+	},
 	"Outlook": {
 		"title": "Outlook",
 		"iconUrl": "https://img.icons8.com/color/48/ms-outlook.png",

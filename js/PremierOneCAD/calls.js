@@ -306,6 +306,9 @@ async function handleAttach() {
 			.update({
 				prmry: nextPrimary,
 				assist: nextAssist,
+				status: 'Active',
+				is_active: true,
+				is_pending: false,
 				history: [...(data.history || []), `${dispatchNowString()} ${currentUnit} (${currentUser}) - Unit attached to incident as ${hasPrimary ? 'assist' : 'primary'}.`]
 			})
 			.eq('id', incidentId);
@@ -491,6 +494,9 @@ async function handlePrimaryButtonClick() {
 			.update({
 				prmry: currentUnit,
 				assist: dedupAssist,
+				status: 'Active',
+				is_active: true,
+				is_pending: false,
 				history: [...(data.history || []), `${dispatchNowString()} ${currentUnit} (${currentUser}) - Unit became primary.`]
 			})
 			.eq('id', incidentId);

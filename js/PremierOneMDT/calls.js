@@ -1388,7 +1388,10 @@ async function becomePrimaryOfCurrentIncident() {
             .from('calls')
             .update({
                 prmry: myUnit,
-                assist: dedupAssist
+                assist: dedupAssist,
+                status: 'Active',
+                is_active: true,
+                is_pending: false
             })
             .eq('id', currentIncidentId);
 
@@ -1414,6 +1417,59 @@ async function becomePrimaryOfCurrentIncident() {
         alert(`Failed to become primary: ${e?.message || e}`);
     }
 }
+
+async function locateCurrentIncidentOnMobileMap() {
+    if (!currentIncidentId || !sbClient) {
+        alert('No incident is currently open.');
+        return;
+    }
+
+    try {
+        const { data, error } = await sbClient
+            .from('calls')
+            .select('id, created_at, status, location, call_code, prmry, assist, is_closed, ping_x, ping_y, ping_z, ping_radius_miles')
+            .eq('id', currentIncidentId)
+            .single();
+
+        if (error || !data) {
+            alert('Incident not found.');
+            return;
+        }
+
+        const x = Number(data.ping_x);
+        const z = Number(data.ping_z);
+        if (!Number.isFinite(x) || !Number.isFinite(z)) {
+            alert('This incident does not have a mobile map ping.');
+            return;
+        }
+
+        window.__pendingMobileMapCallPing = data;
+
+        if (typeof openWindowsApp === 'function') {
+            await openWindowsApp('MobileMap');
+        } else if (typeof updateView === 'function') {
+            await updateView('mobileMap');
+        }
+
+        const centerWhenReady = () => {
+            if (typeof window.centerMobileMapOnCallPing === 'function') {
+                window.centerMobileMapOnCallPing(data);
+                return true;
+            }
+            return false;
+        };
+
+        if (!centerWhenReady()) {
+            setTimeout(centerWhenReady, 250);
+            setTimeout(centerWhenReady, 750);
+        }
+    } catch (e) {
+        console.error('Failed locating incident on mobile map:', e);
+        alert('Failed to locate incident on mobile map.');
+    }
+}
+
+window.locateCurrentIncidentOnMobileMap = locateCurrentIncidentOnMobileMap;
 
 //-- Logic for showing incident details view and loading incident data --\\
 async function showIncident(id) {
@@ -2379,7 +2435,7 @@ async function handleAttach() {
     try {
         const { data, error } = await sbClient
             .from('calls')
-            .select('id, last4, location, prmry, assist, status, is_closed')
+            .select('id, last4, location, prmry, assist, status, is_closed, history')
             .eq('id', currentIncidentId)
             .single();
 
@@ -2434,6 +2490,9 @@ async function handleAttach() {
             .update({
                 prmry: nextPrimary,
                 assist: nextAssistFinal,
+                status: 'Active',
+                is_active: true,
+                is_pending: false,
                 history: [...(data.history || []), `${new Date().toLocaleString('en-US', { timeZone: 'America/Los_Angeles', hour12: false })} ${unit} (${currentUser}) - Unit attached to incident as ${hasPrimary ? 'assist' : 'primary'}.`]
             }).eq('id', currentIncidentId);
 

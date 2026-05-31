@@ -1,0 +1,68 @@
+<div class="mobile-map-app" data-mobile-map-app>
+    <aside class="mobile-map-rail" aria-label="Map tools">
+        <button class="mobile-map-rail-btn active" type="button" title="Search" tabindex="-1"><span class="mif-search"></span></button>
+        <button class="mobile-map-rail-btn" type="button" title="Directions" tabindex="-1"><span class="mif-location"></span></button>
+        <button class="mobile-map-rail-btn mobile-map-return-mdt" type="button" title="Back to MDT"><span class="mif-headphones"></span></button>
+        <button class="mobile-map-rail-btn" type="button" title="Messages" tabindex="-1"><span class="mif-bubbles"></span></button>
+        <button class="mobile-map-rail-btn" type="button" title="Map Tools" tabindex="-1"><span class="mif-map"></span></button>
+        <button class="mobile-map-rail-btn" type="button" title="Bookmark" tabindex="-1"><span class="mif-bookmarks"></span></button>
+        <button class="mobile-map-rail-btn" type="button" title="Measure" tabindex="-1"><span class="mif-crop"></span></button>
+        <button class="mobile-map-rail-btn" type="button" title="Select Area" tabindex="-1"><span class="mif-crop"></span></button>
+        <button class="mobile-map-rail-btn" type="button" title="Info" tabindex="-1"><span class="mif-info"></span></button>
+        <button class="mobile-map-rail-btn" type="button" title="Locate" tabindex="-1"><span class="mif-image"></span></button>
+        <button class="mobile-map-rail-btn" type="button" title="Keyboard" tabindex="-1"><span class="mif-keyboard"></span></button>
+        <button class="mobile-map-rail-btn more" title="More"><span class="mif-more-horiz"></span></button>
+    </aside>
+
+    <main class="mobile-map-stage-shell" aria-label="Mobile map">
+        <div class="mobile-map-stage" id="mobile-map-stage">
+            <canvas id="mobile-map-canvas"></canvas>
+        </div>
+
+        <div class="mobile-map-tools top-tools">
+            <button title="Trace"><span class="mif-share"></span></button>
+            <button title="Route"><span class="mif-flow-tree"></span></button>
+            <button title="Locate"><span class="mif-target"></span></button>
+            <button title="Terrain"><span class="mif-image"></span></button>
+        </div>
+        <button class="mobile-map-ar" title="AR">AR</button>
+        <div class="mobile-map-nav-tools">
+            <button class="mobile-map-sound-toggle" type="button" title="Mute map"><span class="mif-volume-high"></span></button>
+            <button type="button" title="Center" tabindex="-1"><span class="mif-target"></span></button>
+            <button type="button" title="Back" tabindex="-1"><span class="mif-arrow-left"></span></button>
+            <button class="disabled" type="button" title="Forward" tabindex="-1"><span class="mif-arrow-right"></span></button>
+            <button type="button" title="Home" tabindex="-1"><span class="mif-home"></span></button>
+            <button type="button" title="Zoom in" tabindex="-1">+</button>
+            <button type="button" title="Zoom out" tabindex="-1">-</button>
+        </div>
+        <div class="mobile-map-compass">N</div>
+        <div class="mobile-map-status" id="mobile-map-status">Loading map...</div>
+        <div class="mobile-map-attribution">Powered by Summit</div>
+    </main>
+
+    <footer class="mobile-map-footer">
+        <div class="mobile-map-call">
+            <strong>[ PD-00020308 ]</strong>
+            <span>PD NW</span>
+            <span>FIGHT</span>
+        </div>
+        <div class="mobile-map-location">
+            <strong>2309 W WILCOX ST</strong>
+            <span>/ 100 S OAKLEY BLVD</span>
+        </div>
+        <div class="mobile-map-step current">
+            <strong>0.45 mi</strong>
+            <span class="turn-icon">↱</span>
+            <span class="step-text">Turn right on E WACKER DR</span>
+        </div>
+        <div class="mobile-map-step next">
+            <strong>0.58 mi</strong>
+            <span class="turn-icon">↰</span>
+            <span class="step-text">Turn left on N WABASH AVE</span>
+        </div>
+        <div class="mobile-map-eta">
+            <strong>4.5 mi</strong>
+            <span>00:07</span>
+        </div>
+    </footer>
+</div>
