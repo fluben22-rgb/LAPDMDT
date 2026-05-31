@@ -391,12 +391,48 @@ function normalizeUnitKeyForMap(value) {
     return String(value || "").trim().toUpperCase();
 }
 
+async function fetchLiveUnitGpsRowsViaFunction() {
+    const baseUrl = window.supabaseUrl || supabaseUrl;
+    const anonKey = window.supabaseKey || supabaseKey;
+    const authToken = sessionStorage.getItem("userToken") || anonKey;
+    if (!baseUrl || !anonKey || !authToken) return null;
+
+    const response = await fetch(`${baseUrl}/functions/v1/list-unit-gps`, {
+        method: "GET",
+        headers: {
+            "apikey": anonKey,
+            "Authorization": `Bearer ${authToken}`
+        }
+    });
+
+    if (!response.ok) {
+        const text = await response.text().catch(() => "");
+        throw new Error(text || `list-unit-gps failed with ${response.status}`);
+    }
+
+    const result = await response.json();
+    return Array.isArray(result?.units) ? result.units : [];
+}
+
 async function refreshLiveUnitGpsMarkers() {
     const client = getMobileMapSupabaseClient();
-    if (!mapState.bounds || !client) return;
+    if (!mapState.bounds) return;
     const now = performance.now();
     if (mapState.lastUnitGpsFetch && now - mapState.lastUnitGpsFetch < 2000) return;
     mapState.lastUnitGpsFetch = now;
+
+    try {
+        const functionRows = await fetchLiveUnitGpsRowsViaFunction();
+        if (Array.isArray(functionRows)) {
+            syncLiveUnitGpsMarkers(functionRows);
+            setMapStatus(`Map loaded - ${functionRows.length} GPS unit${functionRows.length === 1 ? "" : "s"}`);
+            return;
+        }
+    } catch (error) {
+        console.warn("Failed loading unit GPS through edge function, falling back to direct query:", error);
+    }
+
+    if (!client) return;
 
     const { data, error } = await client
         .from("units")
