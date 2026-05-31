@@ -25,6 +25,10 @@ function getUnitLiveSoundSignature(row) {
 
 function isVisibleUnitRow(unit) {
     const status = String(unit?.status || '').trim().toLowerCase();
+    const inc = String(unit?.inc || '').trim();
+    const incLocation = String(unit?.incLocation || '').trim();
+    const gpsUpdatedAt = Date.parse(unit?.gps_updated_at || '');
+    const hasRecentGps = Number.isFinite(gpsUpdatedAt) && Date.now() - gpsUpdatedAt < 30000;
     const combinedStatus = [
         unit?.status,
         unit?.invehicle,
@@ -34,6 +38,9 @@ function isVisibleUnitRow(unit) {
     if (!status && !unit?.unit) return false;
     if (status === 'end of watch' || status === 'eow') return false;
     if (combinedStatus.includes('end of watch') || combinedStatus.includes('eow')) return false;
+    if (hasRecentGps) return true;
+    if (inc || incLocation) return true;
+    if (['sow', 'start of watch', 'stat', 'station'].includes(status)) return false;
     return true;
 }
 
