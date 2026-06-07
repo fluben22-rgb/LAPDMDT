@@ -241,3 +241,19 @@ function dispatchNormalizeStatusLabel(rawStatus) {
     return getStatusLabelFromCode(parsed.statusCode);
 }
 
+async function initDispatcherOverlay() {
+	if (dispatchRuntimeInitialized) return;
+	dispatchRuntimeInitialized = true;
+
+	updateDispatcherClock();
+	setInterval(updateDispatcherClock, 1000);
+	updateDispatcherTimeDate();
+	setInterval(updateDispatcherTimeDate, 1000);
+
+	await dispatchLoadUnits();
+	await dispatchLoadTabs('all');
+	ensureDispatchIncidentPaneVisible();
+	const rightPanel = document.getElementById('dispRightPanel');
+	if (rightPanel) rightPanel.style.display = 'flex';
+	setDispatchStatus('success', 'Ready');
+}

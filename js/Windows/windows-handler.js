@@ -1,3 +1,5 @@
+// openWindowsApp = ADD PER APP CONFIGS HERE
+
 let winLoginInFlight = false;
 
 // global funcs used by shell menus and windows

@@ -883,22 +883,7 @@ function updateDispatcherTimeDate() {
 	if (timeDateDisplay) timeDateDisplay.textContent = pstTime.toLocaleDateString('en-US', options);
 }
 
-async function initDispatcherOverlay() {
-	if (dispatchRuntimeInitialized) return;
-	dispatchRuntimeInitialized = true;
 
-	updateDispatcherClock();
-	setInterval(updateDispatcherClock, 1000);
-	updateDispatcherTimeDate();
-	setInterval(updateDispatcherTimeDate, 1000);
-
-	await dispatchLoadUnits();
-	await dispatchLoadTabs('all');
-	ensureDispatchIncidentPaneVisible();
-	const rightPanel = document.getElementById('dispRightPanel');
-	if (rightPanel) rightPanel.style.display = 'flex';
-	setDispatchStatus('success', 'Ready');
-}
 
 window.dispatchGetSelectedTab = dispatchGetSelectedTab;
 window.dispatchGetSelectedIncidentId = dispatchGetSelectedIncidentId;
@@ -910,7 +895,6 @@ window.updateAttachToggleButton = window.updateAttachToggleButton || updateAttac
 window.dispatcherAction = dispatcherAction;
 window.renderDispatchUnitTable = renderDispatchUnitTable;
 window.dispatchLoadTabs = dispatchLoadTabs;
-window.initDispatcherOverlay = initDispatcherOverlay;
 window.showModal = window.showModal || showModal;
 window.closeModal = window.closeModal || closeModal;
 
