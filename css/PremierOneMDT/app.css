@@ -249,7 +249,7 @@ button.main-action-btns img {
     background: linear-gradient(to bottom,
             #3f8cd8 0%,
             #000000 30%,
-            #000000 calc(100% - 4px),
+            #000000 calc(100% - 16px),
             #3f8cd8 100%
         ) !important;
     color: #4cff00 !important;

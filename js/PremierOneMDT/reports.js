@@ -810,17 +810,7 @@ async function submitReportPromptForId() {
 
     try {
         const rlsClient = typeof getRlsClient === 'function' ? getRlsClient() : sbClient;
-        if (!rlsClient || !rlsClient.functions || typeof rlsClient.functions.invoke !== 'function') {
-            throw new Error('Query service unavailable.');
-        }
-
-        const { data, error } = await rlsClient.functions.invoke('query-player', {
-            body: { playerId: personId }
-        });
-
-        if (error && error.message !== '404') {
-            throw new Error(error.message || 'Lookup failed.');
-        }
+        const data = await queryPlayerRecord(rlsClient, personId);
         if (!data) {
             if (status) status.textContent = 'No record found for that ID.';
             return;

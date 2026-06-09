@@ -97,8 +97,10 @@ async function updateUser() {
 async function logoff(shouldReload = true) {
     const currentUser = sessionStorage.getItem('userInfo');
     const currentUserParts = currentUser ? currentUser.split(',') : null;
+    const currentUserEmail = currentUserParts ? currentUserParts[0] : null;
     const currentUnit = currentUserParts ? currentUserParts[2] : null;
     const userToken = sessionStorage.getItem('userToken');
+    let logoffError = null;
 
     try {
         if (currentUser && userToken) {
@@ -107,21 +109,16 @@ async function logoff(shouldReload = true) {
             if (currentUnit) {
                 await detachUnitFromAllIncidents(currentUnit, authClient);
             }
-            await authClient
-                .from('units')
-                .update({
-                    roblox_username: null,
-                    gps_x: null,
-                    gps_y: null,
-                    gps_z: null,
-                    gps_heading: null,
-                    gps_updated_at: null
-                })
-                .eq('user', currentUserParts[0]);
             await unsubscribeUnitRequestAlertMonitor();
             await unsubscribeLogoffRequestLiveMonitor();
+            if (typeof unsubscribeUnitLiveMonitor === 'function') await unsubscribeUnitLiveMonitor();
+            if (typeof unsubscribeCallsLiveMonitor === 'function') await unsubscribeCallsLiveMonitor();
+            if (typeof unsubscribeAdvCallsLiveMonitor === 'function') await unsubscribeAdvCallsLiveMonitor();
+            if (typeof stopUnitTableRefreshLoop === 'function') stopUnitTableRefreshLoop();
+            if (typeof stopCallTableRefreshLoop === 'function') stopCallTableRefreshLoop();
+            if (typeof stopAdvCallTableRefreshLoop === 'function') stopAdvCallTableRefreshLoop();
 
-            const response = await fetch('https://lgajaitgqqznzlzjazxn.supabase.co/functions/v1/logoff', {
+            const response = await fetch(`${supabaseUrl}/functions/v1/logoff`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -130,21 +127,31 @@ async function logoff(shouldReload = true) {
                 }
             });
 
-            const result = await response.json();
+            const result = await response.json().catch(() => ({}));
             if (!response.ok || !result.success) {
                 throw new Error(result.error || 'Failed to delete unit on server');
             }
         }
-
-        clearAuthState();
-        if (shouldReload) {
-            location.reload();
-        }
     } catch (e) {
+        logoffError = e;
         console.error('Error during logoff:', e);
-        if (shouldReload) {
-            alert('An error occurred during logoff. Please try again.');
+        try {
+            const authClient = userToken ? getRlsClient() : sbClient;
+            if (authClient && currentUserEmail) {
+                await authClient.from('units').delete().eq('user', currentUserEmail);
+            }
+            if (authClient && currentUnit) {
+                await authClient.from('units').delete().eq('unit', currentUnit);
+            }
+        } catch (fallbackError) {
+            console.error('Fallback unit delete during logoff failed:', fallbackError);
         }
+    }
+
+    clearAuthState();
+    if (shouldReload) {
+        if (logoffError) console.warn('Proceeding with local logoff after server cleanup warning.');
+        location.reload();
     }
 }
 
@@ -161,7 +168,7 @@ function runUnloadLogoff() {
     if (!supabaseUrl || !supabaseKey) return;
 
     try {
-        fetch('https://lgajaitgqqznzlzjazxn.supabase.co/functions/v1/logoff', {
+        fetch(`${supabaseUrl}/functions/v1/logoff`, {
             method: 'POST',
             headers: getSupabaseAuthHeaders({ 'Content-Type': 'application/json' }),
             keepalive: true

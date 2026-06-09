@@ -1,15 +1,11 @@
 /*
-       * ALL CALL / INCIDENT RELATED FUNCTIONS WILL BE BEYOND THIS POINT
-       *Notes for future:
-        - Make creating incident functionality FIRST, then add incident advanced view
-        - ^ Make sure when I do this that creating a C6 / TS is also possible thru those main action btns
-        - When done, incident advanced view will have you subscribe to the incident your viewing for updates, all content will be dynically generated? un-subscribe after not viewing incident anymore
-       * ALL INCIDENT RELATED FUNCTIONS HERE
-       */
-
-
-
-
+ * ALL CALL / INCIDENT RELATED FUNCTIONS WILL BE BEYOND THIS POINT
+ * Notes for future:
+ *      - Make creating incident functionality FIRST, then add incident advanced view
+ *      - ^ Make sure when I do this that creating a C6 / TS is also possible thru those main action btns
+ *      - When done, incident advanced view will have you subscribe to the incident your viewing for updates, all content will be dynically generated? un-subscribe after not viewing incident anymore
+ * ALL INCIDENT RELATED FUNCTIONS HERE
+ */
 
 //-- Set Incident ID Logic --\\
 async function setIncidentID() {
@@ -642,15 +638,9 @@ async function closeIncidentByExactId(incId, sourceLabel) {
         if (!incident) return { ok: true, found: false };
         if (isIncidentClosedValue(incident)) return { ok: true, found: true, alreadyClosed: true };
 
-        let cleanComments = [];
-        if (incident.comments && Array.isArray(incident.comments)) {
-            cleanComments = incident.comments.filter(item => item !== null && String(item).trim() !== "");
-        }
+        let cleanComments = normalizeIncidentTextArray(incident.comments);
 
-        let cleanHistory = [];
-        if (incident.history && Array.isArray(incident.history)) {
-            cleanHistory = incident.history.filter(item => item !== null && String(item).trim() !== "");
-        }
+        let cleanHistory = normalizeIncidentTextArray(incident.history);
 
         cleanComments.push(`INC CLOSED W/O DISPOSITION BY ${callsign}`);
         cleanHistory.push(`${timeNow} ${callsign} (${user}) - Incident closed via ${sourceLabel || 'IC command'}, no disposition.`);
@@ -662,11 +652,21 @@ async function closeIncidentByExactId(incId, sourceLabel) {
                 history: cleanHistory,
                 status: 'Closed',
                 is_active: false,
-                is_closed: true
+                is_closed: true,
+                is_pending: false,
+                prmry: null,
+                assist: []
             })
             .eq('id', normalizedId);
 
         if (error) throw error;
+
+        await syncUnitsForIncidentAssignment({
+            prmry: null,
+            assist: [],
+            last4: incident.last4,
+            location: ''
+        });
 
         alert(`Incident ${normalizedId} closed successfully.`);
         playSound('callClosed');
@@ -994,6 +994,15 @@ function normalizeUnitKey(unitName) {
 function isIncidentClosedValue(incidentData) {
     const statusNorm = String(incidentData?.status || '').trim().toLowerCase();
     return incidentData?.is_closed === true || statusNorm === 'closed';
+}
+
+function normalizeIncidentTextArray(value) {
+    if (Array.isArray(value)) {
+        return value.filter(item => item != null && String(item).trim() !== '');
+    }
+    if (value == null) return [];
+    const text = String(value).trim();
+    return text ? [text] : [];
 }
 
 function didIncidentReceiveNewComment(oldIncident, newIncident) {
@@ -1388,10 +1397,7 @@ async function becomePrimaryOfCurrentIncident() {
             .from('calls')
             .update({
                 prmry: myUnit,
-                assist: dedupAssist,
-                status: 'Active',
-                is_active: true,
-                is_pending: false
+                assist: dedupAssist
             })
             .eq('id', currentIncidentId);
 
@@ -1417,59 +1423,6 @@ async function becomePrimaryOfCurrentIncident() {
         alert(`Failed to become primary: ${e?.message || e}`);
     }
 }
-
-async function locateCurrentIncidentOnMobileMap() {
-    if (!currentIncidentId || !sbClient) {
-        alert('No incident is currently open.');
-        return;
-    }
-
-    try {
-        const { data, error } = await sbClient
-            .from('calls')
-            .select('id, created_at, status, location, call_code, prmry, assist, is_closed, ping_x, ping_y, ping_z, ping_radius_miles')
-            .eq('id', currentIncidentId)
-            .single();
-
-        if (error || !data) {
-            alert('Incident not found.');
-            return;
-        }
-
-        const x = Number(data.ping_x);
-        const z = Number(data.ping_z);
-        if (!Number.isFinite(x) || !Number.isFinite(z)) {
-            alert('This incident does not have a mobile map ping.');
-            return;
-        }
-
-        window.__pendingMobileMapCallPing = data;
-
-        if (typeof openWindowsApp === 'function') {
-            await openWindowsApp('MobileMap');
-        } else if (typeof updateView === 'function') {
-            await updateView('mobileMap');
-        }
-
-        const centerWhenReady = () => {
-            if (typeof window.centerMobileMapOnCallPing === 'function') {
-                window.centerMobileMapOnCallPing(data);
-                return true;
-            }
-            return false;
-        };
-
-        if (!centerWhenReady()) {
-            setTimeout(centerWhenReady, 250);
-            setTimeout(centerWhenReady, 750);
-        }
-    } catch (e) {
-        console.error('Failed locating incident on mobile map:', e);
-        alert('Failed to locate incident on mobile map.');
-    }
-}
-
-window.locateCurrentIncidentOnMobileMap = locateCurrentIncidentOnMobileMap;
 
 //-- Logic for showing incident details view and loading incident data --\\
 async function showIncident(id) {
@@ -2435,7 +2388,7 @@ async function handleAttach() {
     try {
         const { data, error } = await sbClient
             .from('calls')
-            .select('id, last4, location, prmry, assist, status, is_closed, history')
+            .select('id, last4, location, prmry, assist, status, is_closed')
             .eq('id', currentIncidentId)
             .single();
 
@@ -2490,9 +2443,6 @@ async function handleAttach() {
             .update({
                 prmry: nextPrimary,
                 assist: nextAssistFinal,
-                status: 'Active',
-                is_active: true,
-                is_pending: false,
                 history: [...(data.history || []), `${new Date().toLocaleString('en-US', { timeZone: 'America/Los_Angeles', hour12: false })} ${unit} (${currentUser}) - Unit attached to incident as ${hasPrimary ? 'assist' : 'primary'}.`]
             }).eq('id', currentIncidentId);
 
@@ -2775,14 +2725,23 @@ async function handleDisposition(id) {
                 is_active: false,
                 is_closed: true,
                 is_pending: false,
-                comments: [...(incident.comments || []), dispositionEntry],
-                history: [...(incident.history || []), historyEntry]
+                comments: [...normalizeIncidentTextArray(incident.comments), dispositionEntry],
+                history: [...normalizeIncidentTextArray(incident.history), historyEntry],
+                prmry: null,
+                assist: []
             })
             .eq('id', id);
 
         if (updateError) {
             throw updateError;
         }
+
+        await syncUnitsForIncidentAssignment({
+            prmry: null,
+            assist: [],
+            last4: incident.last4,
+            location: ''
+        });
 
         mainDispoEl.value = '';
         dispoCmtsEl.value = '';
@@ -2794,7 +2753,7 @@ async function handleDisposition(id) {
         dicvUsedEl.checked = false;
         repNumEl.value = '';
         closeModal('dispositionModal');
-        closeIncident();
+        await closeIncident();
         await refreshCallTable();
         await refreshAdvCallTable(currentAdvCallsView);
 

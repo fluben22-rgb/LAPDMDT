@@ -1,8 +1,8 @@
 /*
-         * ALL QUERY FUNCTIONS BEYOND THIS POINT
-         * ALL PERSON ALERT FUNCTIONS BEYOND THIS POINT
-         * QUERYING IS NOT FROM OUR DB, WRITING NOT ALLOWED 
-         */
+ * ALL QUERY FUNCTIONS BEYOND THIS POINT
+ * ALL PERSON ALERT FUNCTIONS BEYOND THIS POINT
+ * QUERYING IS NOT FROM OUR DB, WRITING NOT ALLOWED 
+ */
 
 //-- Query panel resizer --\\
 (function () {
@@ -572,10 +572,8 @@ async function query(type) {
         switchQueryFolder('pending', null);
 
         try {
-            const rlsClient = getRlsClient();
-            const { data, error } = await rlsClient.functions.invoke('query-player', {
-                body: { playerId: inputId }
-            });
+            const data = await queryPlayerRecord(getRlsClient(), inputId);
+            const error = null;
 
             // if err
             if (error && error.message !== '404') {

@@ -1,13 +1,14 @@
 "use strict";
 
-const sbAnonClient = createSupabaseClient({
+var sbAnonClient = window.sbAnonClient || createSupabaseClient({
     storageKey: 'sb-lgajaitgqqznzlzjazxn-anon-auth-token'
 });
+window.sbAnonClient = sbAnonClient;
 
-let sbClient = sbAnonClient;
-let sbClientToken = null;
-let rlsClient = null;
-let rlsClientToken = null;
+var sbClient = window.sbClient || sbAnonClient;
+var sbClientToken = window.sbClientToken || null;
+var rlsClient = window.rlsClient || null;
+var rlsClientToken = window.rlsClientToken || null;
 
 //-- Create supabase helper --\\
 function createSupabaseClient({ token = null, storageKey = 'sb-lgajaitgqqznzlzjazxn-anon-auth-token' } = {}) {
