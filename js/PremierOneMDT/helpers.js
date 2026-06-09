@@ -1049,15 +1049,26 @@ function applyCallsViewFilters() {
 //-- Night Mode Toggle --\\
 function toggleNightMode() {
     const mainApp = document.getElementById('mainApp');
+    const modeMenu = document.getElementById('displayModeMenu');
     const toggle = document.getElementById('dayNightToggle');
-    if (!mainApp || !toggle) return;
+    if (!mainApp) return;
     const isNight = mainApp.classList.toggle('night-mode');
     document.body.classList.toggle('night-mode-active', isNight);
-    const icon = toggle.querySelector('span:first-child');
-    const label = toggle.querySelector('span:last-child');
-    if (label) label.textContent = isNight ? 'Night' : 'Day';
-    if (icon) {
-        icon.className = isNight ? 'mif-moon-left mif-sm' : 'mif-brightness-auto mif-sm';
+
+    // Newer MDT layout uses a select menu instead of a clickable status tile.
+    if (modeMenu) {
+        modeMenu.options[0].textContent = isNight ? '☾ Night' : '☾ Day';
+        modeMenu.value = '';
+    }
+
+    // Legacy bundled layout uses a clickable tile with icon + label spans.
+    if (toggle) {
+        const icon = toggle.querySelector('span:first-child');
+        const label = toggle.querySelector('span:last-child');
+        if (label) label.textContent = isNight ? 'Night' : 'Day';
+        if (icon) {
+            icon.className = isNight ? 'mif-moon-left mif-sm' : 'mif-brightness-auto mif-sm';
+        }
     }
 }
 
@@ -1072,6 +1083,16 @@ function initPremierOneMDT() {
             window.addEventListener('pagehide', unloadHandler);
         }
         mdtGlobalInitComplete = true;
+    }
+
+    const modeMenu = document.getElementById('displayModeMenu');
+    if (modeMenu) {
+        modeMenu.onchange = () => {
+            if (modeMenu.value === 'toggle-night') {
+                toggleNightMode();
+            }
+            modeMenu.value = '';
+        };
     }
 
     const dayToggle = document.getElementById('dayNightToggle');

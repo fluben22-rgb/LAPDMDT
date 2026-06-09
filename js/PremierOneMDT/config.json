@@ -13,8 +13,8 @@
         "supabaseKey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxnYWphaXRncXF6bnpsemphenhuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzAzMDg2NzQsImV4cCI6MjA4NTg4NDY3NH0.Sm_Y4XiwCwjVtdvNEALNsDNY4EDGVI2KIWXkp3VdmfQ"
     },
     "flags": {
-        "loadByDefault": false,
-        "loginEnabled": true
+        "loadByDefault": true,
+        "loginEnabled": false
     },
     "vars": {
         "inVehicleOptions": ["In Vehicle", "Out of Vehicle"],

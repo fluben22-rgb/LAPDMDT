@@ -328,8 +328,6 @@ async function openApp(appName) {
 window.APP_ASSET_MANIFEST = APP_ASSET_MANIFEST;
 window.openApp = openApp;
 window.launchDispatchFromWifi = launchDispatchFromWifi;
-window.submitDispatchUserLogin = submitDispatchUserLogin;
-window.submitDispatchAppLogin = submitDispatchAppLogin;
 window.escapeHtml = window.escapeHtml || function escapeHtml(str) {
 	return String(str ?? '')
 		.replace(/&/g, '&amp;')

@@ -184,7 +184,6 @@ button.main-action-btns img {
 #mainApp.night-mode th,
 #mainApp.night-mode td,
 #mainApp.night-mode .input,
-#mainApp.night-mode .status-block,
 #mainApp.night-mode .dashboard-container,
 #mainApp.night-mode .home-table,
 #mainApp.night-mode .incident-content,
@@ -204,7 +203,6 @@ button.main-action-btns img {
 #mainApp.night-mode .modal-footer,
 #mainApp.night-mode .call-item,
 #mainApp.night-mode .call-filter-btn,
-#mainApp.night-mode .sidebar-tile-btn,
 #mainApp.night-mode .query-top-area,
 #mainApp.night-mode .query-detail-area,
 #mainApp.night-mode .homeContentView,
@@ -214,21 +212,50 @@ button.main-action-btns img {
     border-color: #4cff00 !important;
 }
 
-/* Main page content rows only: very dark navy (near-black) */
+#mainApp.night-mode .sidebar-tile-btn {
+    background: #000 !important;
+    color: #4cff00 !important;
+    border-bottom: 1px solid #0d3d58 !important;
+    border-top: 1px solid #0d3d58 !important;
+    border-right: 1px solid #0d3d58 !important;
+    border-left: 0 !important;
+}
+
+#mainApp.night-mode .status-block, #mainApp.night-mode .status-block-custom {
+    background: #000 !important;
+    color: #4cff00 !important;
+    border-color: #4cff00 !important;
+    border-top: 0 !important;
+    border-bottom: 2px solid #0d3d58 !important;
+    border-right: 2px solid #455d6b !important;
+}
+
+#mainApp.night-mode .commandBar {
+    border-top: 1px solid #0d3d58 !important;
+    border-left: 1px solid #0d3d58 !important;
+    border-bottom: 0 !important;
+    border-right: 0 !important;
+    background: #000 !important;
+    color: #4cff00 !important;
+}
+
 #mainApp.night-mode .content-row {
     background: #0a1520 !important;
     color: #4cff00 !important;
     border-color: #4cff00 !important;
 }
 
-/* Main action buttons: hard-cut dark blue (top) / black (bottom) */
 #mainApp.night-mode button.main-action-btns {
-    background: linear-gradient(to bottom, #0a1520 50%, #000000 50%) !important;
+    background: linear-gradient(to bottom,
+            #3f8cd8 0%,
+            #000000 30%,
+            #000000 calc(100% - 4px),
+            #3f8cd8 100%
+        ) !important;
     color: #4cff00 !important;
     border-color: #4cff00 !important;
 }
 
-/* Suppress the :active flash in night mode */
 #mainApp.night-mode button.main-action-btns:active {
     background: linear-gradient(to bottom, #1a4a7a 50%, #000000 50%) !important;
     filter: brightness(1.3);
@@ -253,9 +280,8 @@ body.night-mode-active .modal-overlay .modal-content * {
     border-color: #4cff00 !important;
 }
 
-/* Footer: hard-cut blue (top half) / black (bottom half) */
 body.night-mode-active footer {
-    background: linear-gradient(to bottom, #1a5c9e 50%, #000000 50%) !important;
+    background: linear-gradient(to bottom, #5a97d4 40%, #000000 30%) !important;
     border-top-color: #1a6abf !important;
 }
 
@@ -265,7 +291,6 @@ body.night-mode-active footer .footer-btn {
     border-color: #4cff00 !important;
 }
 
-/* All tabs (active and inactive): black background */
 #mainApp.night-mode #mainTabs>li>a,
 #mainApp.night-mode #mainTabs>li.active>a,
 #mainApp.night-mode #mainTabs>li>a.active-tab,
@@ -280,7 +305,6 @@ body.night-mode-active footer .footer-btn {
     border-bottom-color: #000 !important;
 }
 
-/*=== MAIN APP, HOME AREA STYLES ===*/
 .dashboard-container {
     display: flex;
     flex-direction: column;
@@ -541,6 +565,16 @@ body.night-mode-active footer .footer-btn {
     border: 1px solid #ccc;
     border-right: none;
     background: #f0f0f0;
+}
+
+#mainApp.night-mode .callboard-sidebar-area {
+    width: 180px !important;
+    flex: 0 0 180px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow-y: auto !important;
+    background: #1a1a1a !important;
+    border: 0 !important;
 }
 
 .mobile-map-view-wrapper {

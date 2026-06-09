@@ -1,4 +1,5 @@
-﻿<div id="appLoginArea"
+﻿<style href=""></style>
+<div id="appLoginArea"
     style="display: none; align-items: center; justify-content: center; min-height: 100%; height: 100%; padding: 20px; background: #d9d9d9;">
     <div class="login-box">
         <div class="align-center">
@@ -127,7 +128,7 @@
 
     <!-- Command Bar-->
     <div class="px-5 mt-1">
-        <input type="text" data-role="input" placeholder="Enter commands..." id="cmdBar" style="border-radius: 0;"
+        <input type="text" class="commandBar" data-role="input" placeholder="Enter commands..." id="cmdBar" style="border-radius: 0;"
             onkeydown="if(event.key === 'Enter') { processCmd() } if(event.key === 'ArrowUp') { recallCmd('up') } if(event.key === 'ArrowDown') { recallCmd('down') }">
     </div>
     <!-- Unit Info  -->
@@ -140,7 +141,7 @@
             </div>
             <div class="pos-relative fg-grey-hover" style="flex: 1 1 14.28%; max-width: 14.28%;"
                 onclick="showModal('unitModifyModal');">
-                <div class="d-flex flex-row align-stretch border bd-default bg-white"
+                <div class="d-flex flex-row align-stretch border bd-default bg-white status-block-custom"
                     style="height: 38px; cursor: pointer; border-left: 0;">
                     <div class="d-flex align-center flex-justify-center px-2 text-bold"
                         style="font-size: 16px; min-width: 28px; background-color: green; color: white;">P</div>
@@ -161,9 +162,14 @@
                 <span class="mif-mail mif-sm fg-orange"></span>
                 <span>Unread(1)</span>
             </div>
-            <div id="dayNightToggle" class="status-block" style="flex: 1 1 14.285714%; max-width: 14.285714%;">
-                <span class="mif-brightness-auto mif-sm"></span>
-                <span>Day</span>
+            <div style="flex: 1 1 14.285714%; max-width: 14.285714%;">
+                <select id="displayModeMenu" class="status-block" style="border-radius: 0; font-size: 14px;">
+                    <option value="" selected disabled hidden>☾ Day</option>
+                    <option value="toggle-night">1 Day Night Mode</option>
+                    <option value="inc-font" disabled>2 Increase Font Size</option>
+                    <option value="dec-font" disabled>3 Decrease Font Size</option>
+                    <option value="maximize" disabled>4 Maximize</option>
+                </select>
             </div>
             <select id="unit-in-vehicle-status" class="status-block unit-cycle"
                 onchange="unitCycleState.invehicle = inVehicleOptions.indexOf(this.value); syncCurrentUnitStatus();"
@@ -284,7 +290,7 @@
                             </table>
                         </div>
                     </div>
-                    <!-- Standalone Query Results View -->
+                    <!-- Query Results View -->
                     <div id="queryResultsView" style="display:none;">
                         <div class="query-table-area"
                             style="display:flex; width:100%; height:100%; min-height:0; min-width:0;">
